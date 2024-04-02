@@ -1,12 +1,6 @@
 #include "Ammo.h"
 
 Ammo::Ammo() {
-	rect_.x = 0;
-	rect_.y = 0;
-	rect_.w = 0;
-	rect_.h = 0;
-	texture_ = NULL;
-
 	x_vel_ = 0;
 	y_vel_ = 0;
 	is_move_ = true;

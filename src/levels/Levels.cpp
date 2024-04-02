@@ -18,23 +18,6 @@ bool Level::setPath(const std::string& path) {
 	path_ = path;
 	return loadFromFile();
 }
-std::string Level::getPath() {
-	return path_;
-}
-bool Level::loadSpriteTiles(SDL_Renderer* ren, const std::string& path) {
-	sprite_tiles_ = IMG_LoadTexture(ren, path.c_str());
-	if (sprite_tiles_ == NULL)
-	{
-		std::cout << IMG_GetError() << std::endl;
-	}
-	return sprite_tiles_ == NULL;
-}
-Tile* Level::getTile(const int& x, const int& y)
-{
-	return tiles_[y][x];
-}
-int Level::getWidth() const { return col_; }
-int Level::getHeight() const { return row_; }
 bool Level::loadFromFile() {
 	std::ifstream file(path_);
 	if (!file.is_open()) {
@@ -60,25 +43,53 @@ bool Level::loadFromFile() {
 	file.close();
 	return true;
 }
-void Level::render(SDL_Renderer* ren, Camera* cam) {
-	int x = 0;
-	int y = 0;
-	SDL_Rect viewport = cam->getViewport();
-	for (int i = viewport.y; i <= viewport.y + viewport.h; i++)
+std::string Level::getPath() {
+	return path_;
+}
+bool Level::loadSpriteTiles(SDL_Renderer* ren, const std::string& path) {
+	sprite_tiles_ = IMG_LoadTexture(ren, path.c_str());
+	if (sprite_tiles_ == NULL)
 	{
-		for (int j = viewport.x; j <= viewport.x + viewport.w; j++)
+		std::cout << IMG_GetError() << std::endl;
+	}
+	return sprite_tiles_ == NULL;
+}
+Tile* Level::getTile(const int& x, const int& y)
+{
+	return tiles_[y][x];
+}
+int Level::getWidth() const { return col_; }
+int Level::getHeight() const { return row_; }
+void Level::render(SDL_Renderer* ren, Camera& cam) {
+	SDL_Rect viewport = cam.getViewport();
+
+	int x, y, mapX, x1, x2, mapY, y1, y2;
+
+	mapX = viewport.x;
+	x1 = (int(cam.getPos().x) % TILE_SIZE) * -1;
+	x2 = x1 + SCREEN_WIDTH + (x1 == 0 ? 0 : TILE_SIZE);
+
+	mapY = viewport.y;
+	y1 = (int(cam.getPos().y) % TILE_SIZE) * -1;
+	y2 = y1 + SCREEN_HEIGHT + (y1 == 0 ? 0 : TILE_SIZE);
+
+	for (y = y1; y <= y2; y += TILE_SIZE)
+	{
+
+		mapX = viewport.x;
+		for (x = x1; x <= x2; x += TILE_SIZE)
 		{
-			SDL_Rect des = { x * TILE_SIZE,y * TILE_SIZE ,TILE_SIZE,TILE_SIZE };
-			if (tiles_[i][j]->getType() == Tile::Type::EMPTY) {
+			SDL_Rect des = { x ,y ,TILE_SIZE,TILE_SIZE };
+			if (tiles_[mapY][mapX]->getType() == Tile::Type::EMPTY) {
 				SDL_RenderCopy(ren, sprite_tiles_, &EMPTY_TILE_CLIP, &des);
 			}
-			else if (tiles_[i][j]->getType() == Tile::Type::GROUND) {
+			else if (tiles_[mapY][mapX]->getType() == Tile::Type::GROUND) {
 				SDL_RenderCopy(ren, sprite_tiles_, &GROUND_TILE_CLIP, &des);
 			}
-			x++;
-		}
-		y++;
-		x = 0;
 
+			mapX++;
+		}
+
+		mapY++;
 	}
 }

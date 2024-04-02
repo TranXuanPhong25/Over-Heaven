@@ -15,12 +15,13 @@ public:
 	~Character();
 	void handleInput(SDL_Event& e);
 	Vector2D getVel()const;
-	void moveAndCollideX(const float delta, Level& level);
-	void moveAndCollideY(const float& dT, Level& level);
-	void update(Level& level, const float& dT);
+	void update(Level& level, Camera& cam, const float& dT);
+	void moveX(const float& dT);
+	void moveY(const float& dT);
+	void CollideX(Level& level);
+	void CollideY(Level& level);
 	void handleLevelInteraction(Level& level);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
-
 private:
 	bool shoudSlowDown() const;
 	int speed_;

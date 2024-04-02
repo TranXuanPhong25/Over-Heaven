@@ -11,7 +11,7 @@ public:
 	~Level();
 	bool setPath(const std::string& path);
 	std::string getPath();
-	void render(SDL_Renderer* ren, Camera* cam);
+	void render(SDL_Renderer* ren, Camera& cam);
 	bool loadSpriteTiles(SDL_Renderer* ren, const std::string& path);
 	Tile* getTile(const int& x, const int& y);
 	int getWidth()const;

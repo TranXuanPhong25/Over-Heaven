@@ -80,6 +80,7 @@ void Game::run() {
 		FPS.start();
 		Uint32 preFrame = FPS.getTicks();
 		Uint32 curFrame;
+		float dT = TARGET_TIMESTEP;
 		SDL_Event e;
 		while (state_machine_->getCurrentState() != ExitState::get()) {
 			while (SDL_PollEvent(&e)) {
@@ -91,20 +92,20 @@ void Game::run() {
 
 			}
 
-
-			state_machine_->getCurrentState()->update(1);
+			curFrame = FPS.getTicks();
+			dT = (curFrame - preFrame);
+			if (dT < TARGET_TIMESTEP) {
+				SDL_Delay(TARGET_TIMESTEP - dT);
+			}
+			preFrame = curFrame;
+			state_machine_->getCurrentState()->update(dT / 1000.f);
 			state_machine_->changeState(ren_);
 
 			SDL_RenderClear(ren_);
 			state_machine_->getCurrentState()->render(ren_);
 			SDL_RenderPresent(ren_);
 
-			curFrame = FPS.getTicks();
-			Uint32 delta = 50 - (curFrame - preFrame);
-			/*if (delta > 0) {
-			}*/
-			//SDL_Delay(100);
-			preFrame = curFrame;
+
 		}
 	}
 }

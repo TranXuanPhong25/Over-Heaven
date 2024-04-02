@@ -1,7 +1,6 @@
 #ifndef BASE_OBJECT_H_
 #define BASE_OBJECT_H_
-#include "../core/Constants.h"
-#include "../comp/Vector2D.h"
+#include "../levels/Camera.h"
 class Entity {
 public:
 	Entity();
@@ -10,9 +9,10 @@ public:
 	void free();
 	bool loadTexture(SDL_Renderer* ren, const std::string& path);
 	SDL_Texture* getTexture();
-	void setRect(const int& x, const int& y);
+	void setRect(const int& x, const int& y, Camera& cam);
 	SDL_Rect getRect() const;
-	void updateRect();
+	void updateRect(Camera& cam);
+	Vector2D getPos() const;
 protected:
 
 	SDL_Rect rect_;

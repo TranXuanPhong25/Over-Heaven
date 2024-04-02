@@ -2,25 +2,25 @@
 #define CAMERA_H_
 
 #include "Tile.h"
+#include "../comp/Vector2D.h"
 class Camera {
 public:
 	Camera();
-	Camera(int screenWidth, int screenHeight, int mapWidth, int mapHeight);
+
 	~Camera();
 
 	void setPosition(int x, int y);
-	void move(int dx, int dy);
-	void centerOn(int x, int y);
+	void move(const Vector2D& d);
+	void centerOn(const Vector2D& pos, const int& w, const int& h, const int& levelWidth, const int& levelHeight);
 
 	SDL_Rect getViewport() const;
-
+	Vector2D getPos();
 private:
 	int screenWidth_;
 	int screenHeight_;
-	int mapWidth_;
-	int mapHeight_;
 	int xOffset_;
 	int yOffset_;
+	Vector2D pos_;
 };
 
 #endif 

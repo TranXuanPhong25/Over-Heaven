@@ -17,7 +17,7 @@ private:
 	PlayState();
 
 	Character player_;
-	Camera* cam_;
+	Camera cam_;
 	Level level_;
 };
 

@@ -19,6 +19,8 @@ Vector2D Vector2D::operator/(float scalar) const {
 	if (scalar != 0) {
 		return Vector2D(x / scalar, y / scalar);
 	}
+	else std::cout << "try to / 0\n";
+
 	return *this;
 }
 
@@ -45,6 +47,7 @@ Vector2D& Vector2D::operator/=(float scalar) {
 		x /= scalar;
 		y /= scalar;
 	}
+	else std::cout << "try to / 0\n";
 	return *this;
 }
 

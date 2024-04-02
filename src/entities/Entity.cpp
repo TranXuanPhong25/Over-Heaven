@@ -45,10 +45,10 @@ bool Entity::loadTexture(SDL_Renderer* ren, const std::string& path) {
 	}
 	return texture_ == NULL;
 }
-void Entity::setRect(const int& x, const int& y) {
+void Entity::setRect(const int& x, const int& y, Camera& cam) {
 	pos_.x = x;
 	pos_.y = y;
-	updateRect();
+	updateRect(cam);
 }
 SDL_Rect Entity::getRect()const {
 	return rect_;
@@ -57,7 +57,14 @@ SDL_Rect Entity::getRect()const {
 SDL_Texture* Entity::getTexture() {
 	return texture_;
 }
-void Entity::updateRect() {
-	rect_.x = pos_.x;
-	rect_.y = pos_.y;
+void Entity::updateRect(Camera& cam) {
+	rect_.x = pos_.x - cam.getPos().x;
+	rect_.y = pos_.y - cam.getPos().y;
+	//std::cout << "rect: " << rect_.x << std::endl;
+	//std::cout << "r: " << pos_.x << "   " << cam.getPos().x << std::endl;
+}
+
+Vector2D Entity::getPos() const
+{
+	return pos_;
 }
