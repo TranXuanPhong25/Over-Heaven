@@ -24,13 +24,18 @@ const int MAX_TILES = 200;
 const int TILE_SIZE = 60 / 2;
 
 const std::string NUNU_TEXTURE_PATH_64X91 = "assets/char/nunu.png";
-
+const int JUMP_HEIGHT = 800;
+const int MAX_FALL_SPEED = 600;
+const int MAX_JUMP_BUFFER = 3;
+const int MAX_COYOTE_TIME = 5;
+const int MAX_ROLLING_FRAMES = 24;
 const int GRAVITY = 900;
 const int MAX_RUN_SPEED = 810;
 const int RUN_SPEED = 20;
 const int LEFT = -1;
 const int RIGHT = 1;
 const std::string MAP_PATH = "map/";
+
 const SDL_Rect EMPTY_TILE_CLIP = { 0, 0, TILE_SIZE, TILE_SIZE };
 const SDL_Rect GROUND_TILE_CLIP = { TILE_SIZE, 0, TILE_SIZE, TILE_SIZE };
 

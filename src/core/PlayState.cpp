@@ -21,7 +21,6 @@ bool PlayState::exit() {
 }
 void PlayState::handleEvent(SDL_Event& e) {
 	player_.handleInput(e);
-
 }
 void PlayState::update(const float& dT) {
 	player_.update(level_, cam_, dT);

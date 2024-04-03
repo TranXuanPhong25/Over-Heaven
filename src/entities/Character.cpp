@@ -8,13 +8,16 @@ Character::Character() {
 	on_ground_ = false;
 	dir_left_ = 0;
 	dir_right_ = 0;
-	double_jump_ = false;
+	gravity_scalar_ = 2;
+	jump_count_ = 2;
 	hurtbox_ = { rect_.x + rect_.w / 2,rect_.y + rect_.h / 2,30,30 };
+
 	rolling_ = false;
 	can_roll_ = true;
+
 	rolling_frame_ = 0;
 	roll_dir_ = 0;
-	coyote_time_ = 6;
+	coyote_time_ = 0;
 	jump_buffer_ = 0;
 }
 Character::~Character() {
@@ -89,12 +92,24 @@ bool Character::shoudSlowDown() const {
 Vector2D Character::getVel() const {
 	return vel_;
 }
-
 bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s) {
 	return  a.x < s.x + s.w &&
 		a.x + a.w > s.x &&
 		a.y < s.y + s.h &&
 		a.y + a.h > s.y;
+}
+void Character::roll(const float& dT) {
+	if (rolling_frame_ < MAX_ROLLING_FRAMES) {
+		vel_.x = roll_dir_ * speed_ / RUN_SPEED * 20;
+		pos_.x += vel_.x * dT;
+		rolling_frame_++;
+	}
+	else {
+		rolling_frame_ = 0;
+		rolling_ = false;
+		can_roll_ = true;
+	}
+
 }
 void Character::update(Level& level, Camera& cam, const float& dT) {
 	if (dir_right_ - dir_left_ == RIGHT) {
@@ -112,38 +127,22 @@ void Character::update(Level& level, Camera& cam, const float& dT) {
 }
 void Character::moveX(const float& dT) {
 	if (rolling_) {
-		if (rolling_frame_ < 30) {
-			vel_.x = roll_dir_ * speed_ / RUN_SPEED * 20;
-			//std::cout << roll_dir_ << " " << state_ << std::endl;;
-			std::cout << vel_.x;
-			pos_.x += vel_.x * dT;
-			rolling_frame_++;
-		}
-		else {
-			rolling_frame_ = 0;
-			rolling_ = false;
-			can_roll_ = true;
-		}
-
+		roll(dT);
 	}
 	else {
 		vel_.x = (dir_right_ - dir_left_) * speed_ / RUN_SPEED * 10;
 		pos_.x += vel_.x * dT;
 
 	}
-
 }
 void Character::moveY(const float& dT) {
 	if (spacekey_pressed_ || jump_buffer_) {
 		if (on_ground_ || coyote_time_) {
 			on_ground_ = false;
-			vel_.y = -static_cast<int>(speed_ * 1.4);
+			vel_.y = -static_cast<int>(JUMP_HEIGHT);
 			coyote_time_ = 0;
 		}
-		if (spacekey_pressed_) jump_buffer_ = 3;
-
-
-
+		if (spacekey_pressed_) jump_buffer_ = MAX_JUMP_BUFFER;
 	}
 
 	if (jump_buffer_) {
@@ -151,23 +150,28 @@ void Character::moveY(const float& dT) {
 	}
 	//gravity
 	if (!on_ground_) {
-		if (coyote_time_) {
-			//spacekey_pressed_ = true;
-			coyote_time_--;
+		if (coyote_time_) coyote_time_--;
+		if (vel_.y > -100 && vel_.y < 0) {
+			gravity_scalar_ = 1;
 		}
-
-		if (vel_.y > 0) {
-			vel_.y += static_cast<int>(GRAVITY * 1.6 * dT);
+		else if (vel_.y > 0) {
+			gravity_scalar_ = 4;
 		}
-		vel_.y += static_cast<int>(GRAVITY * 2.3 * dT);
+		else {
+			gravity_scalar_ = 2.5;
+		}
+		vel_.y += GRAVITY * gravity_scalar_ * dT;
+		/*if (vel_.y > MAX_FALL_SPEED * 2); {
+			vel_.y = MAX_FALL_SPEED * 2;
+		}*/
+		std::cout << vel_.y << " " << MAX_FALL_SPEED << std::endl;
 	}
 	else {
-		vel_.y = 0;
-		coyote_time_ = 6;
+		/*vel_.y = 0;
+		coyote_time_ = MAX_COYOTE_TIME;*/
 	}
+
 	pos_.y += int(round(vel_.y * dT));
-
-
 }
 void Character::CollideX(Level& level) {
 	int tileX = pos_.x / TILE_SIZE;
