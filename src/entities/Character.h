@@ -37,6 +37,8 @@ private:
 	bool can_roll_;
 	int roll_dir_;
 	int rolling_frame_;
+	int coyote_time_;
+	int jump_buffer_;
 	Vector2D vel_;
 
 };

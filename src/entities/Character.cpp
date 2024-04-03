@@ -14,6 +14,8 @@ Character::Character() {
 	can_roll_ = true;
 	rolling_frame_ = 0;
 	roll_dir_ = 0;
+	coyote_time_ = 6;
+	jump_buffer_ = 0;
 }
 Character::~Character() {
 	free();
@@ -24,6 +26,7 @@ void Character::handleInput(SDL_Event& e) {
 
 		if (e.key.keysym.sym == SDLK_SPACE) {
 			spacekey_pressed_ = true;
+
 		}
 		if ((e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)) {
 
@@ -131,24 +134,40 @@ void Character::moveX(const float& dT) {
 
 }
 void Character::moveY(const float& dT) {
-	if (spacekey_pressed_) {
-		if (on_ground_) {
+	if (spacekey_pressed_ || jump_buffer_) {
+		if (on_ground_ || coyote_time_) {
 			on_ground_ = false;
-			vel_.y -= static_cast<int>(speed_ * 1.4);
+			vel_.y = -static_cast<int>(speed_ * 1.4);
+			coyote_time_ = 0;
 		}
-		else if (double_jump_) {
-			double_jump_ = false;
-			vel_.y -= static_cast<int>(speed_ * 1.4);
-		}
+		if (spacekey_pressed_) jump_buffer_ = 3;
+
+
+
+	}
+
+	if (jump_buffer_) {
+		jump_buffer_--;
 	}
 	//gravity
 	if (!on_ground_) {
+		if (coyote_time_) {
+			//spacekey_pressed_ = true;
+			coyote_time_--;
+		}
+
 		if (vel_.y > 0) {
-			vel_.y += static_cast<int>(GRAVITY * 1.3 * dT);
+			vel_.y += static_cast<int>(GRAVITY * 1.6 * dT);
 		}
 		vel_.y += static_cast<int>(GRAVITY * 2.3 * dT);
-		pos_.y += int(round(vel_.y * dT));
 	}
+	else {
+		vel_.y = 0;
+		coyote_time_ = 6;
+	}
+	pos_.y += int(round(vel_.y * dT));
+
+
 }
 void Character::CollideX(Level& level) {
 	int tileX = pos_.x / TILE_SIZE;

@@ -29,7 +29,7 @@ void PlayState::update(const float& dT) {
 	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth() * TILE_SIZE, level_.getHeight() * TILE_SIZE);
 	player_.updateRect(cam_);
 	//player_.handleLevelInteraction(level_);
-	//SDL_Delay(100);
+	//SDL_Delay(50);
 }
 void PlayState::render(SDL_Renderer* ren) {
 
