@@ -30,11 +30,10 @@
 mono_crash.*
 
 # Build results
-[Dd]ebug/
+SDLGAME/
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/*.pdb
 x86/
 [Ww][Ii][Nn]32/
 [Aa][Rr][Mm]/
@@ -374,3 +373,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Over-Heaven
