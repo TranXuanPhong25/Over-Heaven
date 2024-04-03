@@ -11,10 +11,11 @@ public:
 	SDL_Texture* getTexture();
 	void setRect(const int& x, const int& y, Camera& cam);
 	SDL_Rect getRect() const;
+	SDL_Rect getHurtBox() const;
 	void updateRect(Camera& cam);
 	Vector2D getPos() const;
 protected:
-
+	SDL_Rect hurtbox_;
 	SDL_Rect rect_;
 	SDL_Texture* texture_;
 	Vector2D pos_;

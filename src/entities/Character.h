@@ -18,6 +18,7 @@ public:
 	void update(Level& level, Camera& cam, const float& dT);
 	void moveX(const float& dT);
 	void moveY(const float& dT);
+	//void roll(const float& dT);
 	void CollideX(Level& level);
 	void CollideY(Level& level);
 	void handleLevelInteraction(Level& level);
@@ -32,7 +33,10 @@ private:
 	bool double_jump_;
 	//int accelerator_;
 	State state_;
-	//SDL_Rect hitbox_;
+	bool rolling_;
+	bool can_roll_;
+	int roll_dir_;
+	int rolling_frame_;
 	Vector2D vel_;
 
 };

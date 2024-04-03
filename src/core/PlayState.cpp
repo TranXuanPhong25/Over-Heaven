@@ -12,7 +12,7 @@ bool PlayState::enter(SDL_Renderer* ren) {
 	player_.loadTexture(ren, NUNU_TEXTURE_PATH_64X91);
 	cam_.setPosition(0, level_.getHeight() - cam_.getViewport().h);
 
-	player_.setRect(TILE_SIZE * 3, level_.getHeight() * TILE_SIZE - TILE_SIZE * 8, cam_);
+	player_.setRect(TILE_SIZE * 3, level_.getHeight() * TILE_SIZE - TILE_SIZE * 9, cam_);
 
 	return true;
 }

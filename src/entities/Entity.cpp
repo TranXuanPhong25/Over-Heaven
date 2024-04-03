@@ -6,7 +6,7 @@ Entity::Entity() {
 	rect_.w = 0;
 	rect_.h = 0;
 	texture_ = NULL;
-
+	hurtbox_ = { 0,0,0,0 };
 }
 Entity::~Entity() {
 	free();
@@ -32,6 +32,8 @@ void Entity::render(SDL_Renderer* ren, SDL_Rect* clip, SDL_Rect* stretch) {
 	else {
 		SDL_RenderCopy(ren, texture_, NULL, &(rect_));
 	}
+	SDL_SetRenderDrawColor(ren, 0xff, 0, 0xff, 0xff);
+	SDL_RenderDrawRect(ren, &hurtbox_);
 }
 bool Entity::loadTexture(SDL_Renderer* ren, const std::string& path) {
 	free();
@@ -54,12 +56,19 @@ SDL_Rect Entity::getRect()const {
 	return rect_;
 }
 
+SDL_Rect Entity::getHurtBox() const
+{
+	return hurtbox_;
+}
+
 SDL_Texture* Entity::getTexture() {
 	return texture_;
 }
 void Entity::updateRect(Camera& cam) {
 	rect_.x = pos_.x - cam.getPos().x;
 	rect_.y = pos_.y - cam.getPos().y;
+	hurtbox_.x = rect_.x;
+	hurtbox_.y = rect_.y;
 	//std::cout << "rect: " << rect_.x << std::endl;
 	//std::cout << "r: " << pos_.x << "   " << cam.getPos().x << std::endl;
 }
