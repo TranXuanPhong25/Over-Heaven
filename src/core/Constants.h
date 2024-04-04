@@ -24,7 +24,7 @@ const int MAX_TILES = 200;
 const int TILE_SIZE = 60 / 2;
 
 const std::string NUNU_TEXTURE_PATH_64X91 = "assets/char/nunu.png";
-const int JUMP_HEIGHT = 800;
+const int JUMP_HEIGHT = 960;
 const int MAX_FALL_SPEED = 600;
 const int MAX_JUMP_BUFFER = 3;
 const int MAX_COYOTE_TIME = 5;

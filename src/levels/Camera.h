@@ -10,7 +10,7 @@ public:
 	~Camera();
 
 	void setPosition(int x, int y);
-	void move(const Vector2D& d);
+	void move(Vector2D d);
 	void centerOn(const Vector2D& pos, const int& w, const int& h, const int& levelWidth, const int& levelHeight);
 
 	SDL_Rect getViewport() const;
@@ -21,6 +21,7 @@ private:
 	int xOffset_;
 	int yOffset_;
 	Vector2D pos_;
+	float dampling_factor_;
 };
 
 #endif 

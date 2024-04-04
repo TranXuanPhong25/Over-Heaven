@@ -19,6 +19,7 @@ public:
 	void moveX(const float& dT);
 	void moveY(const float& dT);
 	void roll(const float& dT);
+	void jump(const float& dT);
 	void CollideX(Level& level);
 	void CollideY(Level& level);
 	void handleLevelInteraction(Level& level);
@@ -30,7 +31,7 @@ private:
 	int dir_left_;
 	int dir_right_;
 	Vector2D vel_;
-	int gravity_scalar_;
+	float gravity_scalar_;
 	bool on_ground_;
 	bool spacekey_pressed_;
 	int jump_count_;
