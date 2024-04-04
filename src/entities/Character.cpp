@@ -183,7 +183,6 @@ void Character::moveY(const float& dT) {
 	}
 
 	if (jump_buffer_) {
-
 		jump_buffer_--;
 	}
 	//gravity
@@ -206,9 +205,10 @@ void Character::moveY(const float& dT) {
 			vel_.y = MAX_FALL_SPEED * 1.5;
 		}
 		else {
+
+			vel_.y += GRAVITY * gravity_scalar_ * dT;
 		}
 
-		vel_.y += GRAVITY * gravity_scalar_ * dT;
 	}
 	else {
 		vel_.y = 0;
