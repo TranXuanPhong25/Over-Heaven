@@ -23,6 +23,7 @@ void PlayState::handleEvent(SDL_Event& e) {
 	player_.handleInput(e);
 }
 void PlayState::update(const float& dT) {
+
 	player_.update(level_, cam_, dT);
 	cam_.move(player_.getVel() * dT);
 	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth() * TILE_SIZE, level_.getHeight() * TILE_SIZE);

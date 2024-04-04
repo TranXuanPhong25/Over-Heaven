@@ -12,11 +12,13 @@ Character::Character() {
 	jump_count_ = 2;
 	hurtbox_ = { rect_.x + rect_.w / 2,rect_.y + rect_.h / 2,30,30 };
 
-	rolling_ = false;
-	can_roll_ = true;
+	dashing_ = false;
+	dash_counter_ = 1;
+	dashing_frame_ = 0;
+	dash_dir_ = 0;
+	dash_cooldown_ = 0;
 
-	rolling_frame_ = 0;
-	roll_dir_ = 0;
+
 	coyote_time_ = 0;
 	jump_buffer_ = 0;
 }
@@ -34,33 +36,28 @@ void Character::handleInput(SDL_Event& e) {
 		if ((e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)) {
 
 			dir_left_ = 1;
-			/*if (accelerator_ <= 0) {
-				state_ = MOVE_LEFT;
-			}*/
+			state_ = MOVE_LEFT;
 		}
 		if ((e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d)) {
 			dir_right_ = 1;
-			/*if (accelerator_ >= 0) {
-
-				state_ = MOVE_RIGHT;
-			}*/
+			state_ = MOVE_RIGHT;
 		}
-		if (e.key.keysym.sym == SDLK_LSHIFT) {
-			if (can_roll_) {
-				if (state_ == MOVE_LEFT) {
-					roll_dir_ = LEFT;
-				}
-				else if (state_ = MOVE_RIGHT) {
-					roll_dir_ = RIGHT;
-				}
-				std::cout << dir_right_ << " " << dir_left_ << std::endl;
-				rolling_ = true;
-				can_roll_ = false;
-			}
-			/*if (accelerator_ >= 0) {
+		//dash
+		if (e.key.keysym.sym == SDLK_LSHIFT && e.key.repeat == 0) {
+			if (dash_counter_ && !dash_cooldown_) {
 
-				state_ = MOVE_RIGHT;
-			}*/
+				if (state_ == MOVE_LEFT) {
+					state_ = DASH_LEFT;
+					dash_dir_ = LEFT;
+				}
+				else if (state_ == MOVE_RIGHT) {
+					state_ = DASH_RIGHT;
+					dash_dir_ = RIGHT;
+				}
+
+				dashing_ = true;
+				dash_counter_--;
+			}
 		}
 	}
 	if (e.type == SDL_KEYUP) {
@@ -74,12 +71,7 @@ void Character::handleInput(SDL_Event& e) {
 			dir_right_ = 0;
 		}
 	}
-	if (e.type == SDL_MOUSEBUTTONDOWN) {
 
-	}
-	if (e.type == SDL_MOUSEBUTTONUP) {
-
-	}
 
 
 }
@@ -99,29 +91,22 @@ bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s) {
 		a.y + a.h > s.y;
 }
 void Character::update(Level& level, Camera& cam, const float& dT) {
-	if (dir_right_ - dir_left_ == RIGHT) {
-		state_ = MOVE_RIGHT;
-	}
-	else if (dir_right_ - dir_left_ == LEFT) {
-		state_ = MOVE_LEFT;
-	}
 
-
-	moveX(dT);
+	if (dashing_) {
+		dash(dT);
+		vel_.y = 0;
+	}
+	else {
+		moveX(dT);
+	}
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
 }
 
 void Character::moveX(const float& dT) {
-	if (rolling_) {
-		roll(dT);
-	}
-	else {
-		vel_.x = (dir_right_ - dir_left_) * speed_ / RUN_SPEED * 10;
-		pos_.x += vel_.x * dT;
-
-	}
+	vel_.x = (dir_right_ - dir_left_) * speed_ / RUN_SPEED * 10;
+	pos_.x += vel_.x * dT;
 }
 void Character::CollideX(Level& level) {
 	int tileX = pos_.x / TILE_SIZE;
@@ -150,23 +135,28 @@ void Character::CollideX(Level& level) {
 	}
 
 }
+//
+//float lerp(float a, float b, float t) {
+//	return (1 - t) * a + t * b;
+//}
 
-float lerp(float a, float b, float t) {
-	return (1 - t) * a + t * b;
-}
-void Character::roll(const float& dT) {
-	if (rolling_frame_ < MAX_ROLLING_FRAMES) {
-		vel_.x = roll_dir_ * speed_ / RUN_SPEED * 20;
+//---------------dash---------------***********************
+void Character::dash(const float& dT) {
+	if (dashing_frame_ < MAX_ROLLING_FRAMES) {
+		vel_.x = dash_dir_ * speed_ / RUN_SPEED * 20;
 		pos_.x += vel_.x * dT;
-		rolling_frame_++;
+		dashing_frame_++;
 	}
 	else {
-		rolling_frame_ = 0;
-		rolling_ = false;
-		can_roll_ = true;
+		dashing_frame_ = 0;
+		dashing_ = false;
+		dash_cooldown_ = 25;
+		if (state_ == DASH_LEFT) state_ = MOVE_LEFT;
+		if (state_ == DASH_RIGHT) state_ = MOVE_RIGHT;
 	}
 
 }
+//---------------jump-**********************************************
 void Character::jump(const float& dT) {
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
@@ -186,7 +176,7 @@ void Character::moveY(const float& dT) {
 		jump_buffer_--;
 	}
 	//gravity
-	if (!on_ground_) {
+	if (!on_ground_ && !dashing_) {
 		if (coyote_time_) coyote_time_--;
 		if (vel_.y > 90) {
 			gravity_scalar_ = 4;
@@ -211,10 +201,18 @@ void Character::moveY(const float& dT) {
 
 	}
 	else {
-		vel_.y = 0;
-		coyote_time_ = MAX_COYOTE_TIME;
-	}
 
+		if (on_ground_) {
+			dash_counter_ = 1;
+			coyote_time_ = MAX_COYOTE_TIME;
+		}
+
+		vel_.y = 0;
+	}
+	if (!dashing_ && dash_cooldown_) {
+
+		dash_cooldown_--;
+	}
 	pos_.y += vel_.y * dT;
 }
 void Character::CollideY(Level& level)
