@@ -21,7 +21,7 @@ private:
 	int xOffset_;
 	int yOffset_;
 	Vector2D pos_;
-	float dampling_factor_;
+	float damping_factor_;
 };
 
 #endif 
