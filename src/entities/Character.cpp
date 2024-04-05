@@ -9,8 +9,7 @@ Character::Character() {
 	dir_left_ = 0;
 	dir_right_ = 0;
 	gravity_scalar_ = 2;
-	jump_count_ = 2;
-	hurtbox_ = { rect_.x + rect_.w / 2,rect_.y + rect_.h / 2,30,30 };
+	jump_count_ = 1;
 
 	dashing_ = false;
 	dash_counter_ = 1;
@@ -158,7 +157,7 @@ void Character::CollideX(Level& level) {
 
 //---------------dash---------------***********************
 void Character::dash(const float& dT) {
-	if (dashing_frame_ < MAX_ROLLING_FRAMES) {
+	if (dashing_frame_ < MAX_DASH_FRAMES) {
 		vel_.x = dash_dir_ * speed_ / RUN_SPEED * 20;
 		pos_.x += vel_.x * dT;
 		dashing_frame_++;

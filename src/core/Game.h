@@ -1,6 +1,5 @@
 #ifndef GAME_H_
 #define GAME_H_
-#include "../comp/Timer.h"
 #include "StateMachine.h"
 #include "IntroState.h"
 

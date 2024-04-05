@@ -11,10 +11,13 @@ public:
 		MOVE_RIGHT,
 		JUMP_LEFT,
 		JUMP_RIGHT,
+		FALL_LEFT,
+		FALL_RIGHT,
 		DASH_LEFT,
 		DASH_RIGHT,
 		SLIDE_LEFT,
 		SLIDE_RIGHT,
+
 	};
 	Character();
 	~Character();

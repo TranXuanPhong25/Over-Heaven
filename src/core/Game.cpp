@@ -40,8 +40,9 @@ bool Game::initWindow() {
 		}
 		else
 		{
+			SDL_ShowCursor(SDL_DISABLE);
 			SDL_SetWindowIcon(window_, IMG_Load("assets/img/icon64x64.png"));
-			//SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
+			SDL_SetWindowFullscreen(window_, SDL_WINDOW_FULLSCREEN_DESKTOP);
 			//Create vsynced renderer for window
 			ren_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 			if (ren_ == NULL)
@@ -59,13 +60,6 @@ bool Game::initWindow() {
 					success = false;
 				}
 
-				//Initialize SDL_ttf
-				if (TTF_Init() == -1)
-				{
-					std::cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << std::endl;
-					success = false;
-				}
-
 			}
 		}
 	}
@@ -74,13 +68,11 @@ bool Game::initWindow() {
 }
 void Game::run() {
 	if (initWindow()) {
-
 		state_machine_->getCurrentState()->enter(ren_);
-		Timer FPS;
-		FPS.start();
-		Uint32 preFrame = FPS.getTicks();
+		Uint32 preFrame = SDL_GetTicks64();
 		Uint32 curFrame;
 		float dT = TARGET_TIMESTEP;
+
 		SDL_Event e;
 		while (state_machine_->getCurrentState() != ExitState::get()) {
 			while (SDL_PollEvent(&e)) {
@@ -89,15 +81,15 @@ void Game::run() {
 					break;
 				}
 				state_machine_->getCurrentState()->handleEvent(e);
-
 			}
 
-			curFrame = FPS.getTicks();
+			curFrame = SDL_GetTicks64();
 			dT = (curFrame - preFrame);
 			if (dT < TARGET_TIMESTEP) {
 				SDL_Delay(TARGET_TIMESTEP - dT);
 			}
 			preFrame = curFrame;
+
 			state_machine_->getCurrentState()->update(dT / 1000.f);
 			state_machine_->changeState(ren_);
 

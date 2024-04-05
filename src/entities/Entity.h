@@ -9,13 +9,11 @@ public:
 	void free();
 	bool loadTexture(SDL_Renderer* ren, const std::string& path);
 	SDL_Texture* getTexture();
+	Vector2D getPos() const;
 	void setRect(const int& x, const int& y, Camera& cam);
 	SDL_Rect getRect() const;
-	SDL_Rect getHurtBox() const;
 	void updateRect(Camera& cam);
-	Vector2D getPos() const;
 protected:
-	SDL_Rect hurtbox_;
 	SDL_Rect rect_;
 	SDL_Texture* texture_;
 	Vector2D pos_;
