@@ -5,12 +5,16 @@
 class Character : public Entity {
 public:
 	enum State {
-		IDLE,
+		IDLE_LEFT,
+		IDLE_RIGHT,
 		MOVE_LEFT,
 		MOVE_RIGHT,
-		JUMPING,
+		JUMP_LEFT,
+		JUMP_RIGHT,
 		DASH_LEFT,
-		DASH_RIGHT
+		DASH_RIGHT,
+		SLIDE_LEFT,
+		SLIDE_RIGHT,
 	};
 	Character();
 	~Character();
@@ -19,11 +23,11 @@ public:
 	void update(Level& level, Camera& cam, const float& dT);
 	void moveX(const float& dT);
 	void moveY(const float& dT);
+	void applyGravity(const float& dT);
 	void dash(const float& dT);
 	void jump(const float& dT);
 	void CollideX(Level& level);
 	void CollideY(Level& level);
-	void handleLevelInteraction(Level& level);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
 	bool shoudSlowDown() const;
@@ -42,7 +46,8 @@ private:
 	int dash_dir_;
 	int dashing_frame_;
 	int dash_cooldown_;
-
+	bool wall_collided_;
+	bool collide_x_;
 	int coyote_time_;
 	int jump_buffer_;
 
