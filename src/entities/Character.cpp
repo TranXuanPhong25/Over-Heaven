@@ -1,6 +1,6 @@
 #include "Character.h"
 Character::Character() {
-	speed_ = 540;
+	speed_ = DEFAULT_SPEED;
 	vel_ = { 0,0 };
 	state_ = IDLE_RIGHT;
 	spacekey_pressed_ = false;
@@ -58,8 +58,6 @@ void Character::handleInput(SDL_Event& e) {
 		if (e.key.keysym.sym == SDLK_LSHIFT && e.key.repeat == 0) {
 
 			if (dash_counter_ && !dash_cooldown_) {
-				std::cout << dash_counter_ << " " << dash_cooldown_ << std::endl;
-
 				if (state_ == MOVE_LEFT || state_ == IDLE_LEFT || state_ == JUMP_LEFT) {
 					state_ = DASH_LEFT;
 					dash_dir_ = LEFT;
@@ -96,11 +94,6 @@ void Character::handleInput(SDL_Event& e) {
 
 }
 
-bool Character::shoudSlowDown() const {
-	//return (state_ == MOVE_LEFT && accelerator_ < 0 && vel_.x == 0)
-	//	|| (state_ == MOVE_RIGHT && accelerator_ > 0 && vel_.x == 0);
-	return true;
-}
 Vector2D Character::getVel() const {
 	return vel_;
 }
@@ -124,7 +117,7 @@ void Character::update(Level& level, Camera& cam, const float& dT) {
 }
 
 void Character::moveX(const float& dT) {
-	vel_.x = (dir_right_ - dir_left_) * speed_ / RUN_SPEED * 10;
+	vel_.x = (dir_right_ - dir_left_) * speed_;
 	pos_.x += vel_.x * dT;
 }
 void Character::CollideX(Level& level) {
@@ -158,7 +151,7 @@ void Character::CollideX(Level& level) {
 //---------------dash---------------***********************
 void Character::dash(const float& dT) {
 	if (dashing_frame_ < MAX_DASH_FRAMES) {
-		vel_.x = dash_dir_ * speed_ / RUN_SPEED * 20;
+		vel_.x = dash_dir_ * speed_ * DASH_FORCE;
 		pos_.x += vel_.x * dT;
 		dashing_frame_++;
 		vel_.y = 0;
@@ -166,7 +159,7 @@ void Character::dash(const float& dT) {
 	else {
 		dashing_frame_ = 0;
 		dashing_ = false;
-		dash_cooldown_ = 25;
+		dash_cooldown_ = DASH_COOLDOWN;
 		if (state_ == DASH_LEFT) state_ = IDLE_LEFT;
 		if (state_ == DASH_RIGHT) state_ = IDLE_RIGHT;
 	}
@@ -179,24 +172,24 @@ void Character::jump(const float& dT) {
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
-	gravity_scalar_ = 5;
+	gravity_scalar_ = DEFAULT_SCALAR;
 }
 void Character::applyGravity(const float& dT) {
-	if (vel_.y > 90) {
-		gravity_scalar_ = 4;
+	if (vel_.y > FLOATY_FALL_VEL) {
+		gravity_scalar_ = FALL_SCALAR;
 
 	}
-	else  if (vel_.y > -90) {
-		gravity_scalar_ = 1.3;
+	else  if (vel_.y > -FLOATY_FALL_VEL) {
+		gravity_scalar_ = FLOATY_SCALAR;
 	}
 	else if (spacekey_pressed_) {
-		gravity_scalar_ -= (gravity_scalar_ > 1.55) ? 0.25 : 0;
+		gravity_scalar_ -= (gravity_scalar_ > MIN_SCALAR) ? REDUCE_SCALAR : 0;
 	}
 	if (wall_collided_ && vel_.y > 0) {
-		gravity_scalar_ = 0.8;
+		gravity_scalar_ = FRICTION_SCALAR;
 	}
-	if (vel_.y > MAX_FALL_SPEED * 1.5) {
-		vel_.y = MAX_FALL_SPEED * 1.5;
+	if (vel_.y > MAX_FALL_SPEED) {
+		vel_.y = MAX_FALL_SPEED;
 	}
 	else {
 
@@ -226,9 +219,11 @@ void Character::moveY(const float& dT) {
 
 		vel_.y = 0;
 	}
-	if (!dashing_ && dash_cooldown_) {
-
-		dash_cooldown_--;
+	if (!dashing_) {
+		if (dash_cooldown_ - dT > 0) {
+			dash_cooldown_ -= dT;
+		}
+		else dash_cooldown_ = 0;
 	}
 	pos_.y += vel_.y * dT;
 }

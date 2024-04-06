@@ -33,7 +33,6 @@ public:
 	void CollideY(Level& level);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
-	bool shoudSlowDown() const;
 	State state_;
 	int speed_;
 	int dir_left_;
@@ -43,16 +42,17 @@ private:
 	bool on_ground_;
 	bool spacekey_pressed_;
 	int jump_count_;
-	//int accelerator_;
+
 	bool dashing_;
 	int dash_counter_;
 	int dash_dir_;
 	int dashing_frame_;
-	int dash_cooldown_;
+	float dash_cooldown_;
 	bool wall_collided_;
 	bool collide_x_;
 	int coyote_time_;
 	int jump_buffer_;
+
 
 };
 
