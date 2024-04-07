@@ -12,6 +12,9 @@ public:
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
+	void changeLevel(SDL_Renderer* ren, const std::string& levelPath, const std::string& spriteTilesPath);
+
+
 private:
 	static PlayState s_play_state_;
 	PlayState();

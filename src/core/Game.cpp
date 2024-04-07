@@ -66,6 +66,7 @@ bool Game::initWindow() {
 
 	return success;
 }
+
 void Game::run() {
 	if (initWindow()) {
 		state_machine_->getCurrentState()->enter(ren_);
@@ -77,6 +78,7 @@ void Game::run() {
 		while (state_machine_->getCurrentState() != ExitState::get()) {
 			while (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
+					state_machine_->getCurrentState()->exit();
 					state_machine_->setNextState(ExitState::get());
 					break;
 				}

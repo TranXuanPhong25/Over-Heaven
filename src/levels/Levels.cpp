@@ -1,4 +1,8 @@
 #include "Levels.h"
+
+/**
+ * @brief Default constructor for the Level class.
+ */
 Level::Level() {
 	path_ = "";
 	row_ = 0;
@@ -11,13 +15,28 @@ Level::Level() {
 	}
 	sprite_tiles_ = NULL;
 }
+
+/**
+ * @brief Destructor for the Level class.
+ */
 Level::~Level() {
 
 }
+
+/**
+ * @brief Sets the path of the level file.
+ * @param path The path of the level file.
+ * @return True if the file is successfully loaded, false otherwise.
+ */
 bool Level::setPath(const std::string& path) {
 	path_ = path;
 	return loadFromFile();
 }
+
+/**
+ * @brief Loads the level data from the file.
+ * @return True if the file is successfully loaded, false otherwise.
+ */
 bool Level::loadFromFile() {
 	std::ifstream file(path_);
 	if (!file.is_open()) {
@@ -43,23 +62,58 @@ bool Level::loadFromFile() {
 	file.close();
 	return true;
 }
+
+/**
+ * @brief Gets the path of the level file.
+ * @return The path of the level file.
+ */
 std::string Level::getPath() {
 	return path_;
 }
-bool Level::loadSpriteTiles(SDL_Renderer* ren, const std::string& path) {
-	sprite_tiles_ = IMG_LoadTexture(ren, path.c_str());
+
+/**
+ * @brief Loads the sprite tiles from the given file path.
+ * @param ren The SDL renderer.
+ * @param path The path of the sprite tiles file.
+ * @return True if the sprite tiles are successfully loaded, false otherwise.
+ */
+bool Level::loadSpriteTiles(SDL_Renderer* ren) {
+	sprite_tiles_ = IMG_LoadTexture(ren, "assets/level/0.png");
 	if (sprite_tiles_ == NULL)
 	{
 		std::cout << IMG_GetError() << std::endl;
 	}
 	return sprite_tiles_ == NULL;
 }
+
+/**
+ * @brief Gets the tile at the specified position.
+ * @param x The x-coordinate of the tile.
+ * @param y The y-coordinate of the tile.
+ * @return A pointer to the tile at the specified position.
+ */
 Tile* Level::getTile(const int& x, const int& y)
 {
 	return tiles_[y][x];
 }
+
+/**
+ * @brief Gets the width of the level in tiles.
+ * @return The width of the level in tiles.
+ */
 int Level::getWidth() const { return col_; }
+
+/**
+ * @brief Gets the height of the level in tiles.
+ * @return The height of the level in tiles.
+ */
 int Level::getHeight() const { return row_; }
+
+/**
+ * @brief Renders the level on the screen.
+ * @param ren - SDL renderer.
+ * @param cam - camera object.
+ */
 void Level::render(SDL_Renderer* ren, Camera& cam) {
 	SDL_Rect viewport = cam.getViewport();
 
@@ -91,5 +145,46 @@ void Level::render(SDL_Renderer* ren, Camera& cam) {
 		}
 
 		mapY++;
+	}
+}
+
+void Level::loadSavedPath()
+{
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
+		tinyxml2::XMLElement* root = doc.RootElement();
+		if (root) {
+			tinyxml2::XMLElement* levelPath = root->FirstChildElement("LevelPath");
+			if (levelPath) {
+				path_ = levelPath->GetText();
+				loadFromFile();
+			}
+		}
+	}
+	else {
+		std::cout << "Failed to load level." << std::endl;
+	}
+}
+
+void Level::savePath() {
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLElement* root;
+	if (doc.LoadFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
+		root = doc.RootElement();
+	}
+	else {
+		root = doc.NewElement("SaveData");
+		doc.InsertFirstChild(root);
+	}
+	if (root) {
+		tinyxml2::XMLElement* levelPath = doc.NewElement("LevelPath");
+		levelPath->SetText(path_.c_str());
+		root->InsertEndChild(levelPath);
+	}
+	if (doc.SaveFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
+		std::cout << "Game saved successfully!" << std::endl;
+	}
+	else {
+		std::cout << "Failed to save game." << std::endl;
 	}
 }

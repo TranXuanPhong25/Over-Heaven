@@ -11,11 +11,11 @@ Character::Character() {
 	gravity_scalar_ = 2;
 	jump_count_ = 1;
 
-	dashing_ = false;
-	dash_counter_ = 1;
-	dashing_frame_ = 0;
-	dash_dir_ = 0;
-	dash_cooldown_ = 0;
+	//dashing_ = false;
+	//dash_counter_ = 1;
+	//dashing_frame_ = 0;
+	//dash_dir_ = 0;
+	//dash_cooldown_ = 0;
 
 	wall_collided_ = false;
 	collide_x_ = false;
@@ -55,7 +55,7 @@ void Character::handleInput(SDL_Event& e) {
 			}
 		}
 		//dash
-		if (e.key.keysym.sym == SDLK_LSHIFT && e.key.repeat == 0) {
+		/*if (e.key.keysym.sym == SDLK_LSHIFT && e.key.repeat == 0) {
 
 			if (dash_counter_ && !dash_cooldown_) {
 				if (state_ == MOVE_LEFT || state_ == IDLE_LEFT || state_ == JUMP_LEFT) {
@@ -70,7 +70,7 @@ void Character::handleInput(SDL_Event& e) {
 				dashing_ = true;
 				if (dash_counter_)dash_counter_--;
 			}
-		}
+		}*/
 	}
 	if (e.type == SDL_KEYUP) {
 		if (e.key.keysym.sym == SDLK_SPACE) {
@@ -105,12 +105,12 @@ bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s) {
 }
 void Character::update(Level& level, Camera& cam, const float& dT) {
 
-	if (dashing_) {
-		dash(dT);
-	}
-	else {
-		moveX(dT);
-	}
+	//if (dashing_) {
+	//	dash(dT);
+	//}
+	//else {
+	moveX(dT);
+	//}
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
@@ -148,27 +148,25 @@ void Character::CollideX(Level& level) {
 
 }
 
-//---------------dash---------------***********************
-void Character::dash(const float& dT) {
-	if (dashing_frame_ < MAX_DASH_FRAMES) {
-		vel_.x = dash_dir_ * speed_ * DASH_FORCE;
-		pos_.x += vel_.x * dT;
-		dashing_frame_++;
-		vel_.y = 0;
-	}
-	else {
-		dashing_frame_ = 0;
-		dashing_ = false;
-		dash_cooldown_ = DASH_COOLDOWN;
-		if (state_ == DASH_LEFT) state_ = IDLE_LEFT;
-		if (state_ == DASH_RIGHT) state_ = IDLE_RIGHT;
-	}
-
-}
-//---------------jump-**********************************************
+//void Character::dash(const float& dT) {
+//	if (dashing_frame_ < MAX_DASH_FRAMES) {
+//		vel_.x = dash_dir_ * speed_ * DASH_FORCE;
+//		pos_.x += vel_.x * dT;
+//		dashing_frame_++;
+//		vel_.y = 0;
+//	}
+//	else {
+//		dashing_frame_ = 0;
+//		dashing_ = false;
+//		dash_cooldown_ = DASH_COOLDOWN;
+//		if (state_ == DASH_LEFT) state_ = IDLE_LEFT;
+//		if (state_ == DASH_RIGHT) state_ = IDLE_RIGHT;
+//	}
+//
+//}
 void Character::jump(const float& dT) {
-	if (state_ == MOVE_LEFT || state_ == IDLE_LEFT || state_ == DASH_LEFT) state_ = JUMP_LEFT;
-	if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT || state_ == DASH_LEFT) state_ = JUMP_RIGHT;
+	if (state_ == MOVE_LEFT || state_ == IDLE_LEFT /*|| state_ == DASH_LEFT*/) state_ = JUMP_LEFT;
+	if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT /*|| state_ == DASH_LEFT*/) state_ = JUMP_RIGHT;
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
@@ -208,23 +206,21 @@ void Character::moveY(const float& dT) {
 		jump_buffer_--;
 	}
 	//gravity
-	if (!on_ground_ && !dashing_) {
+	if (!on_ground_ /*&& !dashing_*/) {
 		if (coyote_time_) coyote_time_--;
 		applyGravity(dT);
 	}
 	else if (on_ground_) {
-		dash_counter_ = 1;
+		//dash_counter_ = 1;
 		coyote_time_ = MAX_COYOTE_TIME;
-
-
 		vel_.y = 0;
 	}
-	if (!dashing_) {
+	/*if (!dashing_) {
 		if (dash_cooldown_ - dT > 0) {
 			dash_cooldown_ -= dT;
 		}
 		else dash_cooldown_ = 0;
-	}
+	}*/
 	pos_.y += vel_.y * dT;
 }
 void Character::CollideY(Level& level)
@@ -277,4 +273,40 @@ void Character::CollideY(Level& level)
 	/*if (tileY < level.getHeight() && ((level.getTile(tileX, tileY + 1)->getType() == Tile::EMPTY && level.getTile(tileX + 1, tileY + 1)->getType() == Tile::EMPTY) || (pos_.x == tileX * TILE_SIZE && (level.getTile(tileX, tileY + 1)->getType() == Tile::EMPTY)))) {
 
 	}*/
+}
+void Character::saveStats() {
+	tinyxml2::XMLDocument doc;
+	tinyxml2::XMLElement* root = doc.NewElement("SaveData");
+	doc.InsertFirstChild(root);
+	tinyxml2::XMLElement* playerPos = doc.NewElement("PlayerPosition");
+	playerPos->SetAttribute("x", pos_.x);
+	playerPos->SetAttribute("y", pos_.y);
+	root->InsertEndChild(playerPos);
+
+	if (doc.SaveFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
+		std::cout << "Game saved successfully!" << std::endl;
+	}
+	else {
+		std::cout << "Failed to save game." << std::endl;
+	}
+}
+// Load game function to load player position from file
+void Character::loadStats() {
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
+		tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
+		if (root) {
+			tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
+			if (playerPos) {
+				int posX = 0, posY = 0;
+				playerPos->QueryIntAttribute("x", &posX);
+				playerPos->QueryIntAttribute("y", &posY);
+				pos_.x = posX;
+				pos_.y = posY;
+				std::cout << "Game loaded successfully!" << std::endl;
+				return;
+			}
+		}
+	}
+	std::cout << "Failed to load game." << std::endl;
 }

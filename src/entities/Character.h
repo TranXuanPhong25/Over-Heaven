@@ -2,6 +2,7 @@
 #define CHARACTER_H_
 #include "Entity.h"
 #include "../levels/Levels.h"
+
 class Character : public Entity {
 public:
 	enum State {
@@ -13,8 +14,8 @@ public:
 		JUMP_RIGHT,
 		FALL_LEFT,
 		FALL_RIGHT,
-		DASH_LEFT,
-		DASH_RIGHT,
+		/*DASH_LEFT,
+		DASH_RIGHT,*/
 		SLIDE_LEFT,
 		SLIDE_RIGHT,
 
@@ -27,10 +28,12 @@ public:
 	void moveX(const float& dT);
 	void moveY(const float& dT);
 	void applyGravity(const float& dT);
-	void dash(const float& dT);
+	//void dash(const float& dT);
 	void jump(const float& dT);
 	void CollideX(Level& level);
 	void CollideY(Level& level);
+	void saveStats();
+	void loadStats();
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
 	State state_;
@@ -43,11 +46,11 @@ private:
 	bool spacekey_pressed_;
 	int jump_count_;
 
-	bool dashing_;
+	/*bool dashing_;
 	int dash_counter_;
 	int dash_dir_;
 	int dashing_frame_;
-	float dash_cooldown_;
+	float dash_cooldown_;*/
 	bool wall_collided_;
 	bool collide_x_;
 	int coyote_time_;

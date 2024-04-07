@@ -4,6 +4,8 @@
 #include "Tile.h"
 #include "Camera.h"
 #include "../comp/Vector2D.h"
+#include "../thirdParty/tinyxml2_10.0.0/tinyxml2.h"
+
 class Level {
 public:
 
@@ -12,7 +14,9 @@ public:
 	bool setPath(const std::string& path);
 	std::string getPath();
 	void render(SDL_Renderer* ren, Camera& cam);
-	bool loadSpriteTiles(SDL_Renderer* ren, const std::string& path);
+	void loadSavedPath();
+	void savePath();
+	bool loadSpriteTiles(SDL_Renderer* ren);
 	Tile* getTile(const int& x, const int& y);
 	int getWidth()const;
 	int getHeight()const;
