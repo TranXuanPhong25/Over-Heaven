@@ -11,7 +11,7 @@ bool PlayState::enter(SDL_Renderer* ren) {
 	level_.loadSpriteTiles(ren);
 	player_.loadTexture(ren, NUNU_TEXTURE_PATH_64X91);
 	cam_.setPosition(0, level_.getHeight() - cam_.getViewport().h);
-	player_.loadStats();
+	player_.loadStats(level_);
 	return true;
 }
 

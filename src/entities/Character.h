@@ -33,7 +33,7 @@ public:
 	void CollideX(Level& level);
 	void CollideY(Level& level);
 	void saveStats();
-	void loadStats();
+	void loadStats(Level& level);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
 	State state_;

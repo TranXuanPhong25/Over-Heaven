@@ -114,6 +114,11 @@ void Character::update(Level& level, Camera& cam, const float& dT) {
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
+	if (pos_.x + rect_.w >= level.getWidth() * TILE_SIZE - TILE_SIZE * 2) {
+		level.toNextLevel();
+		pos_.x = TILE_SIZE * 3;
+		pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 8;
+	}
 }
 
 void Character::moveX(const float& dT) {
@@ -134,6 +139,7 @@ void Character::CollideX(Level& level) {
 		{
 			SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
 			if (checkCollision({ (int)pos_.x ,(int)pos_.y ,rect_.w,rect_.h }, tileRect) && level.getTile(x, y)->getType() != Tile::Type::EMPTY) {
+
 				collide_x_ = true;
 				if (!on_ground_) wall_collided_ = true;
 				if (vel_.x > 0) {
@@ -270,9 +276,6 @@ void Character::CollideY(Level& level)
 		on_ground_ = false;
 
 	}
-	/*if (tileY < level.getHeight() && ((level.getTile(tileX, tileY + 1)->getType() == Tile::EMPTY && level.getTile(tileX + 1, tileY + 1)->getType() == Tile::EMPTY) || (pos_.x == tileX * TILE_SIZE && (level.getTile(tileX, tileY + 1)->getType() == Tile::EMPTY)))) {
-
-	}*/
 }
 void Character::saveStats() {
 	tinyxml2::XMLDocument doc;
@@ -291,7 +294,7 @@ void Character::saveStats() {
 	}
 }
 // Load game function to load player position from file
-void Character::loadStats() {
+void Character::loadStats(Level& level) {
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
 		tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
@@ -307,6 +310,11 @@ void Character::loadStats() {
 				return;
 			}
 		}
+	}
+	else {
+		pos_.x = TILE_SIZE * 3;
+		pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 10;
+		saveStats();
 	}
 	std::cout << "Failed to load game." << std::endl;
 }

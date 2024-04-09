@@ -8,7 +8,13 @@
 
 class Level {
 public:
-
+	enum LevelIndex {
+		NONE,
+		Level1,
+		Level2,
+		Level3
+	};
+	LevelIndex id_;
 	Level();
 	~Level();
 	bool setPath(const std::string& path);
@@ -16,6 +22,7 @@ public:
 	void render(SDL_Renderer* ren, Camera& cam);
 	void loadSavedPath();
 	void savePath();
+	void toNextLevel();
 	bool loadSpriteTiles(SDL_Renderer* ren);
 	Tile* getTile(const int& x, const int& y);
 	int getWidth()const;

@@ -4,7 +4,7 @@
  * @brief Default constructor for the Level class.
  */
 Level::Level() {
-	path_ = "";
+	path_ = LEVEL_PATH[Level1];
 	row_ = 0;
 	col_ = 0;
 	for (int i = 0; i < MAX_TILES; i++)
@@ -13,6 +13,7 @@ Level::Level() {
 			tiles_[i][j] = new Tile(Tile::Type::EMPTY);
 		}
 	}
+	id_ = Level1;
 	sprite_tiles_ = NULL;
 }
 
@@ -156,12 +157,18 @@ void Level::loadSavedPath()
 		if (root) {
 			tinyxml2::XMLElement* levelPath = root->FirstChildElement("LevelPath");
 			if (levelPath) {
+				int id;
+				levelPath->QueryIntAttribute("id", &id);
+				id_ = static_cast<LevelIndex>(id);
 				path_ = levelPath->GetText();
 				loadFromFile();
 			}
 		}
 	}
 	else {
+		setPath(LEVEL_PATH[Level1]);
+		id_ = Level1;
+		savePath();
 		std::cout << "Failed to load level." << std::endl;
 	}
 }
@@ -178,6 +185,7 @@ void Level::savePath() {
 	}
 	if (root) {
 		tinyxml2::XMLElement* levelPath = doc.NewElement("LevelPath");
+		levelPath->SetAttribute("id", static_cast<int>(id_));
 		levelPath->SetText(path_.c_str());
 		root->InsertEndChild(levelPath);
 	}
@@ -187,4 +195,18 @@ void Level::savePath() {
 	else {
 		std::cout << "Failed to save game." << std::endl;
 	}
+}
+
+void Level::toNextLevel() {
+	if (id_ == Level1) {
+		id_ = Level2;
+	}
+	else if (id_ == Level2) {
+		id_ = Level3;
+	}
+	else {
+		return;
+	}
+	savePath();
+	setPath(LEVEL_PATH[id_]);
 }

@@ -42,7 +42,12 @@ const int MAX_RUN_SPEED = 810;
 const int RUN_SPEED = 30;
 const int LEFT = -1;
 const int RIGHT = 1;
-const std::string MAP_PATH = "map/";
+const std::string LEVEL_PATH[4] = {
+	"",
+	"assets/level/map1.csv",
+	"assets/level/map2.csv",
+	"assets/level/map3.csv"
+};
 
 const SDL_Rect EMPTY_TILE_CLIP = { 0, 0, TILE_SIZE, TILE_SIZE };
 const SDL_Rect GROUND_TILE_CLIP = { TILE_SIZE, 0, TILE_SIZE, TILE_SIZE };
