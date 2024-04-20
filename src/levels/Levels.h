@@ -1,7 +1,7 @@
 #ifndef LEVEL_H_
 #define LEVEL_H_
 
-#include "Tile.h"
+//#include "Tile.h"
 #include "Camera.h"
 #include "../comp/Vector2D.h"
 #include "../thirdParty/tinyxml2_10.0.0/tinyxml2.h"
@@ -14,6 +14,12 @@ public:
 		Level2,
 		Level3
 	};
+	enum Tile {
+		EMPTY = 0,
+		GROUND = 1,
+		GOAL = 2
+
+	};
 	LevelIndex id_;
 	Level();
 	~Level();
@@ -22,18 +28,22 @@ public:
 	void render(SDL_Renderer* ren, Camera& cam);
 	void loadSavedPath();
 	void savePath();
+
 	void toNextLevel();
 	bool loadSpriteTiles(SDL_Renderer* ren);
-	Tile* getTile(const int& x, const int& y);
+	Tile getTile(const int& x, const int& y);
 	int getWidth()const;
 	int getHeight()const;
+	SDL_Texture* bg;
+	SDL_Texture* far_ground_;
 private:
 	bool loadFromFile();
 	int row_;
 	int col_;
 	std::string path_;
-	Tile* tiles_[MAX_TILES][MAX_TILES];
+	Tile tiles_[MAX_TILES][MAX_TILES];
 	SDL_Texture* sprite_tiles_;
+	Vector2D default_pos_;
 };
 
 #endif

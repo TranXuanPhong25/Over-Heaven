@@ -25,7 +25,10 @@ public:
 	void handleInput(SDL_Event& e);
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
+	void handleReachGoal(Level& level, Camera& cam);
 	void moveX(const float& dT);
+	void handleCollideX(const int& x, const int& y, Level::Tile tile);
+	void handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow);
 	void moveY(const float& dT);
 	void applyGravity(const float& dT);
 	//void dash(const float& dT);
@@ -51,11 +54,12 @@ private:
 	int dash_dir_;
 	int dashing_frame_;
 	float dash_cooldown_;*/
+	int required_frame_to_apply_jump_;
 	bool wall_collided_;
 	bool collide_x_;
 	int coyote_time_;
-	int jump_buffer_;
-
+	/*int jump_buffer_;*/
+	bool should_change_level_;
 
 };
 

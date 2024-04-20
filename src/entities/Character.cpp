@@ -16,11 +16,12 @@ Character::Character() {
 	//dashing_frame_ = 0;
 	//dash_dir_ = 0;
 	//dash_cooldown_ = 0;
-
+	required_frame_to_apply_jump_ = 50;
 	wall_collided_ = false;
 	collide_x_ = false;
 	coyote_time_ = 0;
-	jump_buffer_ = 0;
+	/*jump_buffer_ = 0;*/
+	should_change_level_ = false;
 }
 Character::~Character() {
 	free();
@@ -29,7 +30,7 @@ Character::~Character() {
 void Character::handleInput(SDL_Event& e) {
 	if (e.type == SDL_KEYDOWN) {
 
-		if (e.key.keysym.sym == SDLK_SPACE) {
+		if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP) {
 			spacekey_pressed_ = true;
 
 		}
@@ -73,7 +74,7 @@ void Character::handleInput(SDL_Event& e) {
 		}*/
 	}
 	if (e.type == SDL_KEYUP) {
-		if (e.key.keysym.sym == SDLK_SPACE) {
+		if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP) {
 			spacekey_pressed_ = false;
 		}
 		if ((e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)) {
@@ -114,17 +115,43 @@ void Character::update(Level& level, Camera& cam, const float& dT) {
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
-	if (pos_.x + rect_.w >= level.getWidth() * TILE_SIZE - TILE_SIZE * 2) {
+	handleReachGoal(level, cam);
+}
+void Character::handleReachGoal(Level& level, Camera& cam) {
+	if (should_change_level_) {
 		level.toNextLevel();
+		cam.setPosition(0, 0);
 		pos_.x = TILE_SIZE * 3;
-		pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 8;
+		pos_.y = 0;
+		saveStats();
+		should_change_level_ = false;
 	}
 }
-
 void Character::moveX(const float& dT) {
 	vel_.x = (dir_right_ - dir_left_) * speed_;
 	pos_.x += vel_.x * dT;
 }
+void Character::handleCollideX(const int& x, const int& y, Level::Tile tile) {
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+	if (checkCollision({ (int)pos_.x ,(int)pos_.y ,rect_.w,rect_.h }, tileRect)) {
+		if (tile == Level::GROUND) {
+			collide_x_ = true;
+			if (!on_ground_) wall_collided_ = true;
+			if (vel_.x > 0) {
+				pos_.x = tileRect.x - rect_.w;
+			}
+			else if (vel_.x < 0) {
+				pos_.x = tileRect.x + tileRect.w;
+			}
+		}
+
+		if (tile == Level::GOAL) {
+			should_change_level_ = true;
+			return;
+		}
+	}
+}
+
 void Character::CollideX(Level& level) {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -137,21 +164,9 @@ void Character::CollideX(Level& level) {
 	for (int x = startX; x <= endX; x++) {
 		for (int y = startY; y <= endY; y++)
 		{
-			SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-			if (checkCollision({ (int)pos_.x ,(int)pos_.y ,rect_.w,rect_.h }, tileRect) && level.getTile(x, y)->getType() != Tile::Type::EMPTY) {
-
-				collide_x_ = true;
-				if (!on_ground_) wall_collided_ = true;
-				if (vel_.x > 0) {
-					pos_.x = tileRect.x - rect_.w;
-				}
-				else if (vel_.x < 0) {
-					pos_.x = tileRect.x + tileRect.w;
-				}
-			}
+			handleCollideX(x, y, level.getTile(x, y));
 		}
 	}
-
 }
 
 //void Character::dash(const float& dT) {
@@ -177,18 +192,37 @@ void Character::jump(const float& dT) {
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
 	gravity_scalar_ = DEFAULT_SCALAR;
+	/*jump_buffer_ = 0;*/
+	required_frame_to_apply_jump_ = 50;
 }
+
 void Character::applyGravity(const float& dT) {
+
 	if (vel_.y > FLOATY_FALL_VEL) {
 		gravity_scalar_ = FALL_SCALAR;
-
 	}
-	else  if (vel_.y > -FLOATY_FALL_VEL) {
+	else if (vel_.y > -FLOATY_FALL_VEL) {
 		gravity_scalar_ = FLOATY_SCALAR;
 	}
-	else if (spacekey_pressed_) {
-		gravity_scalar_ -= (gravity_scalar_ > MIN_SCALAR) ? REDUCE_SCALAR : 0;
+	else {
+
+		if (spacekey_pressed_) {
+			if (required_frame_to_apply_jump_ > 46) {
+				gravity_scalar_ = DEFAULT_SCALAR;
+			}
+			else if (required_frame_to_apply_jump_ == 46) {
+				vel_.y = -JUMP_HEIGHT;
+				gravity_scalar_ -= (gravity_scalar_ > MIN_SCALAR) ? REDUCE_SCALAR * 2.75 : 0;
+			}
+			else if (required_frame_to_apply_jump_ > 32 && required_frame_to_apply_jump_ < 46) {
+				gravity_scalar_ -= (gravity_scalar_ > MIN_SCALAR) ? REDUCE_SCALAR * 2 : 0;
+			}
+		}
+		else {
+			gravity_scalar_ = DEFAULT_SCALAR;
+		}
 	}
+
 	if (wall_collided_ && vel_.y > 0) {
 		gravity_scalar_ = FRICTION_SCALAR;
 	}
@@ -196,31 +230,36 @@ void Character::applyGravity(const float& dT) {
 		vel_.y = MAX_FALL_SPEED;
 	}
 	else {
-
 		vel_.y += GRAVITY * gravity_scalar_ * dT;
 	}
 }
+
 void Character::moveY(const float& dT) {
-	if (spacekey_pressed_ || jump_buffer_) {
+	if (required_frame_to_apply_jump_)required_frame_to_apply_jump_--;
+	if (spacekey_pressed_ /*|| jump_buffer_*/) {
 		if (on_ground_ || coyote_time_) {
 			jump(dT);
 		}
-		if (spacekey_pressed_) jump_buffer_ = MAX_JUMP_BUFFER;
+		/*if (spacekey_pressed_) jump_buffer_ = MAX_JUMP_BUFFER;*/
 	}
 
-	if (jump_buffer_) {
+	/*if (jump_buffer_) {
 		jump_buffer_--;
-	}
-	//gravity
+	}*/
+
+
 	if (!on_ground_ /*&& !dashing_*/) {
 		if (coyote_time_) coyote_time_--;
 		applyGravity(dT);
 	}
 	else if (on_ground_) {
+		required_frame_to_apply_jump_ = 0;
 		//dash_counter_ = 1;
 		coyote_time_ = MAX_COYOTE_TIME;
 		vel_.y = 0;
 	}
+
+
 	/*if (!dashing_) {
 		if (dash_cooldown_ - dT > 0) {
 			dash_cooldown_ -= dT;
@@ -229,48 +268,43 @@ void Character::moveY(const float& dT) {
 	}*/
 	pos_.y += vel_.y * dT;
 }
+void Character::handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow) {
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+	if (tile == Level::GROUND) {
+		if (y == endY) {
+			somethingBelow = true;
+		}
+		if (checkCollision({ (int)pos_.x ,(int)pos_.y ,rect_.w,rect_.h }, tileRect)) {
+			if (vel_.y >= 0) {
+				on_ground_ = true;
+				vel_.y = 0;
+				pos_.y = tileRect.y - rect_.h;
+			}
+			else if (vel_.y < 0) {
+				vel_.y = 0;
+				pos_.y = tileRect.y + tileRect.h;
+			}
+		}
+	}
+	if (tile == Level::GOAL) {
+		should_change_level_ = true;
+	}
+}
 void Character::CollideY(Level& level)
 {
-
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
 	int startX = max(0, tileX);
 	int startY = max(0, tileY);
 	int endX = min(level.getWidth(), (pos_.x + rect_.w) / TILE_SIZE);
 	int endY = min(level.getHeight(), (pos_.y + rect_.h) / TILE_SIZE);
-	SDL_Rect tileRect{};
 	bool somethingBelow = false;
-	for (int y = startY; y <= endY; y++) {
 
+	for (int y = startY; y <= endY; y++) {
 		for (int x = startX; x <= endX; x++)
 		{
-
-			tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-			if (level.getTile(x, y)->getType() != Tile::Type::EMPTY) {
-				if (y == endY) {
-					somethingBelow = true;
-				}
-				if (checkCollision({ (int)pos_.x ,(int)pos_.y ,rect_.w,rect_.h }, tileRect)) {
-					if (vel_.y >= 0) {
-						//move down
-						on_ground_ = true;
-						vel_.y = 0;
-						pos_.y = tileRect.y - rect_.h;;
-
-					}
-					else if (vel_.y < 0) {
-						//jump
-						vel_.y = 0;
-						pos_.y = tileRect.y + tileRect.h;
-
-
-					}
-
-
-				}
-			}
+			handleCollideY(x, y, endY, level.getTile(x, y), somethingBelow);
 		}
-
 	}
 	if (!somethingBelow) {
 		on_ground_ = false;
@@ -293,28 +327,26 @@ void Character::saveStats() {
 		std::cout << "Failed to save game." << std::endl;
 	}
 }
-// Load game function to load player position from file
 void Character::loadStats(Level& level) {
 	tinyxml2::XMLDocument doc;
-	if (doc.LoadFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
-		tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
-		if (root) {
-			tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
-			if (playerPos) {
-				int posX = 0, posY = 0;
-				playerPos->QueryIntAttribute("x", &posX);
-				playerPos->QueryIntAttribute("y", &posY);
-				pos_.x = posX;
-				pos_.y = posY;
-				std::cout << "Game loaded successfully!" << std::endl;
-				return;
-			}
-		}
+	if (doc.LoadFile("save/save_game.xml") != tinyxml2::XML_SUCCESS) {
+		return;
 	}
 	else {
 		pos_.x = TILE_SIZE * 3;
-		pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 10;
+		//pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 15;
+		pos_.y = 0;
 		saveStats();
 	}
-	std::cout << "Failed to load game." << std::endl;
+	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
+	if (!root) return;
+	tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
+	if (playerPos) {
+		int posX = 0, posY = 0;
+		playerPos->QueryIntAttribute("x", &posX);
+		playerPos->QueryIntAttribute("y", &posY);
+		pos_.x = posX;
+		pos_.y = posY;
+		return;
+	}
 }

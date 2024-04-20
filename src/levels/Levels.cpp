@@ -1,8 +1,5 @@
 #include "Levels.h"
 
-/**
- * @brief Default constructor for the Level class.
- */
 Level::Level() {
 	path_ = LEVEL_PATH[Level1];
 	row_ = 0;
@@ -10,34 +7,35 @@ Level::Level() {
 	for (int i = 0; i < MAX_TILES; i++)
 	{
 		for (int j = 0; j < MAX_TILES; j++) {
-			tiles_[i][j] = new Tile(Tile::Type::EMPTY);
+			tiles_[i][j] = EMPTY;
 		}
 	}
 	id_ = Level1;
 	sprite_tiles_ = NULL;
+	bg = NULL;
+	far_ground_ = NULL;
 }
 
-/**
- * @brief Destructor for the Level class.
- */
 Level::~Level() {
-
+	if (sprite_tiles_ != NULL) {
+		SDL_DestroyTexture(sprite_tiles_);
+		sprite_tiles_ = NULL;
+	}
+	if (bg != NULL) {
+		SDL_DestroyTexture(bg);
+		bg = NULL;
+	}
+	if (far_ground_ != NULL) {
+		SDL_DestroyTexture(far_ground_);
+		far_ground_ = NULL;
+	}
 }
 
-/**
- * @brief Sets the path of the level file.
- * @param path The path of the level file.
- * @return True if the file is successfully loaded, false otherwise.
- */
 bool Level::setPath(const std::string& path) {
 	path_ = path;
 	return loadFromFile();
 }
 
-/**
- * @brief Loads the level data from the file.
- * @return True if the file is successfully loaded, false otherwise.
- */
 bool Level::loadFromFile() {
 	std::ifstream file(path_);
 	if (!file.is_open()) {
@@ -51,7 +49,7 @@ bool Level::loadFromFile() {
 		for (char ch : line)
 		{
 			if (ch != ',') {
-				tiles_[r][c]->setType(static_cast<Tile::Type>(ch - '0'));
+				tiles_[r][c] = static_cast<Tile>(ch - '0');
 				c++;
 			}
 		}
@@ -64,20 +62,10 @@ bool Level::loadFromFile() {
 	return true;
 }
 
-/**
- * @brief Gets the path of the level file.
- * @return The path of the level file.
- */
 std::string Level::getPath() {
 	return path_;
 }
 
-/**
- * @brief Loads the sprite tiles from the given file path.
- * @param ren The SDL renderer.
- * @param path The path of the sprite tiles file.
- * @return True if the sprite tiles are successfully loaded, false otherwise.
- */
 bool Level::loadSpriteTiles(SDL_Renderer* ren) {
 	sprite_tiles_ = IMG_LoadTexture(ren, "assets/level/0.png");
 	if (sprite_tiles_ == NULL)
@@ -87,34 +75,16 @@ bool Level::loadSpriteTiles(SDL_Renderer* ren) {
 	return sprite_tiles_ == NULL;
 }
 
-/**
- * @brief Gets the tile at the specified position.
- * @param x The x-coordinate of the tile.
- * @param y The y-coordinate of the tile.
- * @return A pointer to the tile at the specified position.
- */
-Tile* Level::getTile(const int& x, const int& y)
+Level::Tile Level::getTile(const int& x, const int& y)
 {
 	return tiles_[y][x];
 }
 
-/**
- * @brief Gets the width of the level in tiles.
- * @return The width of the level in tiles.
- */
 int Level::getWidth() const { return col_; }
 
-/**
- * @brief Gets the height of the level in tiles.
- * @return The height of the level in tiles.
- */
+
 int Level::getHeight() const { return row_; }
 
-/**
- * @brief Renders the level on the screen.
- * @param ren - SDL renderer.
- * @param cam - camera object.
- */
 void Level::render(SDL_Renderer* ren, Camera& cam) {
 	SDL_Rect viewport = cam.getViewport();
 
@@ -135,10 +105,10 @@ void Level::render(SDL_Renderer* ren, Camera& cam) {
 		for (x = x1; x <= x2; x += TILE_SIZE)
 		{
 			SDL_Rect des = { x ,y ,TILE_SIZE,TILE_SIZE };
-			if (tiles_[mapY][mapX]->getType() == Tile::Type::EMPTY) {
+			if (tiles_[mapY][mapX] == EMPTY) {
 				SDL_RenderCopy(ren, sprite_tiles_, &EMPTY_TILE_CLIP, &des);
 			}
-			else if (tiles_[mapY][mapX]->getType() == Tile::Type::GROUND) {
+			else if (tiles_[mapY][mapX] == GROUND) {
 				SDL_RenderCopy(ren, sprite_tiles_, &GROUND_TILE_CLIP, &des);
 			}
 

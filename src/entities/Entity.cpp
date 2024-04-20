@@ -21,12 +21,7 @@ void Entity::free() {
 void Entity::render(SDL_Renderer* ren, SDL_Rect* clip, SDL_Rect* stretch) {
 
 	if (stretch != NULL) {
-		if (clip != NULL) {
-			SDL_RenderCopy(ren, texture_, clip, stretch);
-		}
-		else {
-			SDL_RenderCopy(ren, texture_, NULL, stretch);
-		}
+		SDL_RenderCopy(ren, texture_, clip, stretch);
 	}
 	else {
 		SDL_RenderCopy(ren, texture_, NULL, &(rect_));

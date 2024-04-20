@@ -7,9 +7,8 @@
 <<<<<<< HEAD
 =======
 >>>>>>> aaba8a83751b3ce9dccaa4c508247b04ead31b69
-*.dll
+*.xml
 *.vcxproj*
-*.sln
 .vs/
 <<<<<<< HEAD
 =======
@@ -375,3 +374,6 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Over-Heaven
+save/save_game.xml
+/save
+*.xml

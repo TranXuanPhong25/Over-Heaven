@@ -6,6 +6,7 @@ public:
 	enum Type {
 		EMPTY = 0,
 		GROUND = 1,
+		GOAL = 2
 	};
 	Tile();
 	Tile(Type type);

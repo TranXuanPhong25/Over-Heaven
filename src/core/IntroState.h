@@ -1,6 +1,6 @@
 #ifndef INTROSTATE_H_
 #define INTROSTATE_H_
-#include "PlayState.h"
+#include "MainMenuState.h"
 #include "StateMachine.h"
 
 class IntroState :public GameState {
@@ -15,6 +15,7 @@ public:
 private:
 	static IntroState s_intro_state_;
 	IntroState();
+	Uint32 start_time_;
 	//another stuff
 };
 #endif // !INTROSTATE_H_
