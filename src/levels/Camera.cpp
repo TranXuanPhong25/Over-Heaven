@@ -1,5 +1,5 @@
 #include "Camera.h"
-Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_HEIGHT / TILE_SIZE), xOffset_(0), yOffset_(0), damping_factor_(0.01f) {
+Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_HEIGHT / TILE_SIZE), xOffset_(0), yOffset_(0), damping_factor_(0.1f) {
 }
 
 Camera::~Camera() {}

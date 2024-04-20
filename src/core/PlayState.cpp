@@ -14,6 +14,11 @@ bool PlayState::enter(SDL_Renderer* ren) {
 	player_.loadStats(level_);
 	level_.bg = IMG_LoadTexture(ren, "assets/level/bg1.png");
 	level_.far_ground_ = IMG_LoadTexture(ren, "assets/level/farground.png");
+	level_.far_ground_clip_.x = 0;
+	level_.far_ground_clip_.y = 0;
+	level_.far_ground_clip_.w = 1920;
+	level_.far_ground_clip_.h = 1080;
+	level_.fore_ground_ = IMG_LoadTexture(ren, "assets/level/foreground.png");
 	return true;
 }
 
@@ -30,6 +35,7 @@ void PlayState::update(const float& dT) {
 	cam_.move(player_.getVel() * dT);
 	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth() * TILE_SIZE, level_.getHeight() * TILE_SIZE);
 	player_.updateRect(cam_);
+	level_.far_ground_clip_.x = cam_.getPos().x / 5760 * 1642;
 }
 void PlayState::render(SDL_Renderer* ren) {
 	//level_.render(ren, cam_);
@@ -38,9 +44,11 @@ void PlayState::render(SDL_Renderer* ren) {
 	sr.y = cam_.getPos().y;
 	sr.w = SCREEN_WIDTH;
 	sr.h = SCREEN_HEIGHT;
-	SDL_RenderCopy(ren, level_.far_ground_, NULL, NULL);
+	SDL_RenderCopy(ren, level_.far_ground_, &level_.far_ground_clip_, NULL);
+
 	SDL_RenderCopy(ren, level_.bg, &sr, NULL);
 	player_.render(ren);
+	SDL_RenderCopy(ren, level_.fore_ground_, &sr, NULL);
 }
 void PlayState::deleteSave()
 {

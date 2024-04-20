@@ -36,6 +36,8 @@ public:
 	int getHeight()const;
 	SDL_Texture* bg;
 	SDL_Texture* far_ground_;
+	SDL_Texture* fore_ground_;
+	SDL_Rect far_ground_clip_;
 private:
 	bool loadFromFile();
 	int row_;

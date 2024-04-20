@@ -14,6 +14,7 @@ Level::Level() {
 	sprite_tiles_ = NULL;
 	bg = NULL;
 	far_ground_ = NULL;
+	fore_ground_ = NULL;
 }
 
 Level::~Level() {
@@ -28,6 +29,10 @@ Level::~Level() {
 	if (far_ground_ != NULL) {
 		SDL_DestroyTexture(far_ground_);
 		far_ground_ = NULL;
+	}
+	if (fore_ground_ != NULL) {
+		SDL_DestroyTexture(fore_ground_);
+		fore_ground_ = NULL;
 	}
 }
 
