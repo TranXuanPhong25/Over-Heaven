@@ -12,9 +12,13 @@ Level::Level() {
 	}
 	id_ = Level1;
 	sprite_tiles_ = NULL;
-	bg = NULL;
+	back_ground_ = NULL;
 	far_ground_ = NULL;
 	fore_ground_ = NULL;
+	background_clip_.x = 0;
+	background_clip_.y = 0;
+	background_clip_.w = SCREEN_WIDTH;
+	background_clip_.h = SCREEN_HEIGHT;
 }
 
 Level::~Level() {
@@ -22,9 +26,9 @@ Level::~Level() {
 		SDL_DestroyTexture(sprite_tiles_);
 		sprite_tiles_ = NULL;
 	}
-	if (bg != NULL) {
-		SDL_DestroyTexture(bg);
-		bg = NULL;
+	if (back_ground_ != NULL) {
+		SDL_DestroyTexture(back_ground_);
+		back_ground_ = NULL;
 	}
 	if (far_ground_ != NULL) {
 		SDL_DestroyTexture(far_ground_);
@@ -89,6 +93,38 @@ int Level::getWidth() const { return col_; }
 
 
 int Level::getHeight() const { return row_; }
+
+void Level::loadResources(SDL_Renderer* ren)
+{
+	back_ground_ = IMG_LoadTexture(ren, "assets/level/bg1.png");
+	far_ground_ = IMG_LoadTexture(ren, "assets/level/farground.png");
+	far_ground_clip_.x = 0;
+	far_ground_clip_.y = 0;
+	far_ground_clip_.w = 1920;
+	far_ground_clip_.h = 1080;
+	fore_ground_ = IMG_LoadTexture(ren, "assets/level/foreground.png");
+}
+void Level::update(Camera& cam) {
+	background_clip_.x = cam.getPos().x;
+	background_clip_.y = cam.getPos().y;
+	far_ground_clip_.x = cam.getPos().x / 5760 * 1642;
+}
+
+void Level::renderFarGround(SDL_Renderer* ren)
+{
+	SDL_RenderCopy(ren, far_ground_, &far_ground_clip_, NULL);
+}
+
+void Level::renderForeGround(SDL_Renderer* ren)
+{
+
+	SDL_RenderCopy(ren, fore_ground_, &background_clip_, NULL);
+}
+
+void Level::renderBackground(SDL_Renderer* ren)
+{
+	SDL_RenderCopy(ren, back_ground_, &background_clip_, NULL);
+}
 
 void Level::render(SDL_Renderer* ren, Camera& cam) {
 	SDL_Rect viewport = cam.getViewport();

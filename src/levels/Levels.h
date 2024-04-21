@@ -28,18 +28,25 @@ public:
 	void render(SDL_Renderer* ren, Camera& cam);
 	void loadSavedPath();
 	void savePath();
-
+	void update(Camera& cam);
 	void toNextLevel();
 	bool loadSpriteTiles(SDL_Renderer* ren);
 	Tile getTile(const int& x, const int& y);
 	int getWidth()const;
 	int getHeight()const;
-	SDL_Texture* bg;
+	void loadResources(SDL_Renderer* ren);
+
+	void renderFarGround(SDL_Renderer* ren);
+	void renderForeGround(SDL_Renderer* ren);
+	void renderBackground(SDL_Renderer* ren);
+private:
+
+	bool loadFromFile();
+	SDL_Rect far_ground_clip_;
+	SDL_Rect background_clip_;
+	SDL_Texture* back_ground_;
 	SDL_Texture* far_ground_;
 	SDL_Texture* fore_ground_;
-	SDL_Rect far_ground_clip_;
-private:
-	bool loadFromFile();
 	int row_;
 	int col_;
 	std::string path_;
