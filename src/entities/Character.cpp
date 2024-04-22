@@ -8,7 +8,7 @@ Character::Character() {
 	on_ground_ = false;
 	dir_left_ = 0;
 	dir_right_ = 0;
-	gravity_scalar_ = 2;
+	gravity_scalar_ = DEFAULT_SCALAR;
 	jump_count_ = 1;
 
 	//dashing_ = false;
@@ -16,7 +16,7 @@ Character::Character() {
 	//dashing_frame_ = 0;
 	//dash_dir_ = 0;
 	//dash_cooldown_ = 0;
-	required_frame_to_apply_jump_ = 50;
+	required_frame_to_apply_jump_ = 0;
 	wall_collided_ = false;
 	collide_x_ = false;
 	coyote_time_ = 0;
@@ -316,37 +316,39 @@ void Character::saveStats() {
 	tinyxml2::XMLElement* root = doc.NewElement("SaveData");
 	doc.InsertFirstChild(root);
 	tinyxml2::XMLElement* playerPos = doc.NewElement("PlayerPosition");
-	playerPos->SetAttribute("x", pos_.x);
-	playerPos->SetAttribute("y", pos_.y);
+	playerPos->SetAttribute("x", static_cast<int>(pos_.x));
+	playerPos->SetAttribute("y", static_cast<int>(pos_.y));
+	//save another member variable
+
 	root->InsertEndChild(playerPos);
 
-	if (doc.SaveFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
-		std::cout << "Game saved successfully!" << std::endl;
-	}
-	else {
-		std::cout << "Failed to save game." << std::endl;
-	}
+	doc.SaveFile("save/save_game.xml");
 }
 void Character::loadStats(Level& level) {
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile("save/save_game.xml") != tinyxml2::XML_SUCCESS) {
+		std::cout << "Failed to load save file." << std::endl;
+	}
+
+	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
+	if (!root) {
+		std::cout << "Save file is missing SaveData element." << std::endl;
 		return;
 	}
-	else {
-		pos_.x = TILE_SIZE * 3;
-		//pos_.y = level.getHeight() * TILE_SIZE - TILE_SIZE * 15;
-		pos_.y = 0;
-		saveStats();
-	}
-	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
-	if (!root) return;
+
 	tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
 	if (playerPos) {
-		int posX = 0, posY = 0;
+		int posX = TILE_SIZE * 3, posY = 0;
 		playerPos->QueryIntAttribute("x", &posX);
 		playerPos->QueryIntAttribute("y", &posY);
 		pos_.x = posX;
 		pos_.y = posY;
-		return;
+
+	}
+	else {
+		pos_.x = TILE_SIZE * 3;
+		pos_.y = 0;
+		saveStats();
+		std::cout << "Save file is missing PlayerPosition element." << std::endl;
 	}
 }

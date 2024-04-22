@@ -171,16 +171,14 @@ void Level::loadSavedPath()
 				int id;
 				levelPath->QueryIntAttribute("id", &id);
 				id_ = static_cast<LevelIndex>(id);
-				path_ = levelPath->GetText();
-				loadFromFile();
+				setPath(levelPath->GetText());
 			}
 		}
 	}
 	else {
-		setPath(LEVEL_PATH[Level1]);
 		id_ = Level1;
+		setPath(LEVEL_PATH[Level1]);
 		savePath();
-		std::cout << "Failed to load level." << std::endl;
 	}
 }
 
@@ -200,12 +198,7 @@ void Level::savePath() {
 		levelPath->SetText(path_.c_str());
 		root->InsertEndChild(levelPath);
 	}
-	if (doc.SaveFile("save/save_game.xml") == tinyxml2::XML_SUCCESS) {
-		std::cout << "Game saved successfully!" << std::endl;
-	}
-	else {
-		std::cout << "Failed to save game." << std::endl;
-	}
+	doc.SaveFile("save/save_game.xml");
 }
 
 void Level::toNextLevel() {
@@ -218,6 +211,6 @@ void Level::toNextLevel() {
 	else {
 		return;
 	}
-	savePath();
 	setPath(LEVEL_PATH[id_]);
+	savePath();
 }

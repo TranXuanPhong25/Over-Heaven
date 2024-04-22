@@ -7,6 +7,8 @@
 <<<<<<< HEAD
 =======
 >>>>>>> aaba8a83751b3ce9dccaa4c508247b04ead31b69
+*.psd
+
 *.xml
 *.vcxproj*
 .vs/

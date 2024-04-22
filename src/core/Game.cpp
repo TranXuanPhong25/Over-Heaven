@@ -78,22 +78,25 @@ void Game::run() {
 		while (state_machine_->getCurrentState() != ExitState::get()) {
 			while (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
-					state_machine_->getCurrentState()->exit();
+					//state_machine_->getCurrentState()->exit();
 					state_machine_->setNextState(ExitState::get());
 					break;
 				}
 				state_machine_->getCurrentState()->handleEvent(e);
 			}
 
+			state_machine_->changeState(ren_);
 			curFrame = SDL_GetTicks64();
 			dT = (curFrame - preFrame);
 			if (dT < TARGET_TIMESTEP) {
 				SDL_Delay(TARGET_TIMESTEP - dT);
 			}
+			else {
+				dT = TARGET_TIMESTEP;
+			}
 			preFrame = curFrame;
 
 			state_machine_->getCurrentState()->update(dT / 1000.f);
-			state_machine_->changeState(ren_);
 
 			SDL_RenderClear(ren_);
 			state_machine_->getCurrentState()->render(ren_);
