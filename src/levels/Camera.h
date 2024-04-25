@@ -1,7 +1,6 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include "Tile.h"
 #include "../comp/Vector2D.h"
 class Camera {
 public:

@@ -11,21 +11,22 @@ Level::Level() {
 		}
 	}
 	id_ = Level1;
-	sprite_tiles_ = NULL;
 	back_ground_ = NULL;
 	far_ground_ = NULL;
 	fore_ground_ = NULL;
-	background_clip_.x = 0;
-	background_clip_.y = 0;
-	background_clip_.w = SCREEN_WIDTH;
-	background_clip_.h = SCREEN_HEIGHT;
+	face_ground_ = NULL;
+
+	background_clip_={0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+	far_ground_clip_={0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
+
+	SDL_QueryTexture(back_ground_, NULL, NULL, &background_width_,&background_height_ );
+	SDL_QueryTexture(far_ground_, NULL, NULL, &far_ground_width_,&far_ground_height_ );
+	SDL_QueryTexture(fore_ground_, NULL, NULL, &fore_ground_width_,&fore_ground_height_ );
+	SDL_QueryTexture(face_ground_, NULL, NULL, &face_ground_width_,&face_ground_height_ );
+
 }
 
 Level::~Level() {
-	if (sprite_tiles_ != NULL) {
-		SDL_DestroyTexture(sprite_tiles_);
-		sprite_tiles_ = NULL;
-	}
 	if (back_ground_ != NULL) {
 		SDL_DestroyTexture(back_ground_);
 		back_ground_ = NULL;
@@ -38,11 +39,25 @@ Level::~Level() {
 		SDL_DestroyTexture(fore_ground_);
 		fore_ground_ = NULL;
 	}
+	if (face_ground_ != NULL) {
+		SDL_DestroyTexture(face_ground_);
+		face_ground_ = NULL;
+	}
 }
 
-bool Level::setPath(const std::string& path) {
+void Level::setPath(const std::string& path) {
 	path_ = path;
-	return loadFromFile();
+}
+
+void Level::handleLineCSV(const std::string &line, int &r, int &c)
+{
+    for (char ch : line)
+		{
+			if (ch != ',') {
+				tiles_[r][c] = static_cast<Tile>(ch - '0');
+				c++;
+			}
+		}
 }
 
 bool Level::loadFromFile() {
@@ -55,13 +70,7 @@ bool Level::loadFromFile() {
 	int c = 0;
 	std::string line;
 	while (std::getline(file, line)) {
-		for (char ch : line)
-		{
-			if (ch != ',') {
-				tiles_[r][c] = static_cast<Tile>(ch - '0');
-				c++;
-			}
-		}
+		handleLineCSV(line, r, c);
 		col_ = c;
 		c = 0;
 		r++;
@@ -75,13 +84,9 @@ std::string Level::getPath() {
 	return path_;
 }
 
-bool Level::loadSpriteTiles(SDL_Renderer* ren) {
-	sprite_tiles_ = IMG_LoadTexture(ren, "assets/level/0.png");
-	if (sprite_tiles_ == NULL)
-	{
-		std::cout << IMG_GetError() << std::endl;
-	}
-	return sprite_tiles_ == NULL;
+Level::LevelIndex Level::getLevelIndex()
+{
+	return id_;
 }
 
 Level::Tile Level::getTile(const int& x, const int& y)
@@ -96,69 +101,90 @@ int Level::getHeight() const { return row_; }
 
 void Level::loadResources(SDL_Renderer* ren)
 {
-	back_ground_ = IMG_LoadTexture(ren, "assets/level/bg1.png");
-	far_ground_ = IMG_LoadTexture(ren, "assets/level/farground.png");
-	far_ground_clip_.x = 0;
-	far_ground_clip_.y = 0;
-	far_ground_clip_.w = 1920;
-	far_ground_clip_.h = 1080;
-	fore_ground_ = IMG_LoadTexture(ren, "assets/level/foreground.png");
+	back_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + BACKGROUND_PATH).c_str());
+
+	if (back_ground_ == NULL) {
+		std::cout << SDL_GetError();
+	}
+
+	far_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FARGROUND_PATH).c_str());
+	if (far_ground_ == NULL) {
+		std::cout << SDL_GetError();
+	}
+
+	fore_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FOREGROUND_PATH).c_str());
+	if (fore_ground_ == NULL) {
+		std::cout << SDL_GetError();
+	}
+
+	face_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FACEGROUND_PATH).c_str());
+	if (face_ground_ == NULL) {
+		std::cout << SDL_GetError();
+	}
 }
 void Level::update(Camera& cam) {
 	background_clip_.x = cam.getPos().x;
 	background_clip_.y = cam.getPos().y;
-	far_ground_clip_.x = cam.getPos().x / 5760 * 1642;
+	far_ground_clip_.x = cam.getPos().x / background_width_ * (far_ground_width_ - SCREEN_WIDTH);
+	far_ground_clip_.y = cam.getPos().y / background_height_ * (far_ground_height_ - SCREEN_HEIGHT);
 }
 
 void Level::renderFarGround(SDL_Renderer* ren)
 {
-	SDL_RenderCopy(ren, far_ground_, &far_ground_clip_, NULL);
+	if (far_ground_ != NULL) SDL_RenderCopy(ren, far_ground_, &far_ground_clip_, NULL);
 }
 
 void Level::renderForeGround(SDL_Renderer* ren)
 {
+	if (fore_ground_ != NULL) SDL_RenderCopy(ren, fore_ground_, &background_clip_, NULL);
+}
 
-	SDL_RenderCopy(ren, fore_ground_, &background_clip_, NULL);
+void Level::renderFaceGround(SDL_Renderer* ren)
+{
+	if (face_ground_ != NULL) SDL_RenderCopy(ren, face_ground_, &background_clip_, NULL);
 }
 
 void Level::renderBackground(SDL_Renderer* ren)
 {
-	SDL_RenderCopy(ren, back_ground_, &background_clip_, NULL);
+	if (back_ground_ != NULL) SDL_RenderCopy (ren, back_ground_, &background_clip_, NULL);
 }
 
-void Level::render(SDL_Renderer* ren, Camera& cam) {
-	SDL_Rect viewport = cam.getViewport();
 
-	int x, y, mapX, x1, x2, mapY, y1, y2;
+//tilebase map render 
 
-	mapX = viewport.x;
-	x1 = (int(cam.getPos().x) % TILE_SIZE) * -1;
-	x2 = x1 + SCREEN_WIDTH + (x1 == 0 ? 0 : TILE_SIZE);
+// void Level::render(SDL_Renderer* ren, Camera& cam) {
+// 	SDL_Rect viewport = cam.getViewport();
 
-	mapY = viewport.y;
-	y1 = (int(cam.getPos().y) % TILE_SIZE) * -1;
-	y2 = y1 + SCREEN_HEIGHT + (y1 == 0 ? 0 : TILE_SIZE);
+// 	int x, y, mapX, x1, x2, mapY, y1, y2;
 
-	for (y = y1; y <= y2; y += TILE_SIZE)
-	{
+// 	mapX = viewport.x;
+// 	x1 = (int(cam.getPos().x) % TILE_SIZE) * -1;
+// 	x2 = x1 + SCREEN_WIDTH + (x1 == 0 ? 0 : TILE_SIZE);
 
-		mapX = viewport.x;
-		for (x = x1; x <= x2; x += TILE_SIZE)
-		{
-			SDL_Rect des = { x ,y ,TILE_SIZE,TILE_SIZE };
-			if (tiles_[mapY][mapX] == EMPTY) {
-				SDL_RenderCopy(ren, sprite_tiles_, &EMPTY_TILE_CLIP, &des);
-			}
-			else if (tiles_[mapY][mapX] == GROUND) {
-				SDL_RenderCopy(ren, sprite_tiles_, &GROUND_TILE_CLIP, &des);
-			}
+// 	mapY = viewport.y;
+// 	y1 = (int(cam.getPos().y) % TILE_SIZE) * -1;
+// 	y2 = y1 + SCREEN_HEIGHT + (y1 == 0 ? 0 : TILE_SIZE);
 
-			mapX++;
-		}
+// 	for (y = y1; y <= y2; y += TILE_SIZE)
+// 	{
 
-		mapY++;
-	}
-}
+// 		mapX = viewport.x;
+// 		for (x = x1; x <= x2; x += TILE_SIZE)
+// 		{
+// 			SDL_Rect des = { x ,y ,TILE_SIZE,TILE_SIZE };
+// 			if (tiles_[mapY][mapX] == EMPTY) {
+// 				SDL_RenderCopy(ren, sprite_tiles_, &EMPTY_TILE_CLIP, &des);
+// 			}
+// 			else if (tiles_[mapY][mapX] == GROUND) {
+// 				SDL_RenderCopy(ren, sprite_tiles_, &GROUND_TILE_CLIP, &des);
+// 			}
+
+// 			mapX++;
+// 		}
+
+// 		mapY++;
+// 	}
+// }
 
 void Level::loadSavedPath()
 {
@@ -168,7 +194,7 @@ void Level::loadSavedPath()
 		if (root) {
 			tinyxml2::XMLElement* levelPath = root->FirstChildElement("LevelPath");
 			if (levelPath) {
-				int id;
+				int id = 1;
 				levelPath->QueryIntAttribute("id", &id);
 				id_ = static_cast<LevelIndex>(id);
 				setPath(levelPath->GetText());
@@ -176,10 +202,12 @@ void Level::loadSavedPath()
 		}
 	}
 	else {
+
 		id_ = Level1;
-		setPath(LEVEL_PATH[Level1]);
+		setPath(LEVEL_PATH[Level1] + MAP_NAME[Level1]);
 		savePath();
 	}
+
 }
 
 void Level::savePath() {
@@ -202,15 +230,17 @@ void Level::savePath() {
 }
 
 void Level::toNextLevel() {
+	if (id_ == Level3) {
+		// StateMachine::changeState(CreditState::get());
+		return;
+	}
 	if (id_ == Level1) {
 		id_ = Level2;
 	}
 	else if (id_ == Level2) {
 		id_ = Level3;
 	}
-	else {
-		return;
-	}
-	setPath(LEVEL_PATH[id_]);
+	setPath(LEVEL_PATH[id_] + MAP_NAME[id_]);
 	savePath();
+	StateMachine::get()->setNextState(LoadingScreenState::get());
 }

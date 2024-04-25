@@ -1,7 +1,7 @@
 #ifndef GAME_H_
 #define GAME_H_
 #include "StateMachine.h"
-#include "IntroState.h"
+#include "../states/IntroState.h"
 
 class Game {
 public:

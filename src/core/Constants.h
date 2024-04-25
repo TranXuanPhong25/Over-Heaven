@@ -13,23 +13,25 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
-//1080p resolution
+
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
 
 const float TARGET_TIMESTEP = 1000 / 60;
-const int MAX_TILES = 2000;
+const int MAX_TILES = 155;
 
 const int TILE_SIZE = 60;
 
 const std::string NUNU_TEXTURE_PATH_64X91 = "assets/char/nunu.png";
 const int JUMP_HEIGHT = 1200;
-const int MAX_FALL_SPEED = 1800;
+const int MAX_FALL_SPEED = 2000;
 const int MAX_JUMP_BUFFER = 3;
 const int MAX_COYOTE_TIME = 6;
+
 //const int MAX_DASH_FRAMES = 6;
 //const int DASH_FORCE = 5;
 //const float DASH_COOLDOWN = 0.5f;
+
 const int GRAVITY = 600;
 const int DEFAULT_SPEED = 400;
 const int FLOATY_FALL_VEL = 80;
@@ -47,12 +49,30 @@ const int UP = -1;
 const int DOWN = 1;
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
+const int PLAYER_DEFAULT_POS[4][2]={
+	{0,0},
+	{ 180, 300 },
+	{120, 5500 },
+	{ 60, 60 }
+};
+
 const std::string LEVEL_PATH[4] = {
 	"",
-	"assets/level/map1.csv",
-	"assets/level/map2.csv",
-	"assets/level/map3.csv"
+	"assets/level/level1/",
+	"assets/level/level2/",
+	"assets/level/level3/"
 };
+const std::string MAP_NAME[4] = {
+	"",
+	"map1.csv",
+	"map2.csv",
+	"map3.csv"
+};
+const std::string BACKGROUND_PATH = "background.png";
+const std::string FARGROUND_PATH = "farground.png";
+const std::string FOREGROUND_PATH = "foreground.png";
+const std::string FACEGROUND_PATH = "faceground.png";
+
 const int NUMS_OF_BUTTONS = 3;
 const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {
 	"assets/menu/newGame.png",
