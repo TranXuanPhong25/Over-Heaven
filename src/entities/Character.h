@@ -35,8 +35,9 @@ public:
 	void jump(const float& dT);
 	void CollideX(Level& level);
 	void CollideY(Level& level);
-	void saveStats();
+	void saveStats() const;
 	void loadStats(Level& level);
+	void resetStats();
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
 	State state_;

@@ -1,56 +1,52 @@
 #include "PlayState.h"
 
 PlayState PlayState::s_play_state_;
-PlayState::PlayState() {}
+PlayState::PlayState() {
+	loaded_player_spritesheet_ = false;
+	is_get_in_ = false;
+	get_in_fx_ = NULL;
+	
+}
 
 PlayState* PlayState::get()
 {
 	return &s_play_state_;
 }
-void PlayState::loadResources(SDL_Renderer* ren)
+void PlayState::getOut()
 {
-	try {
-		level_.loadSavedPath();
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Error loading saved path: " << e.what() << std::endl;
-		// Handle the error (e.g., by loading default saved path or terminating the program)
-	}
 
-	try {
-		level_.loadFromFile();
-	}
-	catch (const std::exception& e) {
-		std::cout << SDL_GetError();
-	}
+}
+void PlayState::getIn()
+{
+	
+}
+float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
+{
+	float totalSteps = 5.0f;
+	level_.loadSavedPath();
+	*progress = *progress + 1.0f / totalSteps;
 
-	try {
-		level_.loadResources(ren);
-	}
-	catch (const std::exception& e) {
-		std::cout << SDL_GetError();
 
-	}
-	try {
-		player_.loadTexture(ren, NUNU_TEXTURE_PATH_64X91);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Error loading player texture: " << e.what() << std::endl;
-		// Handle the error (e.g., by loading default texture or terminating the program)
-	}
+	level_.loadResources(ren);
+	*progress = *progress + 1.0f / totalSteps;
 
-	try {
-		player_.loadStats(level_);
+	level_.loadTiles();
+	*progress = *progress + 1.0f / totalSteps;
 
+	if (!loaded_player_spritesheet_) {
+		player_.loadTexture(ren, PLAYER_SPRITESHEET_PATH);
+		loaded_player_spritesheet_ = true;
 	}
-	catch (const std::exception& e) {
-		std::cerr << "Error loading player stats: " << e.what() << std::endl;
-		// Handle the error (e.g., by loading default stats or terminating the program)
-	}
+	*progress = *progress + 1.0f / totalSteps;
+
+	player_.loadStats(level_);
+	*progress = *progress + 1.0f / totalSteps;
+
+	return *progress;
 }
 bool PlayState::enter(SDL_Renderer* ren)
 {
-	cam_.setPosition(player_.getPos().x - SCREEN_WIDTH / 2, player_.getPos().y - SCREEN_HEIGHT / 2);
+	cam_.setPosition(player_.getPos().x - static_cast<float>(SCREEN_WIDTH) / 2, player_.getPos().y - static_cast<float>(SCREEN_WIDTH) / 2);
 	return true;
 }
 
@@ -75,13 +71,12 @@ void PlayState::update(const float& dT)
 }
 void PlayState::render(SDL_Renderer* ren)
 {
-	
+
 	level_.renderFarGround(ren);
 	level_.renderBackground(ren);
 	player_.render(ren);
 	level_.renderForeGround(ren);
 	level_.renderFaceGround(ren);
-
 }
 void PlayState::deleteSave()
 {

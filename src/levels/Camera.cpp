@@ -1,5 +1,5 @@
 #include "Camera.h"
-Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_HEIGHT / TILE_SIZE), xOffset_(0), yOffset_(0), damping_factor_(0.1f) {
+Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_HEIGHT / TILE_SIZE), xOffset_(0), yOffset_(0), damping_factor_(0.05f) {
 }
 
 Camera::~Camera() {}
@@ -22,8 +22,7 @@ void Camera::centerOn(const Vector2D& pos, const int& w, const int& h, const int
 	// Apply linear interpolation (lerp) to smooth camera movement with damping
 	Vector2D delta = targetPos - pos_;
 	pos_ += delta * damping_factor_;
-	pos_.x = round(pos_.x);
-	pos_.y = round(pos_.y);
+
 	// Ensure camera doesn't go beyond level boundaries
 	if (pos_.x < 0) {
 		pos_.x = 0;

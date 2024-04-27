@@ -2,7 +2,7 @@
 Character::Character()
 {
 	speed_ = DEFAULT_SPEED;
-	vel_ = {0, 0};
+	vel_ = { 0, 0 };
 	state_ = IDLE_RIGHT;
 	spacekey_pressed_ = false;
 	/*accelerator_ = 0;*/
@@ -29,7 +29,7 @@ Character::~Character()
 	free();
 }
 
-void Character::handleInput(SDL_Event &e)
+void Character::handleInput(SDL_Event& e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -112,14 +112,14 @@ Vector2D Character::getVel() const
 {
 	return vel_;
 }
-bool Character::checkCollision(const SDL_Rect &a, const SDL_Rect &s)
+bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s)
 {
 	return a.x < s.x + s.w &&
-		   a.x + a.w > s.x &&
-		   a.y < s.y + s.h &&
-		   a.y + a.h > s.y;
+		a.x + a.w > s.x &&
+		a.y < s.y + s.h &&
+		a.y + a.h > s.y;
 }
-void Character::update(Level &level, Camera &cam, const float &dT)
+void Character::update(Level& level, Camera& cam, const float& dT)
 {
 
 	// if (dashing_) {
@@ -133,27 +133,27 @@ void Character::update(Level &level, Camera &cam, const float &dT)
 	CollideY(level);
 	handleReachGoal(level, cam);
 }
-void Character::handleReachGoal(Level &level, Camera &cam)
+void Character::handleReachGoal(Level& level, Camera& cam)
 {
 	if (should_change_level_)
 	{
 		level.toNextLevel();
 		cam.setPosition(0, 0);
-		pos_.x = TILE_SIZE * 3;
-		pos_.y = 0;
+		pos_.x = PLAYER_DEFAULT_POS[level.getLevelIndex()][0];
+		pos_.y = PLAYER_DEFAULT_POS[level.getLevelIndex()][1];
 		saveStats();
 		should_change_level_ = false;
 	}
 }
-void Character::moveX(const float &dT)
+void Character::moveX(const float& dT)
 {
 	vel_.x = (dir_right_ - dir_left_) * speed_;
 	pos_.x += vel_.x * dT;
 }
-void Character::handleCollideX(const int &x, const int &y, Level::Tile tile)
+void Character::handleCollideX(const int& x, const int& y, Level::Tile tile)
 {
-	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-	if (checkCollision({(int)pos_.x, (int)pos_.y, rect_.w, rect_.h}, tileRect))
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+	if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 	{
 		if (tile == Level::GROUND)
 		{
@@ -178,7 +178,7 @@ void Character::handleCollideX(const int &x, const int &y, Level::Tile tile)
 	}
 }
 
-void Character::CollideX(Level &level)
+void Character::CollideX(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -213,7 +213,7 @@ void Character::CollideX(Level &level)
 //	}
 //
 // }
-void Character::jump(const float &dT)
+void Character::jump(const float& dT)
 {
 	if (state_ == MOVE_LEFT || state_ == IDLE_LEFT /*|| state_ == DASH_LEFT*/)
 		state_ = JUMP_LEFT;
@@ -227,7 +227,7 @@ void Character::jump(const float &dT)
 	required_frame_to_apply_jump_ = 50;
 }
 
-void Character::applyGravity(const float &dT)
+void Character::applyGravity(const float& dT)
 {
 
 	if (vel_.y > FLOATY_FALL_VEL)
@@ -277,7 +277,7 @@ void Character::applyGravity(const float &dT)
 	}
 }
 
-void Character::moveY(const float &dT)
+void Character::moveY(const float& dT)
 {
 	if (required_frame_to_apply_jump_)
 		required_frame_to_apply_jump_--;
@@ -316,16 +316,16 @@ void Character::moveY(const float &dT)
 	}*/
 	pos_.y += vel_.y * dT;
 }
-void Character::handleCollideY(const int &x, const int &y, const int &endY, Level::Tile tile, bool &somethingBelow)
+void Character::handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow)
 {
-	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
 	if (tile == Level::GROUND)
 	{
 		if (y == endY)
 		{
 			somethingBelow = true;
 		}
-		if (checkCollision({(int)pos_.x, (int)pos_.y, rect_.w, rect_.h}, tileRect))
+		if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 		{
 			if (vel_.y >= 0)
 			{
@@ -345,7 +345,7 @@ void Character::handleCollideY(const int &x, const int &y, const int &endY, Leve
 		should_change_level_ = true;
 	}
 }
-void Character::CollideY(Level &level)
+void Character::CollideY(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -367,12 +367,12 @@ void Character::CollideY(Level &level)
 		on_ground_ = false;
 	}
 }
-void Character::saveStats()
+void Character::saveStats() const
 {
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement *root = doc.NewElement("SaveData");
+	tinyxml2::XMLElement* root = doc.NewElement("SaveData");
 	doc.InsertFirstChild(root);
-	tinyxml2::XMLElement *playerPos = doc.NewElement("PlayerPosition");
+	tinyxml2::XMLElement* playerPos = doc.NewElement("PlayerPosition");
 	playerPos->SetAttribute("x", static_cast<int>(pos_.x));
 	playerPos->SetAttribute("y", static_cast<int>(pos_.y));
 	// save another member variable
@@ -381,36 +381,62 @@ void Character::saveStats()
 
 	doc.SaveFile("save/save_game.xml");
 }
-void Character::loadStats(Level &level)
+void Character::loadStats(Level& level)
 {
+	resetStats();
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile("save/save_game.xml") != tinyxml2::XML_SUCCESS)
 	{
 		std::cout << "Failed to load save file." << std::endl;
 	}
 
-	tinyxml2::XMLElement *root = doc.FirstChildElement("SaveData");
+	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
 	if (!root)
 	{
 		std::cout << "Save file is missing SaveData element." << std::endl;
 		return;
 	}
-	
+
 	pos_.x = PLAYER_DEFAULT_POS[level.getLevelIndex()][0];
 	pos_.y = PLAYER_DEFAULT_POS[level.getLevelIndex()][1];
 
-	tinyxml2::XMLElement *playerPos = root->FirstChildElement("PlayerPosition");
+	tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
 	if (playerPos)
 	{
-		int posX=-1,posY=-1;
+		int posX = -1, posY = -1;
 		playerPos->QueryIntAttribute("x", &posX);
 		playerPos->QueryIntAttribute("y", &posY);
-		pos_.x = posX==-1?pos_.x:posX;
-		pos_.y = posY==-1?pos_.y:posY;
+		pos_.x = posX == -1 ? pos_.x : posX;
+		pos_.y = posY == -1 ? pos_.y : posY;
 	}
 	else
 	{
 		saveStats();
 		std::cout << "Save file is missing PlayerPosition element." << std::endl;
 	}
+}
+
+void Character::resetStats()
+{
+	speed_ = DEFAULT_SPEED;
+	vel_ = { 0, 0 };
+	state_ = IDLE_RIGHT;
+	spacekey_pressed_ = false;
+	on_ground_ = false;
+	dir_left_ = 0;
+	dir_right_ = 0;
+	gravity_scalar_ = DEFAULT_SCALAR;
+	jump_count_ = 1;
+
+	// dashing_ = false;
+	// dash_counter_ = 1;
+	// dashing_frame_ = 0;
+	// dash_dir_ = 0;
+	// dash_cooldown_ = 0;
+	required_frame_to_apply_jump_ = 0;
+	wall_collided_ = false;
+	collide_x_ = false;
+	coyote_time_ = 0;
+	/*jump_buffer_ = 0;*/
+	should_change_level_ = false;
 }

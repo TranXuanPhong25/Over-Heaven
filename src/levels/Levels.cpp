@@ -16,13 +16,8 @@ Level::Level() {
 	fore_ground_ = NULL;
 	face_ground_ = NULL;
 
-	background_clip_={0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
-	far_ground_clip_={0,0,SCREEN_WIDTH,SCREEN_HEIGHT};
-
-	SDL_QueryTexture(back_ground_, NULL, NULL, &background_width_,&background_height_ );
-	SDL_QueryTexture(far_ground_, NULL, NULL, &far_ground_width_,&far_ground_height_ );
-	SDL_QueryTexture(fore_ground_, NULL, NULL, &fore_ground_width_,&fore_ground_height_ );
-	SDL_QueryTexture(face_ground_, NULL, NULL, &face_ground_width_,&face_ground_height_ );
+	background_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	far_ground_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 }
 
@@ -49,18 +44,18 @@ void Level::setPath(const std::string& path) {
 	path_ = path;
 }
 
-void Level::handleLineCSV(const std::string &line, int &r, int &c)
+void Level::handleLineCSV(const std::string& line, int& r, int& c)
 {
-    for (char ch : line)
-		{
-			if (ch != ',') {
-				tiles_[r][c] = static_cast<Tile>(ch - '0');
-				c++;
-			}
+	for (char ch : line)
+	{
+		if (ch != ',') {
+			tiles_[r][c] = static_cast<Tile>(ch - '0');
+			c++;
 		}
+	}
 }
 
-bool Level::loadFromFile() {
+bool Level::loadTiles() {
 	std::ifstream file(path_);
 	if (!file.is_open()) {
 		std::cerr << "Error: Unable to open file " << path_ << std::endl;
@@ -80,16 +75,17 @@ bool Level::loadFromFile() {
 	return true;
 }
 
-std::string Level::getPath() {
+std::string Level::getPath() const
+{
 	return path_;
 }
 
-Level::LevelIndex Level::getLevelIndex()
+Level::LevelIndex Level::getLevelIndex() const
 {
 	return id_;
 }
 
-Level::Tile Level::getTile(const int& x, const int& y)
+Level::Tile Level::getTile(const int& x, const int& y) const
 {
 	return tiles_[y][x];
 }
@@ -101,26 +97,34 @@ int Level::getHeight() const { return row_; }
 
 void Level::loadResources(SDL_Renderer* ren)
 {
+	if (back_ground_ != NULL) SDL_DestroyTexture(back_ground_);
 	back_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + BACKGROUND_PATH).c_str());
 
 	if (back_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
 
+	if (far_ground_ != NULL) SDL_DestroyTexture(far_ground_);
 	far_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FARGROUND_PATH).c_str());
 	if (far_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
 
+	if (fore_ground_ != NULL) SDL_DestroyTexture(fore_ground_);
 	fore_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FOREGROUND_PATH).c_str());
 	if (fore_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
 
+	if (face_ground_ != NULL) SDL_DestroyTexture(face_ground_);
 	face_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FACEGROUND_PATH).c_str());
 	if (face_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
+	SDL_QueryTexture(back_ground_, NULL, NULL, &background_width_, &background_height_);
+	SDL_QueryTexture(far_ground_, NULL, NULL, &far_ground_width_, &far_ground_height_);
+	SDL_QueryTexture(fore_ground_, NULL, NULL, &fore_ground_width_, &fore_ground_height_);
+	SDL_QueryTexture(face_ground_, NULL, NULL, &face_ground_width_, &face_ground_height_);
 }
 void Level::update(Camera& cam) {
 	background_clip_.x = cam.getPos().x;
@@ -146,7 +150,7 @@ void Level::renderFaceGround(SDL_Renderer* ren)
 
 void Level::renderBackground(SDL_Renderer* ren)
 {
-	if (back_ground_ != NULL) SDL_RenderCopy (ren, back_ground_, &background_clip_, NULL);
+	if (back_ground_ != NULL) SDL_RenderCopy(ren, back_ground_, &background_clip_, NULL);
 }
 
 
@@ -197,7 +201,7 @@ void Level::loadSavedPath()
 				int id = 1;
 				levelPath->QueryIntAttribute("id", &id);
 				id_ = static_cast<LevelIndex>(id);
-				setPath(levelPath->GetText());
+				setPath(LEVEL_PATH[id_] + MAP_NAME[id_]);
 			}
 		}
 	}

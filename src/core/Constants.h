@@ -5,14 +5,15 @@
 #include <SDL_image.h>
 #include <SDL_mixer.h>
 
-#include <string>
 #include <windows.h>
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <string>
 #include <fstream>
 #include <cmath>
 #include <algorithm>
+#include <atomic>
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
@@ -22,7 +23,7 @@ const int MAX_TILES = 155;
 
 const int TILE_SIZE = 60;
 
-const std::string NUNU_TEXTURE_PATH_64X91 = "assets/char/nunu.png";
+const std::string PLAYER_SPRITESHEET_PATH = "assets/player/player_sprite_sheet.png";
 const int JUMP_HEIGHT = 1200;
 const int MAX_FALL_SPEED = 2000;
 const int MAX_JUMP_BUFFER = 3;
@@ -49,7 +50,7 @@ const int UP = -1;
 const int DOWN = 1;
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
-const int PLAYER_DEFAULT_POS[4][2]={
+const int PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
 	{120, 5500 },
@@ -80,8 +81,7 @@ const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {
 	"assets/menu/quitGame.png",
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
-const SDL_Rect EMPTY_TILE_CLIP = { 0, 0, TILE_SIZE, TILE_SIZE };
-const SDL_Rect GROUND_TILE_CLIP = { TILE_SIZE, 0, TILE_SIZE, TILE_SIZE };
+const SDL_Rect ENTIRE_WINDOW = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 
 #endif // !CONSTANT_H_

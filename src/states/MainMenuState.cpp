@@ -1,5 +1,43 @@
 #include "MainMenuState.h"
 
+MenuButton::~MenuButton()
+{
+	SDL_DestroyTexture(texture_);
+	texture_ = NULL;
+	alpha_ = MISFOCUSING;
+}
+void MenuButton::render(SDL_Renderer* ren)
+{
+	SDL_SetTextureAlphaMod(texture_, alpha_);
+	SDL_RenderCopy(ren, texture_, NULL, &rect_);
+}
+void MenuButton::loadTexture(SDL_Renderer* ren, const std::string& path)
+{
+	texture_ = IMG_LoadTexture(ren, path.c_str());
+	SDL_QueryTexture(texture_, NULL, NULL, &rect_.w, &rect_.h);
+	rect_.x = (SCREEN_WIDTH - rect_.w) / 2;
+}
+void MenuButton::setRectY(const int& y)
+{
+	rect_.y = y;
+}
+void MenuButton::setType(ButtonType type)
+{
+	type_ = type;
+}
+void MenuButton::reduceAlpha()
+{
+	alpha_ = Transition::easeIn(alpha_, MISFOCUSING, 0.25f);
+}
+void MenuButton::enhanceAlpha()
+{
+	alpha_ = Transition::easeOut(alpha_, FOCUSING, 0.25f);
+}
+MenuButton::ButtonType MenuButton::getType() const
+{
+	return type_;
+}
+
 MainMenuState MainMenuState::s_main_menu_state_;
 MainMenuState::MainMenuState()
 {
@@ -48,7 +86,7 @@ void MainMenuState::handleFocusDown() {
 		current_button_ = static_cast<MenuButton::ButtonType>(current_button_ + 1);
 	}
 }
-void MainMenuState::handleEnter() {
+void MainMenuState::handleEnter() const {
 	if (current_button_ == MenuButton::QUIT) {
 		StateMachine::get()->setNextState(ExitState::get());
 	}
@@ -73,49 +111,23 @@ void MainMenuState::handleEvent(SDL_Event& e) {
 	}
 }
 void MainMenuState::update(const float& dT) {
+	for (int i = 0; i < NUMS_OF_BUTTONS; i++) {
+		if (buttons_[i].getType() == current_button_) {
+			buttons_[i].enhanceAlpha();
+		}
+		else {
+			buttons_[i].reduceAlpha();
+		}
+	}
 }
 void MainMenuState::render(SDL_Renderer* ren) {
 	SDL_RenderCopy(ren, bg_, NULL, NULL);
 	for (int i = 0; i < NUMS_OF_BUTTONS; i++) {
 		if (buttons_[i].getType() == current_button_) {
-			buttons_[i].render(ren, FOCUSING);
+			buttons_[i].render(ren);
 		}
 		else buttons_[i].render(ren);
 
 	}
 
-}
-
-MenuButton::~MenuButton()
-{
-	SDL_DestroyTexture(texture_);
-	texture_ = NULL;
-}
-
-void MenuButton::render(SDL_Renderer* ren, const int& alphaFactor)
-{
-	SDL_SetTextureAlphaMod(texture_, alphaFactor);
-	SDL_RenderCopy(ren, texture_, NULL, &rect_);
-}
-
-
-void MenuButton::loadTexture(SDL_Renderer* ren, const std::string& path)
-{
-	texture_ = IMG_LoadTexture(ren, path.c_str());
-	SDL_QueryTexture(texture_, NULL, NULL, &rect_.w, &rect_.h);
-	rect_.x = (SCREEN_WIDTH - rect_.w) / 2;
-}
-void MenuButton::setRectY(const int& y)
-{
-	rect_.y = y;
-}
-
-void MenuButton::setType(ButtonType type)
-{
-	type_ = type;
-}
-
-MenuButton::ButtonType MenuButton::getType()
-{
-	return type_;
 }

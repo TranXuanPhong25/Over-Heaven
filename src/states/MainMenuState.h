@@ -12,17 +12,19 @@ public:
 		QUIT
 	};
 	~MenuButton();
-	void render(SDL_Renderer* ren, const int& alphaFactor = MISFOCUSING);
+	void render(SDL_Renderer* ren);
 	void loadTexture(SDL_Renderer* ren, const std::string& path);
 	void setRectY(const int& y);
 	void setType(ButtonType type);
-	ButtonType getType();
+	void reduceAlpha();
+	void enhanceAlpha();
+	ButtonType getType() const;
 private:
 	ButtonType type_;
 	SDL_Texture* texture_;
 	SDL_Rect rect_;
 	bool is_focused_;
-
+	Uint8 alpha_;
 };
 //single-level menu
 class MainMenuState : public GameState {
@@ -34,7 +36,7 @@ public:
 	void handleFocusUp();
 	void handleFocusDown();
 
-	void handleEnter();
+	void handleEnter() const;
 
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);

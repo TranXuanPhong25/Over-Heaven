@@ -25,10 +25,10 @@ public:
 	~Level();
 	void setPath(const std::string& path);
 
-	std::string getPath();
+	std::string getPath() const;
 	void loadResources(SDL_Renderer* ren);
 	void loadSavedPath();
-	bool loadFromFile();
+	bool loadTiles();
 
 	void savePath();
 
@@ -36,8 +36,8 @@ public:
 
 	void toNextLevel();
 	void handleLineCSV(const std::string& line, int& r, int& c);
-	Tile getTile(const int& x, const int& y);
-	LevelIndex getLevelIndex();
+	Tile getTile(const int& x, const int& y) const;
+	LevelIndex getLevelIndex() const;
 
 	int getWidth()const;
 	int getHeight()const;
@@ -56,7 +56,7 @@ private:
 	int face_ground_height_;
 	int background_width_;
 	int background_height_;
-	
+
 	SDL_Rect far_ground_clip_;
 	SDL_Rect background_clip_;
 
