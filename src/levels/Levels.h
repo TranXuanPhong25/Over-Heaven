@@ -26,7 +26,7 @@ public:
 	void setPath(const std::string& path);
 
 	std::string getPath() const;
-	void loadResources(SDL_Renderer* ren);
+	void loadResources(SDL_Renderer* ren, std::atomic<float>* progress);
 	void loadSavedPath();
 	bool loadTiles();
 

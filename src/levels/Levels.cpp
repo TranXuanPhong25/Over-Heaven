@@ -95,32 +95,36 @@ int Level::getWidth() const { return col_; }
 
 int Level::getHeight() const { return row_; }
 
-void Level::loadResources(SDL_Renderer* ren)
+void Level::loadResources(SDL_Renderer* ren,std::atomic<float>*progress)
 {
 	if (back_ground_ != NULL) SDL_DestroyTexture(back_ground_);
 	back_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + BACKGROUND_PATH).c_str());
-
 	if (back_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	if (far_ground_ != NULL) SDL_DestroyTexture(far_ground_);
 	far_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FARGROUND_PATH).c_str());
 	if (far_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	if (fore_ground_ != NULL) SDL_DestroyTexture(fore_ground_);
 	fore_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FOREGROUND_PATH).c_str());
 	if (fore_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	if (face_ground_ != NULL) SDL_DestroyTexture(face_ground_);
 	face_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + FACEGROUND_PATH).c_str());
 	if (face_ground_ == NULL) {
 		std::cout << SDL_GetError();
 	}
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+
 	SDL_QueryTexture(back_ground_, NULL, NULL, &background_width_, &background_height_);
 	SDL_QueryTexture(far_ground_, NULL, NULL, &far_ground_width_, &far_ground_height_);
 	SDL_QueryTexture(fore_ground_, NULL, NULL, &fore_ground_width_, &fore_ground_height_);

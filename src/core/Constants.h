@@ -50,6 +50,7 @@ const int UP = -1;
 const int DOWN = 1;
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
+const float TOTAL_LOADING_STEP= 8.0f;
 const int PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },

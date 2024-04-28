@@ -31,7 +31,7 @@ void MenuButton::reduceAlpha()
 }
 void MenuButton::enhanceAlpha()
 {
-	alpha_ = Transition::easeOut(alpha_, FOCUSING, 0.25f);
+	alpha_ = Transition::easeOut(alpha_, FOCUSING, 0.05f);
 }
 MenuButton::ButtonType MenuButton::getType() const
 {

@@ -12,7 +12,7 @@ public:
     static T easeIn(T a, T b, float t) {
         return a + t * t * (b - a);
     }
-
+    
     template <typename T>
     static T easeOut(T a, T b, float t) {
         return a + t * (2 - t) * (b - a);

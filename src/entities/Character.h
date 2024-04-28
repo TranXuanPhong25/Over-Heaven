@@ -23,22 +23,30 @@ public:
 	Character();
 	~Character();
 	void handleInput(SDL_Event& e);
+	void handleKeyPressed(const SDL_Event& e);
+	void handleKeyReleased(const SDL_Event& e);
+
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
-	void handleReachGoal(Level& level, Camera& cam);
+	
 	void moveX(const float& dT);
+    void moveY(const float &dT);
+    void CollideX(Level& level);
+	void CollideY(Level& level);
+    void GroundCollideX(const SDL_Rect &tileRect);
+    void GroundCollideY(const SDL_Rect &tileRect);
 	void handleCollideX(const int& x, const int& y, Level::Tile tile);
 	void handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow);
-	void moveY(const float& dT);
+	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
+	void setDefaultPosition(Level&level);
 	void applyGravity(const float& dT);
 	//void dash(const float& dT);
 	void jump(const float& dT);
-	void CollideX(Level& level);
-	void CollideY(Level& level);
+	bool isReachedGoal() const;
+	void handleReachGoal();
 	void saveStats() const;
 	void loadStats(Level& level);
 	void resetStats();
-	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 private:
 	State state_;
 	int speed_;
