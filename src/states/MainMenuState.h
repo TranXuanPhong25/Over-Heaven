@@ -35,9 +35,7 @@ public:
 	bool exit();
 	void handleFocusUp();
 	void handleFocusDown();
-
 	void handleEnter() const;
-
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);

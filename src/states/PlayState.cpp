@@ -13,61 +13,61 @@ PlayState* PlayState::get()
 {
 	return &s_play_state_;
 }
-void PlayState::getOut(const float&dT)
+void PlayState::getOut(const float& dT)
 {
-	overlay_alpha_ +=dT;
-	if (overlay_alpha_>1.0f) {
+	overlay_alpha_ += dT;
+	if (overlay_alpha_ > 1.0f) {
 		overlay_alpha_ = 1.0f;
 		is_on_exit_ = false;
-		should_change_level_= true;
+		should_change_level_ = true;
 	}
 }
-void PlayState::getIn(const float&dT)
+void PlayState::getIn(const float& dT)
 {
 	overlay_alpha_ = Transition::lerp(overlay_alpha_, -0.01f, dT);
-    if (overlay_alpha_<0) {
-        overlay_alpha_ = 0.0f;
+	if (overlay_alpha_ < 0) {
+		overlay_alpha_ = 0.0f;
 		is_on_enter_ = false;
-    }
+	}
 }
 void PlayState::handleTransition(const float& dT)
 {
-	if(is_on_enter_)
+	if (is_on_enter_)
 	{
 		getIn(dT);
 	}
-	if(is_on_exit_)
+	if (is_on_exit_)
 	{
 		getOut(dT);
 	}
-	
+
 }
-void PlayState::renderTransitionFx(SDL_Renderer *ren)
+void PlayState::renderTransitionFx(SDL_Renderer* ren)
 {
 	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(ren, 0, 0, 0, static_cast<Uint8>(overlay_alpha_ * 255));
-    SDL_RenderFillRect(ren, &ENTIRE_WINDOW);
+	SDL_SetRenderDrawColor(ren, 0, 0, 0, static_cast<Uint8>(overlay_alpha_ * 255));
+	SDL_RenderFillRect(ren, &ENTIRE_WINDOW);
 }
 void PlayState::handleChangeLevel()
 {
-	if(player_.isReachedGoal()){
+	if (player_.isReachedGoal()) {
 		player_.handleReachGoal();
 		is_on_exit_ = true;
 	}
-	if(should_change_level_){
+	if (should_change_level_) {
 		level_.toNextLevel();
 	}
 }
-float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
+float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 {
-	
+
 	level_.loadSavedPath();
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
-	level_.loadResources(ren, progress);
-
 	level_.loadTiles();
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+
+	level_.loadResources(ren, progress);
 
 	if (!loaded_player_spritesheet_) {
 		player_.loadTexture(ren, PLAYER_SPRITESHEET_PATH);
@@ -84,7 +84,7 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 bool PlayState::enter(SDL_Renderer* ren)
 {
 	is_on_enter_ = true;
-	if(should_change_level_){
+	if (should_change_level_) {
 		player_.resetStats();
 		player_.setDefaultPosition(level_);
 		should_change_level_ = false;
@@ -116,13 +116,14 @@ void PlayState::update(const float& dT)
 }
 void PlayState::render(SDL_Renderer* ren)
 {
-	
+
 	level_.renderFarGround(ren);
 	level_.renderBackground(ren);
 	player_.render(ren);
 	level_.renderForeGround(ren);
+	level_.renderNearGround(ren);
 	level_.renderFaceGround(ren);
-	if(is_on_enter_||is_on_exit_){
+	if (is_on_enter_ || is_on_exit_) {
 		renderTransitionFx(ren);
 	}
 }

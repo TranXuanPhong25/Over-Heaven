@@ -2,7 +2,7 @@
 Character::Character()
 {
 	speed_ = DEFAULT_SPEED;
-	vel_ = {0, 0};
+	vel_ = { 0, 0 };
 	state_ = IDLE_RIGHT;
 	spacekey_pressed_ = false;
 	/*accelerator_ = 0;*/
@@ -28,7 +28,7 @@ Character::~Character()
 {
 	free();
 }
-void Character::handleInput(SDL_Event &e)
+void Character::handleInput(SDL_Event& e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -40,7 +40,7 @@ void Character::handleInput(SDL_Event &e)
 	}
 }
 
-void Character::handleKeyPressed(const SDL_Event &e)
+void Character::handleKeyPressed(const SDL_Event& e)
 {
 	if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP)
 	{
@@ -90,7 +90,7 @@ void Character::handleKeyPressed(const SDL_Event &e)
 		}
 	}*/
 }
-void Character::handleKeyReleased(const SDL_Event &e)
+void Character::handleKeyReleased(const SDL_Event& e)
 {
 	if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP)
 	{
@@ -118,19 +118,19 @@ Vector2D Character::getVel() const
 {
 	return vel_;
 }
-bool Character::checkCollision(const SDL_Rect &a, const SDL_Rect &s)
+bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s)
 {
 	return a.x < s.x + s.w &&
-		   a.x + a.w > s.x &&
-		   a.y < s.y + s.h &&
-		   a.y + a.h > s.y;
+		a.x + a.w > s.x &&
+		a.y < s.y + s.h &&
+		a.y + a.h > s.y;
 }
-void Character::setDefaultPosition(Level &level)
+void Character::setDefaultPosition(Level& level)
 {
 	pos_.x = PLAYER_DEFAULT_POS[level.getLevelIndex()][0];
 	pos_.y = PLAYER_DEFAULT_POS[level.getLevelIndex()][1];
 }
-void Character::update(Level &level, Camera &cam, const float &dT)
+void Character::update(Level& level, Camera& cam, const float& dT)
 {
 
 	// if (dashing_) {
@@ -147,12 +147,12 @@ void Character::handleReachGoal()
 {
 	should_change_level_ = false;
 }
-void Character::moveX(const float &dT)
+void Character::moveX(const float& dT)
 {
 	vel_.x = (dir_right_ - dir_left_) * speed_;
 	pos_.x += vel_.x * dT;
 }
-void Character::GroundCollideX(const SDL_Rect &tileRect)
+void Character::GroundCollideX(const SDL_Rect& tileRect)
 {
 	collide_x_ = true;
 	if (!on_ground_)
@@ -167,10 +167,10 @@ void Character::GroundCollideX(const SDL_Rect &tileRect)
 	}
 }
 
-void Character::handleCollideX(const int &x, const int &y, Level::Tile tile)
+void Character::handleCollideX(const int& x, const int& y, Level::Tile tile)
 {
-	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
-	if (checkCollision({(int)pos_.x, (int)pos_.y, rect_.w, rect_.h}, tileRect))
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+	if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 	{
 		if (tile == Level::GROUND)
 		{
@@ -185,7 +185,7 @@ void Character::handleCollideX(const int &x, const int &y, Level::Tile tile)
 	}
 }
 
-void Character::CollideX(Level &level)
+void Character::CollideX(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -220,7 +220,7 @@ void Character::CollideX(Level &level)
 //	}
 //
 // }
-void Character::jump(const float &dT)
+void Character::jump(const float& dT)
 {
 	if (state_ == MOVE_LEFT || state_ == IDLE_LEFT /*|| state_ == DASH_LEFT*/)
 		state_ = JUMP_LEFT;
@@ -239,7 +239,7 @@ bool Character::isReachedGoal() const
 	return should_change_level_;
 }
 
-void Character::applyGravity(const float &dT)
+void Character::applyGravity(const float& dT)
 {
 	if (vel_.y > FLOATY_FALL_VEL)
 	{
@@ -251,6 +251,7 @@ void Character::applyGravity(const float &dT)
 	}
 	else if (spacekey_pressed_)
 	{
+		//variable jump height
 		if (required_frame_to_apply_jump_ > 46)
 		{
 			gravity_scalar_ = DEFAULT_SCALAR;
@@ -274,6 +275,7 @@ void Character::applyGravity(const float &dT)
 	{
 		gravity_scalar_ = FRICTION_SCALAR;
 	}
+
 	if (vel_.y > MAX_FALL_SPEED)
 	{
 		vel_.y = MAX_FALL_SPEED;
@@ -284,7 +286,7 @@ void Character::applyGravity(const float &dT)
 	}
 }
 
-void Character::moveY(const float &dT)
+void Character::moveY(const float& dT)
 {
 	if (required_frame_to_apply_jump_)
 		required_frame_to_apply_jump_--;
@@ -323,9 +325,9 @@ void Character::moveY(const float &dT)
 	}*/
 	pos_.y += vel_.y * dT;
 }
-void Character::GroundCollideY(const SDL_Rect &tileRect)
+void Character::GroundCollideY(const SDL_Rect& tileRect)
 {
-	if (checkCollision({(int)pos_.x, (int)pos_.y, rect_.w, rect_.h}, tileRect))
+	if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 	{
 		if (vel_.y >= 0)
 		{
@@ -340,9 +342,9 @@ void Character::GroundCollideY(const SDL_Rect &tileRect)
 		}
 	}
 }
-void Character::handleCollideY(const int &x, const int &y, const int &endY, Level::Tile tile, bool &somethingBelow)
+void Character::handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow)
 {
-	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
 	if (tile == Level::GROUND)
 	{
 		if (y == endY)
@@ -357,7 +359,7 @@ void Character::handleCollideY(const int &x, const int &y, const int &endY, Leve
 	}
 }
 
-void Character::CollideY(Level &level)
+void Character::CollideY(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -382,18 +384,16 @@ void Character::CollideY(Level &level)
 void Character::saveStats() const
 {
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement *root = doc.NewElement("SaveData");
+	tinyxml2::XMLElement* root = doc.NewElement("SaveData");
 	doc.InsertFirstChild(root);
-	tinyxml2::XMLElement *playerPos = doc.NewElement("PlayerPosition");
+	tinyxml2::XMLElement* playerPos = doc.NewElement("PlayerPosition");
 	playerPos->SetAttribute("x", static_cast<int>(pos_.x));
 	playerPos->SetAttribute("y", static_cast<int>(pos_.y));
-	// save another member variable
-
 	root->InsertEndChild(playerPos);
 
 	doc.SaveFile("save/save_game.xml");
 }
-void Character::loadStats(Level &level)
+void Character::loadStats(Level& level)
 {
 	resetStats();
 	tinyxml2::XMLDocument doc;
@@ -402,7 +402,7 @@ void Character::loadStats(Level &level)
 		std::cout << "Failed to load save file." << std::endl;
 	}
 
-	tinyxml2::XMLElement *root = doc.FirstChildElement("SaveData");
+	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
 	if (!root)
 	{
 		std::cout << "Save file is missing SaveData element." << std::endl;
@@ -412,7 +412,7 @@ void Character::loadStats(Level &level)
 	pos_.x = PLAYER_DEFAULT_POS[level.getLevelIndex()][0];
 	pos_.y = PLAYER_DEFAULT_POS[level.getLevelIndex()][1];
 
-	tinyxml2::XMLElement *playerPos = root->FirstChildElement("PlayerPosition");
+	tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
 	if (playerPos)
 	{
 		int posX = -1, posY = -1;
@@ -431,7 +431,7 @@ void Character::loadStats(Level &level)
 void Character::resetStats()
 {
 	speed_ = DEFAULT_SPEED;
-	vel_ = {0, 0};
+	vel_ = { 0, 0 };
 	state_ = IDLE_RIGHT;
 	spacekey_pressed_ = false;
 	on_ground_ = false;

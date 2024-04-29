@@ -64,8 +64,8 @@ void Game::run()
 	if (initWindow())
 	{
 		state_machine_->getCurrentState()->enter(ren_);
-		Uint32 preFrame = SDL_GetTicks64();
-		Uint32 curFrame;
+		Uint64 preFrame = SDL_GetTicks64();
+		Uint64 curFrame;
 		float dT = TARGET_TIMESTEP;
 
 		SDL_Event e;
@@ -83,10 +83,10 @@ void Game::run()
 
 			state_machine_->changeState(ren_);
 			curFrame = SDL_GetTicks64();
-			dT = (curFrame - preFrame);
+			dT = static_cast<float>(curFrame - preFrame);
 			if (dT < TARGET_TIMESTEP)
 			{
-				SDL_Delay(TARGET_TIMESTEP - dT);
+				SDL_Delay(static_cast<Uint32>(TARGET_TIMESTEP - dT));
 			}
 			else
 			{
@@ -94,7 +94,7 @@ void Game::run()
 			}
 			preFrame = curFrame;
 
-			state_machine_->getCurrentState()->update(dT / 1000.f);
+			state_machine_->getCurrentState()->update(dT / 1000.0f);
 
 			SDL_RenderClear(ren_);
 			state_machine_->getCurrentState()->render(ren_);

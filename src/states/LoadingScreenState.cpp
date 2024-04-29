@@ -85,7 +85,7 @@ void LoadingScreenState::update(const float& dT)
 
 	if (loading_finished_)
 	{
-		alpha_ = (SDL_GetTicks64() - end_loaded_time_) / 1000 * 255;
+		alpha_ = static_cast<Uint8>((SDL_GetTicks64() - end_loaded_time_) / 1000 * 255);
 	}
 
 	if (alpha_ >= 255)

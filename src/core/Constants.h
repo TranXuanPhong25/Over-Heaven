@@ -50,8 +50,8 @@ const int UP = -1;
 const int DOWN = 1;
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
-const float TOTAL_LOADING_STEP= 8.0f;
-const int PLAYER_DEFAULT_POS[4][2] = {
+const float TOTAL_LOADING_STEP = 9.0f;
+const float PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
 	{120, 5500 },
@@ -74,6 +74,7 @@ const std::string BACKGROUND_PATH = "background.png";
 const std::string FARGROUND_PATH = "farground.png";
 const std::string FOREGROUND_PATH = "foreground.png";
 const std::string FACEGROUND_PATH = "faceground.png";
+const std::string NEARGROUND_PATH = "nearground.png";
 
 const int NUMS_OF_BUTTONS = 3;
 const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {

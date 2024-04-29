@@ -15,10 +15,27 @@ Level::Level() {
 	far_ground_ = NULL;
 	fore_ground_ = NULL;
 	face_ground_ = NULL;
+	near_ground_ = NULL;
+
+	width_ = 0;
+	height_ = 0;
+
+	background_width_ = 0;
+	background_height_ = 0;
+	far_ground_width_ = 0;
+	far_ground_height_ = 0;
+	fore_ground_width_ = 0;
+	fore_ground_height_ = 0;
+	face_ground_width_ = 0;
+	face_ground_height_ = 0;
+	near_ground_height_ = 0;
+	near_ground_width_ = 0;
 
 	background_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 	far_ground_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
-
+	fore_ground_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	face_ground_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+	near_ground_clip_ = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 }
 
 Level::~Level() {
@@ -37,6 +54,10 @@ Level::~Level() {
 	if (face_ground_ != NULL) {
 		SDL_DestroyTexture(face_ground_);
 		face_ground_ = NULL;
+	}
+	if (near_ground_ != NULL) {
+		SDL_DestroyTexture(near_ground_);
+		near_ground_ = NULL;
 	}
 }
 
@@ -71,6 +92,9 @@ bool Level::loadTiles() {
 		r++;
 	}
 	row_ = r;
+	width_ = col_ * TILE_SIZE - SCREEN_WIDTH;
+	height_ = row_ * TILE_SIZE - SCREEN_HEIGHT;
+
 	file.close();
 	return true;
 }
@@ -95,7 +119,7 @@ int Level::getWidth() const { return col_; }
 
 int Level::getHeight() const { return row_; }
 
-void Level::loadResources(SDL_Renderer* ren,std::atomic<float>*progress)
+void Level::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 {
 	if (back_ground_ != NULL) SDL_DestroyTexture(back_ground_);
 	back_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + BACKGROUND_PATH).c_str());
@@ -125,16 +149,30 @@ void Level::loadResources(SDL_Renderer* ren,std::atomic<float>*progress)
 	}
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
+	if (near_ground_ != NULL) SDL_DestroyTexture(near_ground_);
+	near_ground_ = IMG_LoadTexture(ren, (LEVEL_PATH[id_] + NEARGROUND_PATH).c_str());
+	if (near_ground_ == NULL) {
+		std::cout << SDL_GetError();
+	}
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+
 	SDL_QueryTexture(back_ground_, NULL, NULL, &background_width_, &background_height_);
 	SDL_QueryTexture(far_ground_, NULL, NULL, &far_ground_width_, &far_ground_height_);
 	SDL_QueryTexture(fore_ground_, NULL, NULL, &fore_ground_width_, &fore_ground_height_);
 	SDL_QueryTexture(face_ground_, NULL, NULL, &face_ground_width_, &face_ground_height_);
+	SDL_QueryTexture(near_ground_, NULL, NULL, &near_ground_width_, &near_ground_height_);
 }
 void Level::update(Camera& cam) {
-	background_clip_.x = cam.getPos().x;
-	background_clip_.y = cam.getPos().y;
-	far_ground_clip_.x = cam.getPos().x / background_width_ * (far_ground_width_ - SCREEN_WIDTH);
-	far_ground_clip_.y = cam.getPos().y / background_height_ * (far_ground_height_ - SCREEN_HEIGHT);
+	background_clip_.x = cam.getPos().x / width_ * (background_width_ - SCREEN_WIDTH);
+	background_clip_.y = cam.getPos().y / height_ * (background_height_ - SCREEN_HEIGHT);
+	fore_ground_clip_.x = cam.getPos().x / width_ * (fore_ground_width_ - SCREEN_WIDTH);
+	fore_ground_clip_.y = cam.getPos().y / height_ * (fore_ground_height_ - SCREEN_HEIGHT);
+	far_ground_clip_.x = cam.getPos().x / width_ * (far_ground_width_ - SCREEN_WIDTH);
+	far_ground_clip_.y = cam.getPos().y / height_ * (far_ground_height_ - SCREEN_HEIGHT);
+	face_ground_clip_.x = cam.getPos().x / width_ * (face_ground_width_ - SCREEN_WIDTH);
+	face_ground_clip_.y = cam.getPos().y / height_ * (face_ground_height_ - SCREEN_HEIGHT);
+	near_ground_clip_.x = cam.getPos().x / width_ * (near_ground_width_ - SCREEN_WIDTH);
+	near_ground_clip_.y = cam.getPos().y / height_ * (near_ground_height_ - SCREEN_HEIGHT);
 }
 
 void Level::renderFarGround(SDL_Renderer* ren)
@@ -142,23 +180,28 @@ void Level::renderFarGround(SDL_Renderer* ren)
 	if (far_ground_ != NULL) SDL_RenderCopy(ren, far_ground_, &far_ground_clip_, NULL);
 }
 
-void Level::renderForeGround(SDL_Renderer* ren)
-{
-	if (fore_ground_ != NULL) SDL_RenderCopy(ren, fore_ground_, &background_clip_, NULL);
-}
-
-void Level::renderFaceGround(SDL_Renderer* ren)
-{
-	if (face_ground_ != NULL) SDL_RenderCopy(ren, face_ground_, &background_clip_, NULL);
-}
-
 void Level::renderBackground(SDL_Renderer* ren)
 {
 	if (back_ground_ != NULL) SDL_RenderCopy(ren, back_ground_, &background_clip_, NULL);
 }
+void Level::renderForeGround(SDL_Renderer* ren)
+{
+	if (fore_ground_ != NULL) SDL_RenderCopy(ren, fore_ground_, &fore_ground_clip_, NULL);
+}
+
+void Level::renderFaceGround(SDL_Renderer* ren)
+{
+	if (face_ground_ != NULL) SDL_RenderCopy(ren, face_ground_, &face_ground_clip_, NULL);
+}
+
+void Level::renderNearGround(SDL_Renderer* ren)
+{
+	if (near_ground_ != NULL) SDL_RenderCopy(ren, near_ground_, &near_ground_clip_, NULL);
+}
 
 
-//tilebase map render 
+
+//tilebased map render 
 
 // void Level::render(SDL_Renderer* ren, Camera& cam) {
 // 	SDL_Rect viewport = cam.getViewport();

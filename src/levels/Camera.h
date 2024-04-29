@@ -8,7 +8,7 @@ public:
 
 	~Camera();
 
-	void setPosition(int x, int y);
+	void setPosition(const float& x, const float& y);
 	void move(Vector2D d);
 	void centerOn(const Vector2D& pos, const int& w, const int& h, const int& levelWidth, const int& levelHeight);
 

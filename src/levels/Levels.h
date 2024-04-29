@@ -43,9 +43,10 @@ public:
 	int getHeight()const;
 
 	void renderFarGround(SDL_Renderer* ren);
+	void renderBackground(SDL_Renderer* ren);
 	void renderForeGround(SDL_Renderer* ren);
 	void renderFaceGround(SDL_Renderer* ren);
-	void renderBackground(SDL_Renderer* ren);
+	void renderNearGround(SDL_Renderer* ren);
 private:
 
 	int far_ground_width_;
@@ -56,17 +57,27 @@ private:
 	int face_ground_height_;
 	int background_width_;
 	int background_height_;
+	int near_ground_width_;
+	int near_ground_height_;
 
 	SDL_Rect far_ground_clip_;
 	SDL_Rect background_clip_;
+	SDL_Rect fore_ground_clip_;
+	SDL_Rect face_ground_clip_;
+	SDL_Rect near_ground_clip_;
 
 	SDL_Texture* back_ground_;
 	SDL_Texture* far_ground_;
 	SDL_Texture* fore_ground_;
+	SDL_Texture* near_ground_;
 	SDL_Texture* face_ground_;
+
 
 	int row_;
 	int col_;
+
+	int width_;
+	int height_;
 
 	std::string path_;
 	Tile tiles_[MAX_TILES][MAX_TILES];

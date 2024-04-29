@@ -4,11 +4,11 @@ Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_
 
 Camera::~Camera() {}
 
-void Camera::setPosition(int x, int y) {
-	xOffset_ = x;
-	yOffset_ = y;
-	pos_.x = TILE_SIZE * x;
-	pos_.y = TILE_SIZE * y;
+void Camera::setPosition(const float& x, const float& y) {
+	xOffset_ = static_cast<int>(x / TILE_SIZE);
+	yOffset_ = static_cast<int>(y / TILE_SIZE);
+	pos_.x = x;
+	pos_.y = y;
 }
 
 void Camera::move(Vector2D d) {
