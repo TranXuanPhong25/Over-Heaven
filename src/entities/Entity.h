@@ -10,7 +10,6 @@ public:
 	bool loadTexture(SDL_Renderer* ren, const std::string& path);
 	SDL_Texture* getTexture();
 	Vector2D getPos() const;
-	void setRect(const int& x, const int& y, Camera& cam);
 	SDL_Rect getRect() const;
 	void updateRect(Camera& cam);
 protected:

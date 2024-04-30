@@ -39,11 +39,7 @@ bool Entity::loadTexture(SDL_Renderer* ren, const std::string& path) {
 	}
 	return texture_ == NULL;
 }
-void Entity::setRect(const int& x, const int& y, Camera& cam) {
-	pos_.x = x;
-	pos_.y = y;
-	updateRect(cam);
-}
+
 SDL_Rect Entity::getRect()const {
 	return rect_;
 }

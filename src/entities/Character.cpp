@@ -5,7 +5,7 @@ Character::Character()
 	vel_ = { 0, 0 };
 	state_ = IDLE_RIGHT;
 	spacekey_pressed_ = false;
-	/*accelerator_ = 0;*/
+
 	on_ground_ = false;
 	dir_left_ = 0;
 	dir_right_ = 0;

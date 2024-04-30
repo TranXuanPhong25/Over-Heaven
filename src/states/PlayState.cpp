@@ -15,16 +15,16 @@ PlayState* PlayState::get()
 }
 void PlayState::getOut(const float& dT)
 {
-	overlay_alpha_ += dT;
+	overlay_alpha_ += dT * 2;
 	if (overlay_alpha_ > 1.0f) {
 		overlay_alpha_ = 1.0f;
-		is_on_exit_ = false;
 		should_change_level_ = true;
 	}
 }
 void PlayState::getIn(const float& dT)
 {
-	overlay_alpha_ = Transition::lerp(overlay_alpha_, -0.01f, dT);
+
+	overlay_alpha_ = Transition::lerp(overlay_alpha_, -0.01f, dT * 2);
 	if (overlay_alpha_ < 0) {
 		overlay_alpha_ = 0.0f;
 		is_on_enter_ = false;
@@ -97,6 +97,7 @@ bool PlayState::exit()
 {
 	player_.saveStats();
 	level_.savePath();
+	is_on_exit_ = false;
 	return true;
 }
 void PlayState::handleEvent(SDL_Event& e)
