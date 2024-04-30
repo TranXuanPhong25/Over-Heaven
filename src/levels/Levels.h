@@ -41,7 +41,7 @@ public:
 
 	int getWidth()const;
 	int getHeight()const;
-
+	
 	void renderFarGround(SDL_Renderer* ren);
 	void renderBackground(SDL_Renderer* ren);
 	void renderForeGround(SDL_Renderer* ren);

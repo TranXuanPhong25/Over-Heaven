@@ -2,7 +2,7 @@
 #define INTROSTATE_H_
 #include "MainMenuState.h"
 #include "../core/StateMachine.h"
-
+#include <RmlUi/Core.h>
 class IntroState :public GameState {
 public:
 	static IntroState* get();

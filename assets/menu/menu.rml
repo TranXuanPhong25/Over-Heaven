@@ -1,0 +1,12 @@
+<rml>
+<body>
+    <div id="menu">
+        <h1>Celeste</h1>
+        <ul>
+            <li><a id="start" href="#">Start Game</a></li>
+            <li><a id="options" href="#">Options</a></li>
+            <li><a id="quit" href="#">Quit</a></li>
+        </ul>
+    </div>
+</body>
+</rml>
