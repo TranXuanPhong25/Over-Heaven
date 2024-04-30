@@ -18,13 +18,14 @@ void Entity::free() {
 		rect_.y = 0;
 	}
 }
-void Entity::render(SDL_Renderer* ren, SDL_Rect* clip, SDL_Rect* stretch) {
+void Entity::render(SDL_Renderer* ren, SDL_Rect* clip, SDL_FRect* stretch) {
 
 	if (stretch != NULL) {
-		SDL_RenderCopy(ren, texture_, clip, stretch);
+		SDL_RenderCopyF(ren, texture_, clip, stretch);
 	}
 	else {
-		SDL_RenderCopy(ren, texture_, NULL, &(rect_));
+
+		SDL_RenderCopyF(ren, texture_, NULL, &(rect_));
 	}
 }
 bool Entity::loadTexture(SDL_Renderer* ren, const std::string& path) {
@@ -35,16 +36,20 @@ bool Entity::loadTexture(SDL_Renderer* ren, const std::string& path) {
 		std::cout << IMG_GetError() << std::endl;
 	}
 	else {
-		SDL_QueryTexture(texture_, NULL, NULL, &rect_.w, &rect_.h);
+		int w, h;
+		SDL_QueryTexture(texture_, NULL, NULL, &w, &h);
+		rect_.w = w;
+		rect_.h = h;
+
 	}
 	return texture_ == NULL;
 }
-void Entity::setRect(const int& x, const int& y, Camera& cam) {
+void Entity::setRect(const float& x, const float& y, Camera& cam) {
 	pos_.x = x;
 	pos_.y = y;
 	updateRect(cam);
 }
-SDL_Rect Entity::getRect()const {
+SDL_FRect Entity::getRect() const {
 	return rect_;
 }
 
@@ -56,8 +61,7 @@ SDL_Texture* Entity::getTexture() {
 void Entity::updateRect(Camera& cam) {
 	rect_.x = pos_.x - cam.getPos().x;
 	rect_.y = pos_.y - cam.getPos().y;
-	//std::cout << "rect: " << rect_.x << std::endl;
-	//std::cout << "r: " << pos_.x << "   " << cam.getPos().x << std::endl;
+
 }
 
 Vector2D Entity::getPos() const

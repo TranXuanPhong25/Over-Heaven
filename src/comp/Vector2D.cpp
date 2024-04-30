@@ -1,7 +1,7 @@
 #include "Vector2D.h"
 Vector2D::Vector2D() : x(0), y(0) {}
 Vector2D::Vector2D(float _x, float _y) : x(_x), y(_y) {}
-Vector2D::Vector2D(int _x, int _y) : x(_x), y(_y) {}
+
 
 Vector2D Vector2D::operator+(const Vector2D& other) const {
 	return Vector2D(x + other.x, y + other.y);
