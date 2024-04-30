@@ -118,7 +118,7 @@ Vector2D Character::getVel() const
 {
 	return vel_;
 }
-bool Character::checkCollision(const SDL_FRect& a, const SDL_Rect& s)
+bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s)
 {
 	return a.x < s.x + s.w &&
 		a.x + a.w > s.x &&
@@ -170,7 +170,7 @@ void Character::GroundCollideX(const SDL_Rect& tileRect)
 void Character::handleCollideX(const int& x, const int& y, Level::Tile tile)
 {
 	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-	if (checkCollision({ pos_.x, pos_.y, rect_.w, rect_.h }, tileRect))
+	if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 	{
 		if (tile == Level::GROUND)
 		{
@@ -327,7 +327,7 @@ void Character::moveY(const float& dT)
 }
 void Character::GroundCollideY(const SDL_Rect& tileRect)
 {
-	if (checkCollision({ pos_.x, pos_.y, rect_.w, rect_.h }, tileRect))
+	if (checkCollision({ (int)pos_.x, (int)pos_.y, rect_.w, rect_.h }, tileRect))
 	{
 		if (vel_.y >= 0)
 		{

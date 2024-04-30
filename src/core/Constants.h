@@ -15,13 +15,13 @@
 #include <algorithm>
 #include <atomic>
 
-const int SCREEN_WIDTH = 1536;
-const int SCREEN_HEIGHT = 864;
+const int SCREEN_WIDTH = 1920;
+const int SCREEN_HEIGHT = 1080;
 
 const float TARGET_TIMESTEP = 1000 / 60;
 const int MAX_TILES = 155;
 
-const int TILE_SIZE = 48;
+const int TILE_SIZE = 60;
 
 const std::string PLAYER_SPRITESHEET_PATH = "assets/player/player_sprite_sheet.png";
 const int JUMP_HEIGHT = 1200;
@@ -54,7 +54,7 @@ const float TOTAL_LOADING_STEP = 9.0f;
 const float PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
-	{120, 4700 },
+	{120, 5500 },
 	{ 60, 60 }
 };
 

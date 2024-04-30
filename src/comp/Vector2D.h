@@ -8,6 +8,7 @@ public:
 
 	Vector2D();
 	Vector2D(float _x, float _y);
+	Vector2D(int _x, int _y);
 
 	Vector2D operator+(const Vector2D& other) const;
 	Vector2D operator-(const Vector2D& other) const;
