@@ -1,4 +1,4 @@
 <SaveData>
-    <PlayerPosition x="1358" y="5000"/>
-    <LevelPath id="2">assets/level/level2/map2.csv</LevelPath>
+    <PlayerPosition x="180" y="680"/>
+    <LevelPath id="1">assets/level/level1/map1.csv</LevelPath>
 </SaveData>

@@ -189,10 +189,10 @@ void Character::CollideX(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
-	int startX = std::max(0, tileX - 1);
-	int startY = std::max(0, tileY - 1);
-	int endX = std::min(level.getWidth(), static_cast<int>((pos_.x + rect_.w) / TILE_SIZE + 1));
-	int endY =std:: min(level.getHeight(), static_cast<int>((pos_.y + rect_.h) / TILE_SIZE + 1));
+	int startX = max(0, tileX - 1);
+	int startY = max(0, tileY - 1);
+	int endX = min(level.getWidth(), static_cast<int>((pos_.x + rect_.w) / TILE_SIZE + 1));
+	int endY = min(level.getHeight(), static_cast<int>((pos_.y + rect_.h) / TILE_SIZE + 1));
 	wall_collided_ = false;
 	collide_x_ = false;
 	for (int x = startX; x <= endX; x++)
@@ -363,10 +363,10 @@ void Character::CollideY(Level& level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
-	int startX = std::max(0, tileX);
-	int startY = std::max(0, tileY);
-	int endX = std::min(level.getWidth(), static_cast<int>((pos_.x + rect_.w) / TILE_SIZE ));
-	int endY = std::min(level.getHeight(), static_cast<int>((pos_.y + rect_.h) / TILE_SIZE ));
+	int startX = max(0, tileX);
+	int startY = max(0, tileY);
+	int endX = min(level.getWidth(), static_cast<int>((pos_.x + rect_.w) / TILE_SIZE));
+	int endY = min(level.getHeight(), static_cast<int>((pos_.y + rect_.h) / TILE_SIZE));
 	bool somethingBelow = false;
 
 	for (int y = startY; y <= endY; y++)
