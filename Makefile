@@ -1,2 +1,2 @@
 all:
-	g++ src/* src/comp/* src/states/* src/core/* src/entities/* src/levels/* src/thirdParty/*   -ID:/env/Cpp/SDL2_GAME/src/include/SDL2 -LD:/env/Cpp/SDL2_GAME/src/lib -o Main -w -Wl,-subsystem,windows  -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
+	g++ src/*.cpp src/comp/*.cpp src/states/*.cpp src/core/*.cpp src/entities/*.cpp src/levels/*.cpp src/thirdParty/tinyxml2_10.0.0/*.cpp -I$(CURDIR)/SDL2_dependencies/include/SDL2 -L$(CURDIR)/SDL2_dependencies/src/lib -o Main -w -Wl,-subsystem,windows -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
