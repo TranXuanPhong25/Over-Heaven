@@ -5,7 +5,7 @@
 #include "../comp/Vector2D.h"
 #include "../thirdParty/tinyxml2_10.0.0/tinyxml2.h"
 #include "../states/LoadingScreenState.h"
-
+#include "../states/CreditState.h"
 class Level {
 public:
 	enum LevelIndex {
@@ -26,6 +26,7 @@ public:
 	void setPath(const std::string& path);
 
 	std::string getPath() const;
+
 	void loadResources(SDL_Renderer* ren, std::atomic<float>* progress);
 	void loadSavedPath();
 	bool loadTiles();
@@ -35,13 +36,16 @@ public:
 	void update(Camera& cam);
 
 	void toNextLevel();
-	void handleLineCSV(const std::string& line, int& r, int& c);
+	void processCSVLine(const std::string& line, int& r, int& c);
+
 	Tile getTile(const int& x, const int& y) const;
 	LevelIndex getLevelIndex() const;
 
 	int getWidth()const;
 	int getHeight()const;
 
+	int getTileWidth()const;
+	int getTileHeight()const;
 	void renderFarGround(SDL_Renderer* ren);
 	void renderBackground(SDL_Renderer* ren);
 	void renderForeGround(SDL_Renderer* ren);

@@ -3,18 +3,17 @@
 #include "../entities/Character.h"
 #include "../levels/Levels.h"
 #include "../levels/Camera.h"
-#include "../core/StateMachine.h"
 #include "../comp/Transition.h"
 class PlayState : public GameState {
 public:
-	
+
 	static PlayState* get();
 	bool enter(SDL_Renderer* ren);
 	bool exit();
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
-	
+
 	void handleTransition(const float& dT);
 	void renderTransitionFx(SDL_Renderer* ren);
 	void handleChangeLevel();
@@ -22,11 +21,11 @@ public:
 
 	float loadResources(SDL_Renderer* ren, std::atomic<float>* progress);
 private:
-	void getIn(const float&dT);
-	void getOut(const float&dT);
+	void getIn(const float& dT);
+	void getOut(const float& dT);
 	static PlayState s_play_state_;
 	PlayState();
-	
+
 	bool is_on_enter_;
 	bool is_on_exit_;
 	float overlay_alpha_;

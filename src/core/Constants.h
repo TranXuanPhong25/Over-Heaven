@@ -59,6 +59,7 @@ const float PLAYER_DEFAULT_POS[4][2] = {
 	{120, 5500 },
 	{ 60, 60 }
 };
+const char SAVE_PATH[] = "save/save_game.xml";
 
 const std::string LEVEL_PATH[4] = {
 	"",
@@ -86,6 +87,5 @@ const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
 const SDL_Rect ENTIRE_WINDOW = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
-
 
 #endif // !CONSTANT_H_

@@ -109,7 +109,7 @@ void PlayState::update(const float& dT)
 
 	player_.update(level_, cam_, dT);
 	cam_.move(player_.getVel() * dT);
-	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth() * TILE_SIZE, level_.getHeight() * TILE_SIZE);
+	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth(), level_.getHeight());
 	player_.updateRect(cam_);
 	level_.update(cam_);
 	handleChangeLevel();

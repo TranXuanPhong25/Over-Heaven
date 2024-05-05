@@ -28,17 +28,17 @@ public:
 
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
-	
+
 	void moveX(const float& dT);
-    void moveY(const float &dT);
-    void CollideX(Level& level);
+	void moveY(const float& dT);
+	void CollideX(Level& level);
 	void CollideY(Level& level);
-    void GroundCollideX(const SDL_Rect &tileRect);
-    void GroundCollideY(const SDL_Rect &tileRect);
+	void GroundCollideX(const SDL_Rect& tileRect);
+	void GroundCollideY(const SDL_Rect& tileRect);
 	void handleCollideX(const int& x, const int& y, Level::Tile tile);
 	void handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
-	void setDefaultPosition(Level&level);
+	void setDefaultPosition(Level& level);
 	void applyGravity(const float& dT);
 	//void dash(const float& dT);
 	void jump(const float& dT);
@@ -49,7 +49,7 @@ public:
 	void resetStats();
 private:
 	State state_;
-	int speed_;
+	float speed_;
 	int dir_left_;
 	int dir_right_;
 	Vector2D vel_;
