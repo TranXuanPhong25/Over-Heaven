@@ -1,5 +1,5 @@
 #include "CreditState.h"
-
+#include "IntroState.h"
 CreditState CreditState::s_exit_state_;
 
 CreditState::CreditState()
@@ -28,7 +28,7 @@ void CreditState::handleEvent(SDL_Event& e)
         if (e.key.keysym.sym == SDLK_ESCAPE)
         {
             
-            // StateMachine::get()->setNextState(MainMenuState::get());
+            StateMachine::get()->setNextState(IntroState::get());
         }
     }
 }

@@ -1,6 +1,7 @@
 #ifndef CREDITSTATE_H_
 #define CREDITSTATE_H_
 #include "../core/StateMachine.h"
+class IntroState;
 class CreditState : public GameState{
 public:
 	static CreditState* get();
