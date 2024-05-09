@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "../comp/Vector2D.h"
 #include "../thirdParty/tinyxml2_10.0.0/tinyxml2.h"
-#include "../states/LoadingScreenState.h"
+#include "../states/LoadingState.h"
 #include "../states/CreditState.h"
 class Level {
 public:

@@ -1,8 +1,13 @@
 #ifndef MAINMENUSTATE_H_
 #define MAINMENUSTATE_H_
 
-#include "LoadingScreenState.h"
+#include "LoadingState.h"
 #include "PlayState.h"
+#include "../thirdParty/ffmpeg/VideoStreamer.h"
+
+//thread function
+int streamVideo(void *data);
+
 class MenuButton {
 public:
 	enum ButtonType {
@@ -29,7 +34,10 @@ private:
 //single-level menu
 class MainMenuState : public GameState {
 public:
-
+	enum State {
+		MAINMENU,
+		OPTIONS
+	};
 	static MainMenuState* get();
 	bool enter(SDL_Renderer* ren);
 	bool exit();
@@ -43,6 +51,10 @@ private:
 	static MainMenuState s_main_menu_state_;
 	MainMenuState();
 	~MainMenuState();
+
+	VideoStreamer *p_video_streamer_;
+	SDL_Thread * p_video_thread_;
+	// std::atomic<bool> is_playing_;
 	MenuButton buttons_[NUMS_OF_BUTTONS];
 
 	MenuButton::ButtonType current_button_;

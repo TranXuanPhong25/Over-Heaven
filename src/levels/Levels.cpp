@@ -344,5 +344,5 @@ void Level::toNextLevel()
 	id_ = static_cast<LevelIndex>(id_ + 1);
 	setPath(LEVEL_PATH[id_] + MAP_NAME[id_]);
 	savePath();
-	StateMachine::get()->setNextState(LoadingScreenState::get());
+	StateMachine::get()->setNextState(LoadingState::get());
 }
