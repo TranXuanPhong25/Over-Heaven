@@ -1,41 +1,41 @@
 #include "MainMenuState.h"
-struct VideoThreadData{
-	VideoStreamer* videoStreamer;
-	SDL_Renderer* ren;
-	std::atomic<bool>* isPlaying;
-};
-int streamVideo(void *data){
-	VideoThreadData* videoThreadData = reinterpret_cast<VideoThreadData*>(data);
-	VideoStreamer* videoStreamer = videoThreadData->videoStreamer;
-	SDL_Renderer* ren = videoThreadData->ren;
-	std::atomic<bool>* isPlaying = videoThreadData->isPlaying;
-	while (*isPlaying)
-	{
-		videoStreamer->play(ren);
-	}
-	delete videoThreadData;
-	return 1;
-}
+// struct VideoThreadData{
+// 	VideoStreamer* videoStreamer;
+// 	SDL_Renderer* ren;
+// 	std::atomic<bool>* isPlaying;
+// };
+// int streamVideo(void *data){
+// 	VideoThreadData* videoThreadData = reinterpret_cast<VideoThreadData*>(data);
+// 	VideoStreamer* videoStreamer = videoThreadData->videoStreamer;
+// 	SDL_Renderer* ren = videoThreadData->ren;
+// 	std::atomic<bool>* isPlaying = videoThreadData->isPlaying;
+// 	while (*isPlaying)
+// 	{
+// 		videoStreamer->play(ren);
+// 	}
+// 	delete videoThreadData;
+// 	return 1;
+// }
 
 MenuButton::~MenuButton()
 {
 	SDL_DestroyTexture(texture_);
 	texture_ = NULL;
 	alpha_ = MISFOCUSING;
-	
+
 }
-void MenuButton::render(SDL_Renderer *ren)
+void MenuButton::render(SDL_Renderer* ren)
 {
 	SDL_SetTextureAlphaMod(texture_, alpha_);
 	SDL_RenderCopy(ren, texture_, NULL, &rect_);
 }
-void MenuButton::loadTexture(SDL_Renderer *ren, const std::string &path)
+void MenuButton::loadTexture(SDL_Renderer* ren, const std::string& path)
 {
 	texture_ = IMG_LoadTexture(ren, path.c_str());
 	SDL_QueryTexture(texture_, NULL, NULL, &rect_.w, &rect_.h);
 	rect_.x = (SCREEN_WIDTH - rect_.w) / 2;
 }
-void MenuButton::setRectY(const int &y)
+void MenuButton::setRectY(const int& y)
 {
 	rect_.y = y;
 }
@@ -59,7 +59,7 @@ MenuButton::ButtonType MenuButton::getType() const
 MainMenuState MainMenuState::s_main_menu_state_;
 MainMenuState::MainMenuState()
 {
-	p_video_thread_=NULL;
+	p_video_thread_ = NULL;
 	p_video_streamer_ = new VideoStreamer();
 	// *is_playing_=true;
 
@@ -77,16 +77,16 @@ MainMenuState::~MainMenuState()
 		bg_ = NULL;
 	}
 
-	p_video_thread_ =NULL;
+	p_video_thread_ = NULL;
 	delete p_video_streamer_;
 }
-MainMenuState *MainMenuState::get()
+MainMenuState* MainMenuState::get()
 {
 	return &s_main_menu_state_;
 }
-bool MainMenuState::enter(SDL_Renderer *ren)
+bool MainMenuState::enter(SDL_Renderer* ren)
 {
-	p_video_streamer_->init(ren,"assets/menu/menu_25fps.mov");
+	p_video_streamer_->init(ren, "assets/menu/menu.mov");
 	// p_video_streamer_->readFrames();
 	// VideoThreadData* videoThreadData = new VideoThreadData();
 	// videoThreadData->videoStreamer = p_video_streamer_;
@@ -105,9 +105,9 @@ bool MainMenuState::enter(SDL_Renderer *ren)
 }
 bool MainMenuState::exit()
 {
-	p_video_thread_ =NULL;
+	p_video_thread_ = NULL;
 	// *is_playing_=false;
-	p_video_streamer_->reset();
+	p_video_streamer_->free();
 	return true;
 }
 void MainMenuState::handleFocusUp()
@@ -147,7 +147,7 @@ void MainMenuState::handleEnter() const
 		StateMachine::get()->setNextState(LoadingState::get());
 	}
 }
-void MainMenuState::handleEvent(SDL_Event &e)
+void MainMenuState::handleEvent(SDL_Event& e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -165,9 +165,10 @@ void MainMenuState::handleEvent(SDL_Event &e)
 		}
 	}
 }
-void MainMenuState::update(const float &dT)
+void MainMenuState::update(const float& dT)
 {
-	p_video_streamer_->readFrame();	
+	
+	p_video_streamer_->readFrame();
 	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
 	{
 		if (buttons_[i].getType() == current_button_)
@@ -180,10 +181,11 @@ void MainMenuState::update(const float &dT)
 		}
 	}
 }
-void MainMenuState::render(SDL_Renderer *ren)
+void MainMenuState::render(SDL_Renderer* ren)
 {
-	// SDL_RenderCopy(ren, bg_, NULL, NULL);
 	p_video_streamer_->render(ren);
+	// SDL_RenderCopy(ren, bg_, NULL, NULL);
+
 	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
 	{
 		if (buttons_[i].getType() == current_button_)

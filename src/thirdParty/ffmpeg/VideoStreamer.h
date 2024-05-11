@@ -18,16 +18,18 @@ public:
 	void render(SDL_Renderer*ren);
 	void renderFrame(SDL_Renderer*ren,AVFrame * frame);
 	void reset();
+	void free();
 	void play(SDL_Renderer* ren);
 private:
 	bool is_end_of_stream_;
 	AVFormatContext* format_context_;
 	AVCodecContext* codec_context_;
-	std::deque<AVFrame*> frames_;
+	// std::deque<AVFrame*> frames_;
 	AVFrame* frame_;
 	AVPacket packet_;
 	SDL_Texture* frame_texture_;
 	int video_stream_index_;
+	bool isFrameReady;
 };
 
 #endif // VIDEOSTREAMER_H_
