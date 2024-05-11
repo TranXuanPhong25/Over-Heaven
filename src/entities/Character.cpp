@@ -390,7 +390,11 @@ void Character::saveStats() const
 	playerPos->SetAttribute("x", static_cast<int>(pos_.x));
 	playerPos->SetAttribute("y", static_cast<int>(pos_.y));
 	root->InsertEndChild(playerPos);
-
+	try {
+		std::filesystem::create_directories("save");
+	}catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
 	doc.SaveFile("save/save_game.xml");
 }
 void Character::loadStats(Level& level)

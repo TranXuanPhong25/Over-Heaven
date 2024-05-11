@@ -13,6 +13,7 @@
 #include <cmath>
 #include <algorithm>
 #include <atomic>
+#include <filesystem>
 
 using std::max;
 using std::min;

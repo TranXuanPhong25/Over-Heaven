@@ -9,4 +9,7 @@
 - lỗi độ phân giải
 # Source
 Image : Designed by [Freepik.io](https://www.freepik.com), downloaded from [itch.io]() videvo.net 
+
+ C++17 required
+
 singleton, thread, no magic string/ number, oop ,ffmpeg

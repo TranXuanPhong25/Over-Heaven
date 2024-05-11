@@ -331,6 +331,11 @@ void Level::savePath()
 		levelPath->SetText(path_.c_str());
 		root->InsertEndChild(levelPath);
 	}
+	try {
+		std::filesystem::create_directories("save");
+	}catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
 	doc.SaveFile(SAVE_PATH);
 }
 
