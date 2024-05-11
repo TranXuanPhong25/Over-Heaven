@@ -377,8 +377,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /Over-Heaven
 save/save_game.xml
-/save
-*.xml
 Over-Heaven.exe
-save/save_game.xml
-/save
