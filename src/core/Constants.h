@@ -87,6 +87,6 @@ const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {
 	"assets/menu/quitGame.png",
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
-const SDL_Rect ENTIRE_WINDOW = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
+const SDL_Rect ENTIRE_SCREEN = { 0,0,SCREEN_WIDTH,SCREEN_HEIGHT };
 
 #endif // !CONSTANT_H_

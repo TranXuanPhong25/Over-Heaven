@@ -6,7 +6,7 @@
 static int loadingResources(void* data);
 
 class PlayState;
-class LoadingState : public GameState
+class LoadingState : public GameState,public Transition
 {
 public:
 	static LoadingState* get();
@@ -15,6 +15,7 @@ public:
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
+	void finishGetOut() override;
 private:
 	static LoadingState s_loading_state_;
 	LoadingState();

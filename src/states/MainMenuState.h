@@ -5,9 +5,6 @@
 #include "PlayState.h"
 #include "../thirdParty/ffmpeg/VideoStreamer.h"
 
-//thread function
-int streamVideo(void *data);
-
 class MenuButton {
 public:
 	enum ButtonType {
@@ -32,7 +29,8 @@ private:
 	Uint8 alpha_;
 };
 //single-level menu
-class MainMenuState : public GameState {
+class MainMenuState : public GameState ,public Transition
+{
 public:
 	enum State {
 		MAINMENU,
@@ -43,21 +41,21 @@ public:
 	bool exit();
 	void handleFocusUp();
 	void handleFocusDown();
-	void handleEnter() const;
+	void handleEnter();
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
+	void finishGetOut() override;
 private:
 	static MainMenuState s_main_menu_state_;
 	MainMenuState();
 	~MainMenuState();
 
 	VideoStreamer *p_video_streamer_;
-	SDL_Thread * p_video_thread_;
-	// std::atomic<bool> is_playing_;
-	MenuButton buttons_[NUMS_OF_BUTTONS];
 
+	MenuButton buttons_[NUMS_OF_BUTTONS];
 	MenuButton::ButtonType current_button_;
+
 	SDL_Texture* bg_;
 };
 

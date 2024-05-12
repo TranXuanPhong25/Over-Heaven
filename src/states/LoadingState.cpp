@@ -46,6 +46,7 @@ LoadingState* LoadingState::get()
 
 bool LoadingState::enter(SDL_Renderer* ren)
 {
+	startGetInEffect();
 	bool success = true;
 	progress_ = 0.0f;
 	// Start the loading thread
@@ -79,8 +80,7 @@ void LoadingState::handleEvent(SDL_Event& e)
 
 void LoadingState::update(const float& dT)
 {
-
-	progress_bar_rect_.w = Transition::easeInOut(progress_bar_rect_.w, static_cast<float>(SCREEN_WIDTH) / 2 * progress_, 0.1f);
+	progress_bar_rect_.w = easeInOut(progress_bar_rect_.w, static_cast<float>(SCREEN_WIDTH) / 2 * progress_, 0.1f);
 	progress_bar_rect_.x = static_cast<float>(SCREEN_WIDTH) / 2 - progress_bar_rect_.w / 2;
 
 	if (loading_finished_)
@@ -90,15 +90,21 @@ void LoadingState::update(const float& dT)
 
 	if (alpha_ >= 255)
 	{
-		StateMachine::get()->setNextState(PlayState::get());
+		startGetOutEffect();
+		loading_finished_=false; // stop the loading bar, ensure this block run once
+		alpha_=	0;
 	}
+	handleTransition(dT);
 }
 void LoadingState::render(SDL_Renderer* ren)
 {
-
 	SDL_SetRenderDrawColor(ren, 0xff, 0xff, 0xff, 255);
-
 	SDL_RenderFillRectF(ren, &progress_bar_rect_);
-
 	SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+	renderTransitionFx(ren);
+}
+
+void LoadingState::finishGetOut()
+{
+	StateMachine::get()->setNextState(PlayState::get());
 }

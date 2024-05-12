@@ -3,9 +3,6 @@
 PlayState PlayState::s_play_state_;
 PlayState::PlayState() {
 	loaded_player_spritesheet_ = false;
-	is_on_enter_ = false;
-	is_on_exit_ = false;
-	overlay_alpha_ = 1.0f;
 	should_change_level_ = false;
 }
 
@@ -13,46 +10,17 @@ PlayState* PlayState::get()
 {
 	return &s_play_state_;
 }
-void PlayState::getOut(const float& dT)
-{
-	overlay_alpha_ += dT * 2;
-	if (overlay_alpha_ > 1.0f) {
-		overlay_alpha_ = 1.0f;
-		should_change_level_ = true;
-	}
-}
-void PlayState::getIn(const float& dT)
-{
 
-	overlay_alpha_ = Transition::lerp(overlay_alpha_, -0.01f, dT * 2);
-	if (overlay_alpha_ < 0) {
-		overlay_alpha_ = 0.0f;
-		is_on_enter_ = false;
-	}
-}
-void PlayState::handleTransition(const float& dT)
+void PlayState::finishGetOut()
 {
-	if (is_on_enter_)
-	{
-		getIn(dT);
-	}
-	if (is_on_exit_)
-	{
-		getOut(dT);
-	}
+	should_change_level_ = true;
+}
 
-}
-void PlayState::renderTransitionFx(SDL_Renderer* ren)
-{
-	SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
-	SDL_SetRenderDrawColor(ren, 0, 0, 0, static_cast<Uint8>(overlay_alpha_ * 255));
-	SDL_RenderFillRect(ren, &ENTIRE_WINDOW);
-}
 void PlayState::handleChangeLevel()
 {
 	if (player_.isReachedGoal()) {
 		player_.handleReachGoal();
-		is_on_exit_ = true;
+		startGetOutEffect();
 	}
 	if (should_change_level_) {
 		level_.toNextLevel();
@@ -83,7 +51,7 @@ float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 }
 bool PlayState::enter(SDL_Renderer* ren)
 {
-	is_on_enter_ = true;
+	startGetInEffect();
 	if (should_change_level_) {
 		player_.resetStats();
 		player_.setDefaultPosition(level_);
@@ -97,7 +65,7 @@ bool PlayState::exit()
 {
 	player_.saveStats();
 	level_.savePath();
-	is_on_exit_ = false;
+	
 	return true;
 }
 void PlayState::handleEvent(SDL_Event& e)
@@ -124,9 +92,8 @@ void PlayState::render(SDL_Renderer* ren)
 	level_.renderForeGround(ren);
 	level_.renderNearGround(ren);
 	level_.renderFaceGround(ren);
-	if (is_on_enter_ || is_on_exit_) {
-		renderTransitionFx(ren);
-	}
+	renderTransitionFx(ren);
+	
 }
 void PlayState::deleteSave()
 {
