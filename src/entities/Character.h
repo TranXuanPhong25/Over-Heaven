@@ -14,11 +14,6 @@ public:
 		JUMP_RIGHT,
 		FALL_LEFT,
 		FALL_RIGHT,
-		/*DASH_LEFT,
-		DASH_RIGHT,*/
-		SLIDE_LEFT,
-		SLIDE_RIGHT,
-
 	};
 	Character();
 	~Character();
@@ -40,7 +35,6 @@ public:
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
 	void setDefaultPosition(Level& level);
 	void applyGravity(const float& dT);
-	//void dash(const float& dT);
 	void jump(const float& dT);
 	bool isReachedGoal() const;
 	void handleReachGoal();
@@ -56,18 +50,9 @@ private:
 	float gravity_scalar_;
 	bool on_ground_;
 	bool spacekey_pressed_;
-	int jump_count_;
 
-	/*bool dashing_;
-	int dash_counter_;
-	int dash_dir_;
-	int dashing_frame_;
-	float dash_cooldown_;*/
 	int required_frame_to_apply_jump_;
-	bool wall_collided_;
-	bool collide_x_;
 	int coyote_time_;
-	/*int jump_buffer_;*/
 	bool should_change_level_;
 
 };

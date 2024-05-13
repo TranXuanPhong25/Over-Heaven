@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
 
 #include <windows.h>
 #include <iostream>
@@ -27,6 +28,7 @@ const int MAX_TILES = 155;
 const int TILE_SIZE = 60;
 
 const std::string PLAYER_SPRITESHEET_PATH = "assets/player/player_sprite_sheet.png";
+
 const int JUMP_HEIGHT = 1200;
 const int MAX_FALL_SPEED = 2000;
 const int MAX_JUMP_BUFFER = 3;
