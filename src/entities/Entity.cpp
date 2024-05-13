@@ -14,6 +14,7 @@ Entity::Entity()
 	current_frame_clip_ = std::make_pair(0, 0);
 	width_ = 0;
 	height_ = 0;
+	flip_ = false;
 }
 Entity::~Entity()
 {
@@ -28,11 +29,18 @@ void Entity::free()
 		texture_ = NULL;
 	}
 }
-void Entity::render(SDL_Renderer* ren)
+void Entity::render(SDL_Renderer *ren)
 {
-	SDL_RenderCopy(ren, texture_, &frames_clips_[current_frame_clip_.first][current_frame_clip_.second], &rect_);
+	SDL_RenderCopyEx(ren,
+					 texture_,
+					 &frames_clips_[current_frame_clip_.first][current_frame_clip_.second],
+					 &rect_,
+					 0,
+					 NULL,
+					 flip_ ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE
+	);
 }
-bool Entity::loadTexture(SDL_Renderer* ren)
+bool Entity::loadTexture(SDL_Renderer *ren)
 {
 	free();
 	texture_ = IMG_LoadTexture(ren, sprite_sheet_path_.c_str());
@@ -48,16 +56,14 @@ SDL_Rect Entity::getRect() const
 	return rect_;
 }
 
-SDL_Texture* Entity::getTexture()
+SDL_Texture *Entity::getTexture()
 {
 	return texture_;
 }
-void Entity::updateRect(Camera& cam)
+void Entity::updateRect(Camera &cam)
 {
 	rect_.x = pos_.x - cam.getPos().x - width_offset_;
 	rect_.y = pos_.y - cam.getPos().y - height_offset_;
-	// std::cout << "rect: " << rect_.x << std::endl;
-	// std::cout << "r: " << pos_.x << "   " << cam.getPos().x << std::endl;
 }
 
 Vector2D Entity::getPos() const

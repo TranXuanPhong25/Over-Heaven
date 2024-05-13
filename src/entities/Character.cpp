@@ -105,10 +105,39 @@ void Character::setDefaultPosition(Level& level)
 }
 void Character::update(Level& level, Camera& cam, const float& dT)
 {
+	
 	moveX(dT);
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
+	animate(dT);
+}
+void Character::animate(const float &dT)
+{
+	if(state_==IDLE_LEFT||state_==MOVE_LEFT||state_==JUMP_LEFT)
+	{
+		flip_=true;
+	}else flip_=false;
+	if (state_ == IDLE_LEFT || state_ == IDLE_RIGHT)
+	{
+		current_frame_clip_ = std::make_pair(IDLE, 0);
+	}
+	if (state_ == MOVE_LEFT)
+	{
+		current_frame_clip_ = std::make_pair(RUN, (current_frame_clip_.second + 1) % frames_clips_[RUN].size());
+	}
+	if (state_ == MOVE_RIGHT)
+	{
+		current_frame_clip_ = std::make_pair(RUN, (current_frame_clip_.second + 1) % frames_clips_[RUN].size());
+	}
+	if (state_ == JUMP_LEFT)
+	{
+		current_frame_clip_ = std::make_pair(JUMP, 0);
+	}
+	if (state_ == JUMP_RIGHT)
+	{
+		current_frame_clip_ = std::make_pair(JUMP, 0);
+	}
 }
 void Character::handleReachGoal()
 {

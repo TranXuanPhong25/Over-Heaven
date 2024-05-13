@@ -12,8 +12,6 @@ public:
 		MOVE_RIGHT,
 		JUMP_LEFT,
 		JUMP_RIGHT,
-		FALL_LEFT,
-		FALL_RIGHT,
 	};
 	enum ANIMATION_INDEX {
 		IDLE,
@@ -29,6 +27,7 @@ public:
 
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
+	virtual void animate(const float&dT) override;
 
 	void moveX(const float& dT);
 	void moveY(const float& dT);
@@ -47,8 +46,8 @@ public:
 	void handleReachGoal();
 	void saveStats() const;
 	void loadStats(Level& level);
-	bool loadSpriteSheetData(const std::string& path);
-	bool loadData(const std::string& path);
+	bool loadSpriteSheetData(const std::string& path) override;
+	bool loadData(const std::string& path) override;
 	void resetStats();
 private:
 	State state_;
