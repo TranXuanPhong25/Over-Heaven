@@ -1,4 +1,4 @@
-#include "IntroState.h"
+#include "IntroState.hpp"
 IntroState IntroState::s_intro_state_;
 IntroState::IntroState() {
 	start_time_ = 0;

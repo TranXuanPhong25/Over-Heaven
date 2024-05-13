@@ -1,4 +1,4 @@
-#include "Game.h"
+#include "Game.hpp"
 Game::Game() : window_(NULL), ren_(NULL)
 {
 	state_machine_ = StateMachine::get();
@@ -28,7 +28,7 @@ bool Game::initWindow()
 		std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
 		return false;
 	}
-	window_ = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP|SDL_WINDOW_ALLOW_HIGHDPI);
+	window_ = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_ALLOW_HIGHDPI);
 	if (window_ == NULL)
 	{
 		std::cout << "Window could not be created! SDL Error: " << SDL_GetError() << std::endl;
@@ -72,7 +72,7 @@ void Game::run()
 		}
 	}
 }
-void Game::launchGameLoop(SDL_Event &e)
+void Game::launchGameLoop(SDL_Event& e)
 {
 	while (SDL_PollEvent(&e))
 	{

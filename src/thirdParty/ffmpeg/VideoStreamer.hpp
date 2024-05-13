@@ -1,6 +1,6 @@
 #ifndef VIDEOSTREAMER_H_
 #define VIDEOSTREAMER_H_
-#include "../../core/Constants.h"
+#include "../../core/Constants.hpp"
 extern "C" {
 #include <libavcodec/avcodec.h>
 #include <libavformat/avformat.h>

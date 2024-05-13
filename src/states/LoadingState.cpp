@@ -1,5 +1,5 @@
-#include "LoadingState.h"
-#include "PlayState.h"
+#include "LoadingState.hpp"
+#include "PlayState.hpp"
 struct ThreadData
 {
 	PlayState* playState;
@@ -91,8 +91,8 @@ void LoadingState::update(const float& dT)
 	if (alpha_ >= 255)
 	{
 		startGetOutEffect();
-		loading_finished_=false; // stop the loading bar, ensure this block run once
-		alpha_=	0;
+		loading_finished_ = false; // stop the loading bar, ensure this block run once
+		alpha_ = 0;
 	}
 	handleTransition(dT);
 }

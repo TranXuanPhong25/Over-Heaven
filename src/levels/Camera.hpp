@@ -1,7 +1,7 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
-#include "../comp/Vector2D.h"
+#include "../comp/Vector2D.hpp"
 /**
  * @class Camera
  * @brief Represents a camera used for viewing a game level.
@@ -56,7 +56,7 @@ public:
 	 *
 	 * @return The position of the camera as a Vector2D.
 	 */
-	Vector2D getPos();
+	Vector2D getPos() const;
 
 private:
 	int screenWidth_; /**< The width of the screen.> */

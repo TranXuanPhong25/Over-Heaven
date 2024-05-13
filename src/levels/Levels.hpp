@@ -1,11 +1,11 @@
 #ifndef LEVEL_H_
 #define LEVEL_H_
 
-#include "Camera.h"
-#include "../comp/Vector2D.h"
-#include "../thirdParty/tinyxml2_10.0.0/tinyxml2.h"
-#include "../states/LoadingState.h"
-#include "../states/CreditState.h"
+#include "Camera.hpp"
+#include "../comp/Vector2D.hpp"
+#include "../thirdParty/tinyxml2_10.0.0/tinyxml2.hpp"
+#include "../states/LoadingState.hpp"
+#include "../states/CreditState.hpp"
 class Level {
 public:
 	enum LevelIndex {

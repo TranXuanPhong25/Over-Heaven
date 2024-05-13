@@ -1,14 +1,14 @@
 #ifndef GAME_H_
 #define GAME_H_
-#include "StateMachine.h"
-#include "../states/IntroState.h"
+#include "StateMachine.hpp"
+#include "../states/IntroState.hpp"
 
 class Game {
 public:
 	Game();
 	~Game();
 	void run();
-	void launchGameLoop(SDL_Event &e);
+	void launchGameLoop(SDL_Event& e);
 private:
 	bool initWindow();
 	SDL_Renderer* ren_;

@@ -1,10 +1,10 @@
 #ifndef PLAYSTATE_H_
 #define PLAYSTATE_H_
-#include "../entities/Character.h"
-#include "../levels/Levels.h"
-#include "../levels/Camera.h"
-#include "../comp/Transition.h"
-class PlayState : public GameState ,public Transition {
+#include "../entities/Character.hpp"
+#include "../levels/Levels.hpp"
+#include "../levels/Camera.hpp"
+#include "../comp/Transition.hpp"
+class PlayState : public GameState, public Transition {
 public:
 
 	static PlayState* get();

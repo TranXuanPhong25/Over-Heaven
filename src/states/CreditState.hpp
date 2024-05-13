@@ -1,8 +1,8 @@
 #ifndef CREDITSTATE_H_
 #define CREDITSTATE_H_
-#include "../core/StateMachine.h"
+#include "../core/StateMachine.hpp"
 class IntroState;
-class CreditState : public GameState{
+class CreditState : public GameState {
 public:
 	static CreditState* get();
 	bool enter(SDL_Renderer* ren);

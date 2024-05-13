@@ -20,8 +20,8 @@ must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source
 distribution.
 */
-
-#include "tinyxml2.h"
+// origin tinyxml2.h !!! modified by me 
+#include "tinyxml2.hpp"
 
 #include <new>		// yes, this one new style header, is in the Android SDK.
 #if defined(ANDROID_NDK) || defined(__BORLANDC__) || defined(__QNXNTO__)

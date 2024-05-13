@@ -1,7 +1,7 @@
 #ifndef EXITSTATE_H_
 #define EXITSTATE_H_
 
-#include "GameState.h"
+#include "GameState.hpp"
 class ExitState : public GameState {
 public:
 	static ExitState* get();

@@ -1,4 +1,4 @@
-#include "ExitState.h"
+#include "ExitState.hpp"
 
 ExitState ExitState::s_exit_state_;
 ExitState::ExitState() {}

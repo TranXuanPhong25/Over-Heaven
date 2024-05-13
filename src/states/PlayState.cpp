@@ -1,4 +1,4 @@
-#include "PlayState.h"
+#include "PlayState.hpp"
 
 PlayState PlayState::s_play_state_;
 PlayState::PlayState() {
@@ -36,9 +36,17 @@ float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	level_.loadResources(ren, progress);
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+
+	try {
+		player_.loadData(PLAYER_DATA_PATH);
+		*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+	} catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}
 
 	if (!loaded_player_spritesheet_) {
-		player_.loadTexture(ren, PLAYER_SPRITESHEET_PATH);
+		player_.loadTexture(ren);
 		loaded_player_spritesheet_ = true;
 	}
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
@@ -65,7 +73,7 @@ bool PlayState::exit()
 {
 	player_.saveStats();
 	level_.savePath();
-	
+
 	return true;
 }
 void PlayState::handleEvent(SDL_Event& e)
@@ -93,7 +101,7 @@ void PlayState::render(SDL_Renderer* ren)
 	level_.renderNearGround(ren);
 	level_.renderFaceGround(ren);
 	renderTransitionFx(ren);
-	
+
 }
 void PlayState::deleteSave()
 {
@@ -101,7 +109,7 @@ void PlayState::deleteSave()
 	should_change_level_ = true;
 	try
 	{
-		std::remove("save/save_game.xml");
+		std::remove(SAVE_PATH);
 	}
 	catch (std::exception& e)
 	{

@@ -1,7 +1,7 @@
 #ifndef CHARACTER_H_
 #define CHARACTER_H_
-#include "Entity.h"
-#include "../levels/Levels.h"
+#include "Entity.hpp"
+#include "../levels/Levels.hpp"
 
 class Character : public Entity {
 public:
@@ -15,6 +15,12 @@ public:
 		FALL_LEFT,
 		FALL_RIGHT,
 	};
+	enum ANIMATION_INDEX {
+		IDLE,
+		JUMP,
+		RUN,
+		NUM_ANIMATIONS
+	};
 	Character();
 	~Character();
 	void handleInput(SDL_Event& e);
@@ -26,6 +32,7 @@ public:
 
 	void moveX(const float& dT);
 	void moveY(const float& dT);
+
 	void CollideX(Level& level);
 	void CollideY(Level& level);
 	void GroundCollideX(const SDL_Rect& tileRect);
@@ -40,6 +47,8 @@ public:
 	void handleReachGoal();
 	void saveStats() const;
 	void loadStats(Level& level);
+	bool loadSpriteSheetData(const std::string& path);
+	bool loadData(const std::string& path);
 	void resetStats();
 private:
 	State state_;

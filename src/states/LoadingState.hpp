@@ -1,12 +1,12 @@
 #ifndef LOADING_SCREEN_STATE_H
 #define LOADING_SCREEN_STATE_H
 
-#include "../core/StateMachine.h"
-#include "../comp/Transition.h"
+#include "../core/StateMachine.hpp"
+#include "../comp/Transition.hpp"
 static int loadingResources(void* data);
 
 class PlayState;
-class LoadingState : public GameState,public Transition
+class LoadingState : public GameState, public Transition
 {
 public:
 	static LoadingState* get();

@@ -1,4 +1,4 @@
-#include "Levels.h"
+#include "Levels.hpp"
 
 Level::Level()
 {
@@ -33,11 +33,11 @@ Level::Level()
 	near_ground_height_ = 0;
 	near_ground_width_ = 0;
 
-	background_clip_ = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-	far_ground_clip_ = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-	fore_ground_clip_ = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-	face_ground_clip_ = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-	near_ground_clip_ = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+	background_clip_ = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	far_ground_clip_ = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	fore_ground_clip_ = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	face_ground_clip_ = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
+	near_ground_clip_ = { 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT };
 }
 
 Level::~Level()
@@ -69,14 +69,14 @@ Level::~Level()
 	}
 }
 
-void Level::setPath(const std::string &path)
+void Level::setPath(const std::string& path)
 {
 	path_ = path;
 }
 
-void Level::processCSVLine(const std::string &line, int &r, int &c)
+void Level::processCSVLine(const std::string& line, int& r, int& c)
 {
-	for (const char &ch : line)
+	for (const char& ch : line)
 	{
 		if (ch != ',')
 		{
@@ -122,7 +122,7 @@ Level::LevelIndex Level::getLevelIndex() const
 	return id_;
 }
 
-Level::Tile Level::getTile(const int &x, const int &y) const
+Level::Tile Level::getTile(const int& x, const int& y) const
 {
 	return tiles_[y][x];
 }
@@ -145,7 +145,7 @@ int Level::getTileHeight() const
 	return row_;
 }
 
-void Level::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
+void Level::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 {
 	if (back_ground_ != NULL)
 		SDL_DestroyTexture(back_ground_);
@@ -199,7 +199,7 @@ void Level::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 	SDL_QueryTexture(face_ground_, NULL, NULL, &face_ground_width_, &face_ground_height_);
 	SDL_QueryTexture(near_ground_, NULL, NULL, &near_ground_width_, &near_ground_height_);
 }
-void Level::update(Camera &cam)
+void Level::update(Camera& cam)
 {
 	// move relative to camera
 	background_clip_.x = cam.getPos().x / width_ * (background_width_ - SCREEN_WIDTH);
@@ -214,30 +214,30 @@ void Level::update(Camera &cam)
 	near_ground_clip_.y = cam.getPos().y / height_ * (near_ground_height_ - SCREEN_HEIGHT);
 }
 
-void Level::renderFarGround(SDL_Renderer *ren)
+void Level::renderFarGround(SDL_Renderer* ren)
 {
 	if (far_ground_ != NULL)
 		SDL_RenderCopy(ren, far_ground_, &far_ground_clip_, NULL);
 }
 
-void Level::renderBackground(SDL_Renderer *ren)
+void Level::renderBackground(SDL_Renderer* ren)
 {
 	if (back_ground_ != NULL)
 		SDL_RenderCopy(ren, back_ground_, &background_clip_, NULL);
 }
-void Level::renderForeGround(SDL_Renderer *ren)
+void Level::renderForeGround(SDL_Renderer* ren)
 {
 	if (fore_ground_ != NULL)
 		SDL_RenderCopy(ren, fore_ground_, &fore_ground_clip_, NULL);
 }
 
-void Level::renderFaceGround(SDL_Renderer *ren)
+void Level::renderFaceGround(SDL_Renderer* ren)
 {
 	if (face_ground_ != NULL)
 		SDL_RenderCopy(ren, face_ground_, &face_ground_clip_, NULL);
 }
 
-void Level::renderNearGround(SDL_Renderer *ren)
+void Level::renderNearGround(SDL_Renderer* ren)
 {
 	if (near_ground_ != NULL)
 		SDL_RenderCopy(ren, near_ground_, &near_ground_clip_, NULL);
@@ -284,12 +284,12 @@ void Level::loadSavedPath()
 	tinyxml2::XMLDocument doc;
 	if (doc.LoadFile(SAVE_PATH) == tinyxml2::XML_SUCCESS)
 	{
-		tinyxml2::XMLElement *root = doc.RootElement();
+		tinyxml2::XMLElement* root = doc.RootElement();
 		if (!root)
 		{
 			return;
 		}
-		tinyxml2::XMLElement *levelPath = root->FirstChildElement("LevelPath");
+		tinyxml2::XMLElement* levelPath = root->FirstChildElement("LevelPath");
 		if (!levelPath)
 		{
 			id_ = Level1;
@@ -314,7 +314,7 @@ void Level::loadSavedPath()
 void Level::savePath()
 {
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement *root;
+	tinyxml2::XMLElement* root;
 	if (doc.LoadFile(SAVE_PATH) == tinyxml2::XML_SUCCESS)
 	{
 		root = doc.RootElement();
@@ -326,14 +326,15 @@ void Level::savePath()
 	}
 	if (root)
 	{
-		tinyxml2::XMLElement *levelPath = doc.NewElement("LevelPath");
+		tinyxml2::XMLElement* levelPath = doc.NewElement("LevelPath");
 		levelPath->SetAttribute("id", static_cast<int>(id_));
 		levelPath->SetText(path_.c_str());
 		root->InsertEndChild(levelPath);
 	}
 	try {
 		std::filesystem::create_directories("save");
-	}catch (std::exception& e) {
+	}
+	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
 	doc.SaveFile(SAVE_PATH);

@@ -1,4 +1,4 @@
-#include "Camera.h"
+#include "Camera.hpp"
 Camera::Camera() : screenWidth_(SCREEN_WIDTH / TILE_SIZE), screenHeight_(SCREEN_HEIGHT / TILE_SIZE), xOffset_(0), yOffset_(0), damping_factor_(0.05f) {
 }
 
@@ -52,7 +52,7 @@ SDL_Rect Camera::getViewport() const {
 	return viewport;
 }
 
-Vector2D Camera::getPos()
+Vector2D Camera::getPos() const
 {
 	return pos_;
 }

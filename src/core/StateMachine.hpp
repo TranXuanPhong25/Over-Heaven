@@ -1,6 +1,6 @@
 #ifndef STATEMACHINE_H_
 #define STATEMACHINE_H_
-#include "../states/ExitState.h"
+#include "../states/ExitState.hpp"
 
 class StateMachine {
 public:

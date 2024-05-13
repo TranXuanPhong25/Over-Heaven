@@ -1,9 +1,9 @@
 #ifndef MAINMENUSTATE_H_
 #define MAINMENUSTATE_H_
 
-#include "LoadingState.h"
-#include "PlayState.h"
-#include "../thirdParty/ffmpeg/VideoStreamer.h"
+#include "LoadingState.hpp"
+#include "PlayState.hpp"
+#include "../thirdParty/ffmpeg/VideoStreamer.hpp"
 
 class MenuButton {
 public:
@@ -29,7 +29,7 @@ private:
 	Uint8 alpha_;
 };
 //single-level menu
-class MainMenuState : public GameState ,public Transition
+class MainMenuState : public GameState, public Transition
 {
 public:
 	enum State {
@@ -51,7 +51,7 @@ private:
 	MainMenuState();
 	~MainMenuState();
 
-	VideoStreamer *p_video_streamer_;
+	VideoStreamer* p_video_streamer_;
 
 	MenuButton buttons_[NUMS_OF_BUTTONS];
 	MenuButton::ButtonType current_button_;

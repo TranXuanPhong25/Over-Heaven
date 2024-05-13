@@ -1,7 +1,7 @@
 #ifndef INTROSTATE_H_
 #define INTROSTATE_H_
-#include "MainMenuState.h"
-#include "../core/StateMachine.h"
+#include "MainMenuState.hpp"
+#include "../core/StateMachine.hpp"
 
 class IntroState :public GameState {
 public:

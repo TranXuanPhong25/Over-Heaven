@@ -1,7 +1,7 @@
 #ifndef TRANSITION_H_
 #define TRANSITION_H_
 
-#include "../core/Constants.h"
+#include "../core/Constants.hpp"
 
 /**
  * @brief The Transition class provides static functions for performing various types of transitions.
@@ -10,13 +10,13 @@ class Transition
 {
 public:
 	Transition();
-    void getIn(const float &dT);
-    void NewFunction(const float &dT);
-    void getOut(const float &dT);
-    virtual void finishGetIn();
-    virtual void finishGetOut();
-    void handleTransition(const float &dT);
-	void renderTransitionFx(SDL_Renderer *ren);
+	void getIn(const float& dT);
+	void NewFunction(const float& dT);
+	void getOut(const float& dT);
+	virtual void finishGetIn();
+	virtual void finishGetOut();
+	void handleTransition(const float& dT);
+	void renderTransitionFx(SDL_Renderer* ren);
 	void startGetInEffect();
 	void startGetOutEffect();
 	/**

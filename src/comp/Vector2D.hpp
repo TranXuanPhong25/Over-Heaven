@@ -1,7 +1,7 @@
 #ifndef VECTOR2D_H_
 #define VECTOR2D_H_
 
-#include "../core/Constants.h"
+#include "../core/Constants.hpp"
 
 /**
  * @brief Represents a 2D vector.
