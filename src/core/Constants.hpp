@@ -41,7 +41,7 @@ const std::string HEIGHT_KEY = "h";
 const std::string SIZE_KEY = "size";
 const std::string IMAGES_PATH_KEY = "images";
 const std::string PLAYER_SPRITESHEET_DATA_PATH_KEY = "spriteSheetData";
-
+const std::string FRAME_DURATION_KEY = "frameDuration";
 const int JUMP_HEIGHT = 1200;
 const int MAX_FALL_SPEED = 2000;
 const int MAX_JUMP_BUFFER = 3;

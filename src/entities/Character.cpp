@@ -110,33 +110,67 @@ void Character::update(Level& level, Camera& cam, const float& dT)
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
+	updateState();
 	animate(dT);
 }
 void Character::animate(const float &dT)
 {
+	animation_time_ += dT;
+	if (animation_time_ < frame_duration_)
+	{
+		return;
+	}
+	animation_time_ -= frame_duration_;
+	
 	if(state_==IDLE_LEFT||state_==MOVE_LEFT||state_==JUMP_LEFT)
 	{
 		flip_=true;
 	}else flip_=false;
+	
 	if (state_ == IDLE_LEFT || state_ == IDLE_RIGHT)
 	{
-		current_frame_clip_ = std::make_pair(IDLE, 0);
+		current_frame_clip_ = std::make_pair(IDLE, (current_frame_clip_.second + 1) % frames_clips_[IDLE].size());
 	}
-	if (state_ == MOVE_LEFT)
+	if (state_ == MOVE_LEFT || state_==MOVE_RIGHT)
 	{
 		current_frame_clip_ = std::make_pair(RUN, (current_frame_clip_.second + 1) % frames_clips_[RUN].size());
 	}
-	if (state_ == MOVE_RIGHT)
+	if (state_ == JUMP_LEFT || state_ == JUMP_RIGHT)
 	{
-		current_frame_clip_ = std::make_pair(RUN, (current_frame_clip_.second + 1) % frames_clips_[RUN].size());
+		current_frame_clip_ = std::make_pair(JUMP, (current_frame_clip_.second + 1) % frames_clips_[JUMP].size());
 	}
-	if (state_ == JUMP_LEFT)
+	
+}
+void Character::updateState()
+{
+	if (dir_left_)
 	{
-		current_frame_clip_ = std::make_pair(JUMP, 0);
+		state_ = MOVE_LEFT;
 	}
-	if (state_ == JUMP_RIGHT)
+	if (dir_right_)
 	{
-		current_frame_clip_ = std::make_pair(JUMP, 0);
+		state_ = MOVE_RIGHT;
+	}
+	if (vel_.y < 0)
+	{
+		if (state_ == MOVE_LEFT || state_ == IDLE_LEFT)
+			state_ = JUMP_LEFT;
+		if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT)
+			state_ = JUMP_RIGHT;
+	}
+	if (vel_.y > 0)
+	{
+		if (state_ == MOVE_LEFT || state_ == IDLE_LEFT)
+			state_ = JUMP_LEFT;
+		if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT)
+			state_ = JUMP_RIGHT;
+	}
+	if (vel_.y == 0)
+	{
+		if (state_ == JUMP_LEFT)
+			state_ = IDLE_LEFT;
+		if (state_ == JUMP_RIGHT)
+			state_ = IDLE_RIGHT;
 	}
 }
 void Character::handleReachGoal()
@@ -403,6 +437,7 @@ void Character::resetStats()
 	dir_left_ = 0;
 	dir_right_ = 0;
 	gravity_scalar_ = DEFAULT_SCALAR;
+	
 
 	required_frame_to_apply_jump_ = 0;
 	coyote_time_ = 0;
@@ -431,7 +466,7 @@ bool Character::loadSpriteSheetData(const std::string& path)
 	}
 
 	sprite_sheet_path_ = spriteSheetData[IMAGES_PATH_KEY];
-
+	frame_duration_ = spriteSheetData[FRAME_DURATION_KEY];
 	rect_.w = spriteSheetData[FRAME_SIZE_KEY][WIDTH_KEY];
 	rect_.h = spriteSheetData[FRAME_SIZE_KEY][HEIGHT_KEY];
 
@@ -456,7 +491,7 @@ bool Character::loadSpriteSheetData(const std::string& path)
 		}
 		index++;
 	}
-
+	
 	file.close();
 
 	return true;

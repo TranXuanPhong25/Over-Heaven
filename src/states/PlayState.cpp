@@ -1,12 +1,13 @@
 #include "PlayState.hpp"
 
 PlayState PlayState::s_play_state_;
-PlayState::PlayState() {
-	loaded_player_spritesheet_ = false;
+PlayState::PlayState()
+{
+	loaded_player_data_ = false;
 	should_change_level_ = false;
 }
 
-PlayState* PlayState::get()
+PlayState *PlayState::get()
 {
 	return &s_play_state_;
 }
@@ -18,15 +19,17 @@ void PlayState::finishGetOut()
 
 void PlayState::handleChangeLevel()
 {
-	if (player_.isReachedGoal()) {
+	if (player_.isReachedGoal())
+	{
 		player_.handleReachGoal();
 		startGetOutEffect();
 	}
-	if (should_change_level_) {
+	if (should_change_level_)
+	{
 		level_.toNextLevel();
 	}
 }
-float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
+float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 {
 
 	level_.loadSavedPath();
@@ -36,31 +39,38 @@ float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	level_.loadResources(ren, progress);
-	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
-	try {
-		player_.loadData(PLAYER_DATA_PATH);
-		*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
-	} catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}
+	if (!loaded_player_data_)
+	{
+		try
+		{
+			player_.loadData(PLAYER_DATA_PATH);
+			*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+		}
+		catch (std::exception &e)
+		{
+			std::cerr << e.what() << std::endl;
+		}
 
-	if (!loaded_player_spritesheet_) {
 		player_.loadTexture(ren);
-		loaded_player_spritesheet_ = true;
+		*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+		
+		loaded_player_data_ = true;
 	}
-	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
+	else
+	{
+		*progress = *progress + 2.0f / TOTAL_LOADING_STEP;
+	}
 
-	//this action may be redundant but it doesn't hurt to load it again
-	player_.loadStats(level_);
+	player_.loadStats(level_); // this action may be redundant but it doesn't hurt to load it again
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
-
 	return *progress;
 }
-bool PlayState::enter(SDL_Renderer* ren)
+bool PlayState::enter(SDL_Renderer *ren)
 {
 	startGetInEffect();
-	if (should_change_level_) {
+	if (should_change_level_)
+	{
 		player_.resetStats();
 		player_.setDefaultPosition(level_);
 		should_change_level_ = false;
@@ -76,11 +86,11 @@ bool PlayState::exit()
 
 	return true;
 }
-void PlayState::handleEvent(SDL_Event& e)
+void PlayState::handleEvent(SDL_Event &e)
 {
 	player_.handleInput(e);
 }
-void PlayState::update(const float& dT)
+void PlayState::update(const float &dT)
 {
 
 	player_.update(level_, cam_, dT);
@@ -91,7 +101,7 @@ void PlayState::update(const float& dT)
 	handleChangeLevel();
 	handleTransition(dT);
 }
-void PlayState::render(SDL_Renderer* ren)
+void PlayState::render(SDL_Renderer *ren)
 {
 
 	level_.renderFarGround(ren);
@@ -101,17 +111,16 @@ void PlayState::render(SDL_Renderer* ren)
 	level_.renderNearGround(ren);
 	level_.renderFaceGround(ren);
 	renderTransitionFx(ren);
-
 }
 void PlayState::deleteSave()
 {
-	//set flag load default to true
+	// set flag load default to true
 	should_change_level_ = true;
 	try
 	{
 		std::remove(SAVE_PATH);
 	}
-	catch (std::exception& e)
+	catch (std::exception &e)
 	{
 		std::cerr << e.what() << std::endl;
 	}

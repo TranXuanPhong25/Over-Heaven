@@ -15,6 +15,9 @@ Entity::Entity()
 	width_ = 0;
 	height_ = 0;
 	flip_ = false;
+	frame_duration_ = 0;
+	animation_time_ = 0;
+	
 }
 Entity::~Entity()
 {

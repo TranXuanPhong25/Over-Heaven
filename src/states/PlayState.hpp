@@ -23,8 +23,7 @@ private:
 	PlayState();
 
 	bool should_change_level_;
-	bool loaded_player_spritesheet_;
-
+	bool loaded_player_data_;
 	Character player_;
 	Camera cam_;
 	Level level_;

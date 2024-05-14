@@ -13,7 +13,7 @@ public:
 		JUMP_LEFT,
 		JUMP_RIGHT,
 	};
-	enum ANIMATION_INDEX {
+	enum AnimationIndex {
 		IDLE,
 		JUMP,
 		RUN,
@@ -28,7 +28,7 @@ public:
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
 	virtual void animate(const float&dT) override;
-
+	void updateState();
 	void moveX(const float& dT);
 	void moveY(const float& dT);
 

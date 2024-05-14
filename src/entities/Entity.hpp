@@ -23,6 +23,8 @@ protected:
 	int width_offset_;
 	int height_offset_;
 
+	float frame_duration_;
+	float animation_time_;
 	bool flip_;
 	int width_;
 	int height_;
