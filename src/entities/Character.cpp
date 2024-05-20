@@ -3,10 +3,11 @@ Character::Character()
 {
 	speed_ = DEFAULT_SPEED;
 	vel_ = { 0, 0 };
-	state_ = IDLE_RIGHT;
+	state_ = State::IDLE;
 	spacekey_pressed_ = false;
 
 	on_ground_ = false;
+	direction_ = RIGHT;
 	dir_left_ = 0;
 	dir_right_ = 0;
 	gravity_scalar_ = DEFAULT_SCALAR;
@@ -15,7 +16,7 @@ Character::Character()
 	coyote_time_ = 0;
 	should_change_level_ = false;
 
-	frames_clips_.resize(NUM_ANIMATIONS);
+	frames_clips_.resize(NUM_STATES);
 }
 Character::~Character()
 {
@@ -42,28 +43,12 @@ void Character::handleKeyPressed(const SDL_Event& e)
 	if ((e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a))
 	{
 		dir_left_ = 1;
-		if (state_ < JUMP_LEFT)
-		{
-			state_ = MOVE_LEFT;
-		}
-
-		if (state_ == JUMP_RIGHT)
-		{
-			state_ = JUMP_LEFT;
-		}
+		direction_ = LEFT;
 	}
 	if ((e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d))
 	{
 		dir_right_ = 1;
-		if (state_ < JUMP_LEFT)
-		{
-			state_ = MOVE_RIGHT;
-		}
-
-		if (state_ == JUMP_LEFT)
-		{
-			state_ = JUMP_RIGHT;
-		}
+		direction_ = RIGHT;
 	}
 }
 void Character::handleKeyReleased(const SDL_Event& e)
@@ -74,19 +59,11 @@ void Character::handleKeyReleased(const SDL_Event& e)
 	}
 	if ((e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a))
 	{
-		if (state_ < JUMP_LEFT)
-		{
-			state_ = IDLE_LEFT;
-		}
 		dir_left_ = 0;
 	}
 	if ((e.key.keysym.sym == SDLK_RIGHT || e.key.keysym.sym == SDLK_d))
 	{
 		dir_right_ = 0;
-		if (state_ < JUMP_LEFT)
-		{
-			state_ = IDLE_RIGHT;
-		}
 	}
 }
 
@@ -122,55 +99,56 @@ void Character::animate(const float &dT)
 	}
 	animation_time_ -= frame_duration_;
 	
-	if(state_==IDLE_LEFT||state_==MOVE_LEFT||state_==JUMP_LEFT)
-	{
+	if(direction_==LEFT){
 		flip_=true;
-	}else flip_=false;
-	
-	if (state_ == IDLE_LEFT || state_ == IDLE_RIGHT)
+	}else{
+		flip_=false;
+	}
+	if (state_ == IDLE )
 	{
 		current_frame_clip_ = std::make_pair(IDLE, (current_frame_clip_.second + 1) % frames_clips_[IDLE].size());
 	}
-	if (state_ == MOVE_LEFT || state_==MOVE_RIGHT)
+	if (state_ == RUNNING)
 	{
-		current_frame_clip_ = std::make_pair(RUN, (current_frame_clip_.second + 1) % frames_clips_[RUN].size());
+		current_frame_clip_ = std::make_pair(RUNNING, (current_frame_clip_.second + 1) % frames_clips_[RUNNING].size());
 	}
-	if (state_ == JUMP_LEFT || state_ == JUMP_RIGHT)
+	if (state_ == JUMPING)
 	{
-		current_frame_clip_ = std::make_pair(JUMP, (current_frame_clip_.second + 1) % frames_clips_[JUMP].size());
+		std::cout<<vel_.y<<std::endl;
+		if(vel_.y<-600){
+
+			current_frame_clip_ = std::make_pair(JUMPING, (current_frame_clip_.second + 1) %4);
+		}else if(vel_.y<-FLOATY_FALL_VEL){
+			current_frame_clip_.second=5;
+		}else if(vel_.y<FLOATY_FALL_VEL){
+			current_frame_clip_.second=6;
+		}else{
+			current_frame_clip_ = std::make_pair(JUMPING, current_frame_clip_.second<12?(current_frame_clip_.second + 1):12);
+		}
 	}
 	
+
 }
 void Character::updateState()
 {
-	if (dir_left_)
+	State prevState = state_;
+
+	if (dir_left_-dir_right_)
 	{
-		state_ = MOVE_LEFT;
+		state_ = RUNNING;
+		
 	}
-	if (dir_right_)
+	else
 	{
-		state_ = MOVE_RIGHT;
+		state_ = IDLE;
 	}
-	if (vel_.y < 0)
+	if (!on_ground_)
 	{
-		if (state_ == MOVE_LEFT || state_ == IDLE_LEFT)
-			state_ = JUMP_LEFT;
-		if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT)
-			state_ = JUMP_RIGHT;
+		state_ = JUMPING;
 	}
-	if (vel_.y > 0)
+	if (prevState != state_)
 	{
-		if (state_ == MOVE_LEFT || state_ == IDLE_LEFT)
-			state_ = JUMP_LEFT;
-		if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT)
-			state_ = JUMP_RIGHT;
-	}
-	if (vel_.y == 0)
-	{
-		if (state_ == JUMP_LEFT)
-			state_ = IDLE_LEFT;
-		if (state_ == JUMP_RIGHT)
-			state_ = IDLE_RIGHT;
+		current_frame_clip_.second =0;
 	}
 }
 void Character::handleReachGoal()
@@ -231,10 +209,9 @@ void Character::CollideX(Level& level)
 
 void Character::jump(const float& dT)
 {
-	if (state_ == MOVE_LEFT || state_ == IDLE_LEFT)
-		state_ = JUMP_LEFT;
-	if (state_ == MOVE_RIGHT || state_ == IDLE_RIGHT)
-		state_ = JUMP_RIGHT;
+	if (state_ == RUNNING||state_==IDLE)
+		state_ = JUMPING;
+	
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
@@ -431,7 +408,7 @@ void Character::resetStats()
 {
 	speed_ = DEFAULT_SPEED;
 	vel_ = { 0, 0 };
-	state_ = IDLE_RIGHT;
+	state_ = IDLE;
 	spacekey_pressed_ = false;
 	on_ground_ = false;
 	dir_left_ = 0;

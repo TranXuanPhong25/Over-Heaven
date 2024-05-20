@@ -6,19 +6,12 @@
 class Character : public Entity {
 public:
 	enum State {
-		IDLE_LEFT,
-		IDLE_RIGHT,
-		MOVE_LEFT,
-		MOVE_RIGHT,
-		JUMP_LEFT,
-		JUMP_RIGHT,
-	};
-	enum AnimationIndex {
 		IDLE,
-		JUMP,
-		RUN,
-		NUM_ANIMATIONS
+		JUMPING,
+		RUNNING,
+		NUM_STATES
 	};
+	
 	Character();
 	~Character();
 	void handleInput(SDL_Event& e);
@@ -52,6 +45,7 @@ public:
 private:
 	State state_;
 	float speed_;
+	int direction_;
 	int dir_left_;
 	int dir_right_;
 	Vector2D vel_;
