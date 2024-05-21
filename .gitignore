@@ -381,3 +381,5 @@ FodyWeavers.xsd
 /Over-Heaven
 save/save_game.xml
 Over-Heaven.exe
+resource.h
+Over-Heaven.rc
