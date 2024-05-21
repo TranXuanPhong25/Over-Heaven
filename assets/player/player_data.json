@@ -1,7 +1,7 @@
 {
     "size": {
-        "w": 58,
-        "h": 90
+        "w": 50,
+        "h": 50
     },
     "spriteSheetData": "assets/player/player_sprite_sheet_data.json"
 }

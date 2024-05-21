@@ -1,4 +1,4 @@
-#include "Transition.h"
+#include "Transition.hpp"
 Transition::Transition()
 {
 	overlay_alpha_ = 1.0f;

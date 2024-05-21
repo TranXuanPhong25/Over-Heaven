@@ -36,7 +36,6 @@ bool Game::initWindow()
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
-	SDL_SetWindowIcon(window_, IMG_Load("assets/img/icon64x64.png"));
 
 	ren_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (ren_ == NULL)
