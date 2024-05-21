@@ -2,8 +2,7 @@
 Character::Character()
 {
 	speed_ = DEFAULT_SPEED;
-	vel_ = { 0, 0 };
-	state_ = State::IDLE;
+	vel_ = {0, 0};
 	spacekey_pressed_ = false;
 
 	on_ground_ = false;
@@ -16,13 +15,13 @@ Character::Character()
 	coyote_time_ = 0;
 	should_change_level_ = false;
 
-	frames_clips_.resize(NUM_STATES);
+	frames_clips_.resize(NUM_ANIMATIONS);
 }
 Character::~Character()
 {
 	free();
 }
-void Character::handleInput(SDL_Event& e)
+void Character::handleInput(SDL_Event &e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -34,7 +33,7 @@ void Character::handleInput(SDL_Event& e)
 	}
 }
 
-void Character::handleKeyPressed(const SDL_Event& e)
+void Character::handleKeyPressed(const SDL_Event &e)
 {
 	if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP)
 	{
@@ -51,7 +50,7 @@ void Character::handleKeyPressed(const SDL_Event& e)
 		direction_ = RIGHT;
 	}
 }
-void Character::handleKeyReleased(const SDL_Event& e)
+void Character::handleKeyReleased(const SDL_Event &e)
 {
 	if (e.key.keysym.sym == SDLK_SPACE || e.key.keysym.sym == SDLK_UP)
 	{
@@ -71,23 +70,22 @@ Vector2D Character::getVel() const
 {
 	return vel_;
 }
-bool Character::checkCollision(const SDL_Rect& a, const SDL_Rect& s)
+bool Character::checkCollision(const SDL_Rect &a, const SDL_Rect &s)
 {
 	return a.x < s.x + s.w && a.x + a.w > s.x && a.y < s.y + s.h && a.y + a.h > s.y;
 }
-void Character::setDefaultPosition(Level& level)
+void Character::setDefaultPosition(Level &level)
 {
 	pos_.x = PLAYER_DEFAULT_POS[level.getLevelIndex()][0];
 	pos_.y = PLAYER_DEFAULT_POS[level.getLevelIndex()][1];
 }
-void Character::update(Level& level, Camera& cam, const float& dT)
+void Character::update(Level &level, Camera &cam, const float &dT)
 {
-	
+
 	moveX(dT);
 	CollideX(level);
 	moveY(dT);
 	CollideY(level);
-	updateState();
 	animate(dT);
 }
 void Character::animate(const float &dT)
@@ -98,69 +96,86 @@ void Character::animate(const float &dT)
 		return;
 	}
 	animation_time_ -= frame_duration_;
-	
-	if(direction_==LEFT){
-		flip_=true;
-	}else{
-		flip_=false;
-	}
-	if (state_ == IDLE )
-	{
-		current_frame_clip_ = std::make_pair(IDLE, (current_frame_clip_.second + 1) % frames_clips_[IDLE].size());
-	}
-	if (state_ == RUNNING)
-	{
-		current_frame_clip_ = std::make_pair(RUNNING, (current_frame_clip_.second + 1) % frames_clips_[RUNNING].size());
-	}
-	if (state_ == JUMPING)
-	{
-		std::cout<<vel_.y<<std::endl;
-		if(vel_.y<-600){
 
-			current_frame_clip_ = std::make_pair(JUMPING, (current_frame_clip_.second + 1) %4);
-		}else if(vel_.y<-FLOATY_FALL_VEL){
-			current_frame_clip_.second=5;
-		}else if(vel_.y<FLOATY_FALL_VEL){
-			current_frame_clip_.second=6;
-		}else{
-			current_frame_clip_ = std::make_pair(JUMPING, current_frame_clip_.second<12?(current_frame_clip_.second + 1):12);
-		}
-	}
-	
-
-}
-void Character::updateState()
-{
-	State prevState = state_;
-
-	if (dir_left_-dir_right_)
+	if (direction_ == LEFT)
 	{
-		state_ = RUNNING;
-		
+		flip_ = true;
 	}
 	else
 	{
-		state_ = IDLE;
+		flip_ = false;
 	}
-	if (!on_ground_)
+
+	int numFrames = frames_clips_[current_animation_].size();
+
+	if (on_ground_)
 	{
-		state_ = JUMPING;
+		current_frame_ = (current_frame_ + 1) % numFrames;
+		if (dir_left_ != dir_right_ && current_animation_ == IDLE)
+		{
+			current_animation_ = RUNNING;
+		}
+		if (current_animation_ == RUNNING)
+		{
+			if (dir_left_ == dir_right_)
+			{
+
+				if (current_frame_ % numFrames == 0)
+				{
+					current_frame_ = 0;
+					current_animation_ = IDLE;
+				}
+				else if (current_frame_ < frames_clips_[RUNNING].size() - 2)
+				{
+					current_frame_ = frames_clips_[RUNNING].size() - 2;
+				}
+			}
+		}
+		else if (current_animation_ == JUMPING)
+		{
+			if (current_frame_ % numFrames == 0)
+			{
+				current_frame_ = 0;
+				current_animation_ = IDLE;
+			}
+			else if (current_frame_ < frames_clips_[JUMPING].size() - 4)
+			{
+				current_frame_ = frames_clips_[JUMPING].size() - 4;
+			}
+		}
 	}
-	if (prevState != state_)
+	else
 	{
-		current_frame_clip_.second =0;
+		current_animation_ = JUMPING;
+		if (vel_.y < -600)
+		{
+			current_frame_ = current_frame_ < 4 ? (current_frame_ + 1) : 4;
+		}
+		else if (vel_.y < -FLOATY_FALL_VEL)
+		{
+			// loop between 4-5
+			current_frame_ = (current_frame_ + 1) % 3 + 4;
+		}
+		else if (vel_.y < FLOATY_FALL_VEL)
+		{
+			current_frame_ = (current_frame_ + 1) % 2 + 7;
+		}
+		else 
+		{
+			current_frame_ = (current_frame_ + 1) % 3 + 9;
+		}
 	}
 }
 void Character::handleReachGoal()
 {
 	should_change_level_ = false;
 }
-void Character::moveX(const float& dT)
+void Character::moveX(const float &dT)
 {
 	vel_.x = (dir_right_ - dir_left_) * speed_;
 	pos_.x += vel_.x * dT;
 }
-void Character::GroundCollideX(const SDL_Rect& tileRect)
+void Character::GroundCollideX(const SDL_Rect &tileRect)
 {
 	if (vel_.x > 0)
 	{
@@ -172,10 +187,10 @@ void Character::GroundCollideX(const SDL_Rect& tileRect)
 	}
 }
 
-void Character::handleCollideX(const int& x, const int& y, Level::Tile tile)
+void Character::handleCollideX(const int &x, const int &y, Level::Tile tile)
 {
-	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
-	if (checkCollision({ (int)pos_.x, (int)pos_.y, width_ ,height_ }, tileRect))
+	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
+	if (checkCollision({(int)pos_.x, (int)pos_.y, width_, height_}, tileRect))
 	{
 		if (tile == Level::GROUND)
 		{
@@ -190,7 +205,7 @@ void Character::handleCollideX(const int& x, const int& y, Level::Tile tile)
 	}
 }
 
-void Character::CollideX(Level& level)
+void Character::CollideX(Level &level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -207,11 +222,8 @@ void Character::CollideX(Level& level)
 	}
 }
 
-void Character::jump(const float& dT)
+void Character::jump(const float &dT)
 {
-	if (state_ == RUNNING||state_==IDLE)
-		state_ = JUMPING;
-	
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
@@ -224,7 +236,7 @@ bool Character::isReachedGoal() const
 	return should_change_level_;
 }
 
-void Character::applyGravity(const float& dT)
+void Character::applyGravity(const float &dT)
 {
 	if (vel_.y > FLOATY_FALL_VEL)
 	{
@@ -266,7 +278,7 @@ void Character::applyGravity(const float& dT)
 	}
 }
 
-void Character::moveY(const float& dT)
+void Character::moveY(const float &dT)
 {
 	if (required_frame_to_apply_jump_)
 		required_frame_to_apply_jump_--;
@@ -292,9 +304,9 @@ void Character::moveY(const float& dT)
 	}
 	pos_.y += vel_.y * dT;
 }
-void Character::GroundCollideY(const SDL_Rect& tileRect)
+void Character::GroundCollideY(const SDL_Rect &tileRect)
 {
-	if (checkCollision({ (int)pos_.x, (int)pos_.y, width_ ,height_ }, tileRect))
+	if (checkCollision({(int)pos_.x, (int)pos_.y, width_, height_}, tileRect))
 	{
 		if (vel_.y >= 0)
 		{
@@ -309,9 +321,9 @@ void Character::GroundCollideY(const SDL_Rect& tileRect)
 		}
 	}
 }
-void Character::handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow)
+void Character::handleCollideY(const int &x, const int &y, const int &endY, Level::Tile tile, bool &somethingBelow)
 {
-	SDL_Rect tileRect = { x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE };
+	SDL_Rect tileRect = {x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE};
 	if (tile == Level::GROUND)
 	{
 		if (y == endY)
@@ -326,7 +338,7 @@ void Character::handleCollideY(const int& x, const int& y, const int& endY, Leve
 	}
 }
 
-void Character::CollideY(Level& level)
+void Character::CollideY(Level &level)
 {
 	int tileX = pos_.x / TILE_SIZE;
 	int tileY = pos_.y / TILE_SIZE;
@@ -352,9 +364,9 @@ void Character::CollideY(Level& level)
 void Character::saveStats() const
 {
 	tinyxml2::XMLDocument doc;
-	tinyxml2::XMLElement* root = doc.NewElement("SaveData");
+	tinyxml2::XMLElement *root = doc.NewElement("SaveData");
 	doc.InsertFirstChild(root);
-	tinyxml2::XMLElement* playerPos = doc.NewElement("PlayerPosition");
+	tinyxml2::XMLElement *playerPos = doc.NewElement("PlayerPosition");
 	playerPos->SetAttribute("x", static_cast<int>(pos_.x));
 	playerPos->SetAttribute("y", static_cast<int>(pos_.y));
 	root->InsertEndChild(playerPos);
@@ -362,14 +374,14 @@ void Character::saveStats() const
 	{
 		std::filesystem::create_directories("save");
 	}
-	catch (std::exception& e)
+	catch (std::exception &e)
 	{
 		std::cout << e.what() << std::endl;
 	}
 	doc.SaveFile(SAVE_PATH);
 }
 
-void Character::loadStats(Level& level)
+void Character::loadStats(Level &level)
 {
 	resetStats();
 	tinyxml2::XMLDocument doc;
@@ -378,7 +390,7 @@ void Character::loadStats(Level& level)
 		std::cout << "Failed to load save file." << std::endl;
 	}
 
-	tinyxml2::XMLElement* root = doc.FirstChildElement("SaveData");
+	tinyxml2::XMLElement *root = doc.FirstChildElement("SaveData");
 	if (!root)
 	{
 		std::cout << "Save file is missing SaveData element." << std::endl;
@@ -388,7 +400,7 @@ void Character::loadStats(Level& level)
 	// default value will be set if position node not found
 	setDefaultPosition(level);
 
-	tinyxml2::XMLElement* playerPos = root->FirstChildElement("PlayerPosition");
+	tinyxml2::XMLElement *playerPos = root->FirstChildElement("PlayerPosition");
 	if (!playerPos)
 	{
 		saveStats();
@@ -406,22 +418,23 @@ void Character::loadStats(Level& level)
 
 void Character::resetStats()
 {
-	speed_ = DEFAULT_SPEED;
-	vel_ = { 0, 0 };
-	state_ = IDLE;
-	spacekey_pressed_ = false;
+	pos_ = {0, 0};
+	vel_ = {0, 0};
 	on_ground_ = false;
-	dir_left_ = 0;
-	dir_right_ = 0;
+	spacekey_pressed_ = false;
 	gravity_scalar_ = DEFAULT_SCALAR;
-	
-
 	required_frame_to_apply_jump_ = 0;
 	coyote_time_ = 0;
 	should_change_level_ = false;
+
+	current_animation_ = 0;
+	current_frame_ = 0;
+	flip_ = false;
+
+	animation_time_ = 0;
 }
 
-bool Character::loadSpriteSheetData(const std::string& path)
+bool Character::loadSpriteSheetData(const std::string &path)
 {
 
 	std::ifstream file(path);
@@ -436,7 +449,7 @@ bool Character::loadSpriteSheetData(const std::string& path)
 	{
 		spriteSheetData = nlohmann::json::parse(file);
 	}
-	catch (nlohmann::json::parse_error& e)
+	catch (nlohmann::json::parse_error &e)
 	{
 		std::cout << "Error parsing JSON: " << e.what() << std::endl;
 		return false;
@@ -455,25 +468,25 @@ bool Character::loadSpriteSheetData(const std::string& path)
 	SDL_Rect rect;
 
 	int index = 0;
-	for (const auto& clips : { idleClips, jumpClips, runClips })
+	for (const auto &clips : {idleClips, jumpClips, runClips})
 	{
-		for (const auto& frame_clip_ : clips)
+		for (const auto &frame_clip_ : clips)
 		{
 			x = frame_clip_[X_KEY];
 			y = frame_clip_[Y_KEY];
 			w = frame_clip_[WIDTH_KEY];
 			h = frame_clip_[HEIGHT_KEY];
-			rect = { x, y, w, h };
+			rect = {x, y, w, h};
 			frames_clips_[index].push_back(rect);
 		}
 		index++;
 	}
-	
+
 	file.close();
 
 	return true;
 }
-bool Character::loadData(const std::string& path)
+bool Character::loadData(const std::string &path)
 {
 	std::ifstream file(path);
 	if (!file.is_open())
@@ -486,20 +499,20 @@ bool Character::loadData(const std::string& path)
 	{
 		playerData = nlohmann::json::parse(file);
 	}
-	catch (nlohmann::json::parse_error& e)
+	catch (nlohmann::json::parse_error &e)
 	{
-		
+
 		std::cout << "Error parsing JSON: " << e.what() << std::endl;
 		return false;
 	}
-	
+
 	std::string spriteSheetDataPath = playerData[PLAYER_SPRITESHEET_DATA_PATH_KEY];
 	if (!loadSpriteSheetData(spriteSheetDataPath))
 	{
 		std::cout << "Error loading sprite sheet data" << std::endl;
 		return false;
 	}
-	
+
 	width_ = playerData[SIZE_KEY][WIDTH_KEY];
 	height_ = playerData[SIZE_KEY][HEIGHT_KEY];
 	width_offset_ = (rect_.w - width_) / 2;

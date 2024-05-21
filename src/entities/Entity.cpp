@@ -11,7 +11,9 @@ Entity::Entity()
 	pos_.y = 0;
 	width_offset_ = 0;
 	height_offset_ = 0;
-	current_frame_clip_ = std::make_pair(0, 0);
+	current_animation_ = 0;
+	current_frame_ = 0;
+	
 	width_ = 0;
 	height_ = 0;
 	flip_ = false;
@@ -36,7 +38,7 @@ void Entity::render(SDL_Renderer *ren)
 {
 	SDL_RenderCopyEx(ren,
 					 texture_,
-					 &frames_clips_[current_frame_clip_.first][current_frame_clip_.second],
+					 &frames_clips_[current_animation_][current_frame_],
 					 &rect_,
 					 0,
 					 NULL,

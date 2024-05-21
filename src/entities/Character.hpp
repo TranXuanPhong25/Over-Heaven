@@ -5,11 +5,11 @@
 
 class Character : public Entity {
 public:
-	enum State {
+	enum Animation {
 		IDLE,
 		JUMPING,
 		RUNNING,
-		NUM_STATES
+		NUM_ANIMATIONS
 	};
 	
 	Character();
@@ -21,7 +21,6 @@ public:
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
 	virtual void animate(const float&dT) override;
-	void updateState();
 	void moveX(const float& dT);
 	void moveY(const float& dT);
 
@@ -43,7 +42,6 @@ public:
 	bool loadData(const std::string& path) override;
 	void resetStats();
 private:
-	State state_;
 	float speed_;
 	int direction_;
 	int dir_left_;
@@ -51,6 +49,7 @@ private:
 	Vector2D vel_;
 	float gravity_scalar_;
 	bool on_ground_;
+	
 	bool spacekey_pressed_;
 
 	int required_frame_to_apply_jump_;
