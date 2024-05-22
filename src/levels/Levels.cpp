@@ -345,6 +345,12 @@ void Level::toNextLevel()
 	if (id_ == Level3)
 	{
 		StateMachine::get()->setNextState(CreditState::get());
+		try {
+			std::filesystem::remove(SAVE_PATH);
+		}
+		catch (std::exception& e) {
+			std::cout << e.what() << std::endl;
+		}
 		return;
 	}
 	id_ = static_cast<LevelIndex>(id_ + 1);

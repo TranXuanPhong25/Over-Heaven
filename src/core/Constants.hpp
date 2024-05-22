@@ -68,7 +68,7 @@ const float PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
 	{120, 5500 },
-	{ 60, 60 }
+	{ 120, 500 }
 };
 const char SAVE_PATH[] = "save/save_game.xml";
 

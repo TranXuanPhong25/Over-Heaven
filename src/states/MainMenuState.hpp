@@ -10,8 +10,11 @@ public:
 	enum ButtonType {
 		NEWGAME,
 		CONTINUE,
-		//OPTIONS,
-		QUIT
+		QUIT,
+		OPTIONS,
+		VOLUME_SLIDER,
+		BACK,
+
 	};
 	~MenuButton();
 	void render(SDL_Renderer* ren);
@@ -52,7 +55,7 @@ private:
 	~MainMenuState();
 
 	VideoStreamer* p_video_streamer_;
-
+	bool continue_available_;
 	MenuButton buttons_[NUMS_OF_BUTTONS];
 	MenuButton::ButtonType current_button_;
 

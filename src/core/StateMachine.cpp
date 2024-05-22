@@ -1,4 +1,4 @@
-#include "StateMachine.h"
+#include "StateMachine.hpp"
 StateMachine::StateMachine() {
 	p_current_state_ = NULL;
 	p_next_state_ = NULL;

@@ -1,4 +1,4 @@
-#include "MainMenuState.h"
+#include "MainMenuState.hpp"
 MenuButton::~MenuButton()
 {
 	SDL_DestroyTexture(texture_);
@@ -48,6 +48,7 @@ MainMenuState::MainMenuState()
 	buttons_[2].setType(MenuButton::QUIT);
 	current_button_ = MenuButton::NEWGAME;
 	bg_ = NULL;
+	continue_available_ = false;
 }
 MainMenuState::~MainMenuState()
 {
@@ -72,6 +73,9 @@ bool MainMenuState::enter(SDL_Renderer* ren)
 		buttons_[i].loadTexture(ren, MENU_BUTTON_TEXTURE_PATHS[i]);
 		buttons_[i].setRectY(SCREEN_HEIGHT / 2 + i * 100);
 	}
+	std::ifstream save_file(SAVE_PATH);
+	continue_available_ = save_file.good();
+	save_file.close();
 	bg_ = IMG_LoadTexture(ren, MENU_BACKGROUND_TEXTURE_PATH.c_str());
 
 	return true;
@@ -90,6 +94,10 @@ void MainMenuState::handleFocusUp()
 	else
 	{
 		current_button_ = static_cast<MenuButton::ButtonType>(current_button_ - 1);
+		if (!continue_available_ && current_button_ == MenuButton::CONTINUE)
+		{
+			current_button_ = static_cast<MenuButton::ButtonType>(current_button_ - 1);
+		}
 	}
 }
 void MainMenuState::handleFocusDown()
@@ -100,7 +108,12 @@ void MainMenuState::handleFocusDown()
 	}
 	else
 	{
+
 		current_button_ = static_cast<MenuButton::ButtonType>(current_button_ + 1);
+		if (!continue_available_ && current_button_ == MenuButton::CONTINUE)
+		{
+			current_button_ = static_cast<MenuButton::ButtonType>(current_button_ + 1);
+		}
 	}
 }
 void MainMenuState::handleEnter()
@@ -155,7 +168,7 @@ void MainMenuState::update(const float& dT)
 void MainMenuState::render(SDL_Renderer* ren)
 {
 	p_video_streamer_->render(ren);
-	// SDL_RenderCopy(ren, bg_, NULL, NULL);
+	SDL_RenderCopy(ren, bg_, NULL, NULL);
 
 	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
 	{

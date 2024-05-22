@@ -7,7 +7,7 @@ Transition::Transition()
 }
 void Transition::getIn(const float& dT)
 {
-	overlay_alpha_ = lerp(overlay_alpha_, -0.01f, dT * 3);
+	overlay_alpha_ = lerp(overlay_alpha_, -0.1f, dT * 3);
 	if (overlay_alpha_ <= 0.0f)
 	{
 		overlay_alpha_ = 0.0f;
@@ -18,7 +18,7 @@ void Transition::getIn(const float& dT)
 }
 void Transition::getOut(const float& dT)
 {
-	overlay_alpha_ += dT * 4;
+	overlay_alpha_ += dT / 0.4;
 	if (overlay_alpha_ > 1.0f)
 	{
 		overlay_alpha_ = 1.0f;
@@ -45,7 +45,7 @@ void Transition::handleTransition(const float& dT)
 }
 void Transition::renderTransitionFx(SDL_Renderer* ren)
 {
-	if (is_on_enter_ || is_on_exit_||overlay_alpha_==1)
+	if (is_on_enter_ || is_on_exit_ || overlay_alpha_ == 1)
 	{
 		SDL_SetRenderDrawBlendMode(ren, SDL_BLENDMODE_BLEND);
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, static_cast<Uint8>(overlay_alpha_ * 255));

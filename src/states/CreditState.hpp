@@ -3,7 +3,7 @@
 #include "../core/StateMachine.hpp"
 #include "../comp/Transition.hpp"
 class IntroState;
-class CreditState : public GameState,public Transition {
+class CreditState : public GameState, public Transition {
 public:
 	static CreditState* get();
 	bool enter(SDL_Renderer* ren);
@@ -18,6 +18,7 @@ private:
 	SDL_Texture* credit_;
 	SDL_Rect credit_rect_;
 	SDL_Rect dest_rect_;
+	int credit_texture_height_;
 	bool esc_pressed_;
 };
 

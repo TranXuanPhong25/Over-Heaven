@@ -1,4 +1,4 @@
-#include "VideoStreamer.h"
+#include "VideoStreamer.hpp"
 
 VideoStreamer::VideoStreamer()
 {
@@ -9,7 +9,7 @@ VideoStreamer::VideoStreamer()
 	video_stream_index_ = -1;
 	packet_ = { 0 };
 	is_end_of_stream_ = false;
-	isFrameReady =false;
+	isFrameReady = false;
 }
 VideoStreamer::~VideoStreamer()
 {
@@ -179,7 +179,7 @@ bool VideoStreamer::readFrame()
 	}
 	// av_frame_free(&frame_);
 	av_packet_unref(&packet_);
-	if(success) isFrameReady = true;
+	if (success) isFrameReady = true;
 	return success;
 }
 
@@ -201,7 +201,7 @@ void VideoStreamer::free()
 }
 void VideoStreamer::render(SDL_Renderer* ren)
 {
-	if(isFrameReady) SDL_RenderCopy(ren, frame_texture_, NULL, NULL);
+	if (isFrameReady) SDL_RenderCopy(ren, frame_texture_, NULL, NULL);
 }
 void VideoStreamer::renderFrame(SDL_Renderer* ren, AVFrame* frame)
 {
