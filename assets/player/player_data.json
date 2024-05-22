@@ -3,5 +3,8 @@
         "w": 50,
         "h": 50
     },
-    "spriteSheetData": "assets/player/player_sprite_sheet_data.json"
+    "spriteSheetData": "assets/player/player_sprite_sheet_data.json",
+    "jumpSound": "assets/sounds/slimejump-6913.mp3",
+    "landSound": "assets/sounds/slime_land.wav",
+    "walkSound" : "assets/sounds/walk_rimuru.wav"
 }

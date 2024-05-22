@@ -41,21 +41,25 @@ public:
 	bool loadSpriteSheetData(const std::string& path) override;
 	bool loadData(const std::string& path) override;
 	void resetStats();
+	void handleSoundFx();
 private:
 	float speed_;
 	int direction_;
 	int dir_left_;
 	int dir_right_;
 	Vector2D vel_;
+
 	float gravity_scalar_;
 	bool on_ground_;
-	
 	bool spacekey_pressed_;
-
 	int required_frame_to_apply_jump_;
 	int coyote_time_;
+
 	bool should_change_level_;
 
+	Mix_Chunk *jump_sound_;
+	Mix_Chunk *land_sound_;
+	Mix_Music *walk_sound_;
 };
 
 

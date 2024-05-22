@@ -11,12 +11,13 @@ public:
 	void launchGameLoop(SDL_Event& e);
 private:
 	bool initWindow();
-	SDL_Renderer* ren_;
-	SDL_Window* window_;
-	StateMachine* state_machine_;
+	SDL_Renderer* p_ren_;
+	SDL_Window* p_window_;
+	StateMachine* p_state_machine_;
 
 	Uint64 preFrame;
 	Uint64 curFrame;
 	float time_step_;
+	float time_step_seconds_;
 };
 #endif

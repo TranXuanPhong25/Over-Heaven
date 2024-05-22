@@ -16,10 +16,21 @@ Character::Character()
 	should_change_level_ = false;
 
 	frames_clips_.resize(NUM_ANIMATIONS);
+	current_animation_ = IDLE;
+	current_frame_ = 0;
+	flip_ = false;
+
+	animation_time_ = 0;
+	jump_sound_ = NULL;
+	land_sound_ = NULL;
+	walk_sound_ = NULL;
 }
 Character::~Character()
 {
 	free();
+	Mix_FreeChunk(jump_sound_);
+	Mix_FreeChunk(land_sound_);
+	Mix_FreeMusic(walk_sound_);
 }
 void Character::handleInput(SDL_Event &e)
 {
@@ -87,6 +98,46 @@ void Character::update(Level &level, Camera &cam, const float &dT)
 	moveY(dT);
 	CollideY(level);
 	animate(dT);
+	handleSoundFx();
+}
+void Character::handleSoundFx()
+{
+	static bool playedLandSound = false;
+
+	if (on_ground_)
+	{
+		if (current_animation_ == RUNNING)
+		{
+			if (dir_left_ != dir_right_)
+			{
+				if (Mix_PlayingMusic() == 0)
+				{
+					Mix_PlayMusic(walk_sound_, -1);
+				}
+			}
+		}
+		else if (current_animation_ == JUMPING)
+		{
+			if(!playedLandSound){
+				if (Mix_PlayChannel(-1, land_sound_, 0) == -1)
+				{
+					printf("Failed to play sound! SDL_mixer Error: %s\n", Mix_GetError());
+				}
+				playedLandSound = true;
+			}
+		}
+		else
+		{
+			Mix_HaltMusic();
+		}
+		
+	}
+	else
+	{
+		playedLandSound = false;
+		Mix_HaltMusic();
+	}
+
 }
 void Character::animate(const float &dT)
 {
@@ -117,9 +168,10 @@ void Character::animate(const float &dT)
 		}
 		if (current_animation_ == RUNNING)
 		{
+			
 			if (dir_left_ == dir_right_)
 			{
-
+				//continue play music 
 				if (current_frame_ % numFrames == 0)
 				{
 					current_frame_ = 0;
@@ -130,9 +182,11 @@ void Character::animate(const float &dT)
 					current_frame_ = frames_clips_[RUNNING].size() - 2;
 				}
 			}
+			
 		}
 		else if (current_animation_ == JUMPING)
 		{
+			
 			if (current_frame_ % numFrames == 0)
 			{
 				current_frame_ = 0;
@@ -160,7 +214,7 @@ void Character::animate(const float &dT)
 		{
 			current_frame_ = (current_frame_ + 1) % 2 + 7;
 		}
-		else 
+		else
 		{
 			current_frame_ = (current_frame_ + 1) % 3 + 9;
 		}
@@ -224,6 +278,14 @@ void Character::CollideX(Level &level)
 
 void Character::jump(const float &dT)
 {
+	// play jump sound
+	if (jump_sound_ != NULL)
+	{
+		if (Mix_PlayChannel(-1, jump_sound_, 0) == -1)
+		{
+			printf("Failed to play sound! SDL_mixer Error: %s\n", Mix_GetError());
+		}
+	}
 	on_ground_ = false;
 	vel_.y = -JUMP_HEIGHT;
 	coyote_time_ = 0;
@@ -431,8 +493,13 @@ void Character::resetStats()
 	current_frame_ = 0;
 	flip_ = false;
 
+	dir_left_ = 0;
+	dir_right_ = 0;
+
 	animation_time_ = 0;
 }
+
+
 
 bool Character::loadSpriteSheetData(const std::string &path)
 {
@@ -517,6 +584,24 @@ bool Character::loadData(const std::string &path)
 	height_ = playerData[SIZE_KEY][HEIGHT_KEY];
 	width_offset_ = (rect_.w - width_) / 2;
 	height_offset_ = (rect_.h - height_);
+
+	try
+	{
+		/* code */
+		std::string jumpSoundPath = playerData[JUMP_SOUND_KEY];
+		std::string landSoundPath = playerData[LAND_SOUND_KEY];
+		std::string walkSoundPath = playerData[WALK_SOUND_KEY];
+		jump_sound_ = Mix_LoadWAV(jumpSoundPath.c_str());
+		land_sound_ = Mix_LoadWAV(landSoundPath.c_str());
+		walk_sound_ = Mix_LoadMUS(walkSoundPath.c_str());
+		
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+		std::cerr << SDL_GetError() << '\n';
+	}
+
 	file.close();
 	return true;
 }
