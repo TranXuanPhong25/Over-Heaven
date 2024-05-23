@@ -12,6 +12,11 @@ public:
 		MAINMENU=0,
 		OPTIONS=4
 	};
+	enum Channel{
+		NAVIGATE,
+		SELECT,
+		ADJUST
+	};
 	static MainMenuState* get();
 	bool enter(SDL_Renderer* ren);
 	bool exit();
@@ -20,9 +25,9 @@ public:
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
 
-	void handleFocusDown();
-	void handleFocusUp();
-	void handleAdjustVolume();
+	void handleNavigateUp();
+	void handleNavigateDown();
+	void handleAdjustVolume(int direction);
 	void finishGetOut() override;
 private:
 	static MainMenuState s_main_menu_state_;
@@ -35,8 +40,11 @@ private:
 	bool continue_available_;
 
 	Mix_Music* background_music_;
-	VideoStreamer* p_video_streamer_;
 	SDL_Texture* bg_;
+	VideoStreamer* p_video_streamer_;
+	Mix_Chunk* navigate_sound_;
+	Mix_Chunk* select_sound_;
+	Mix_Chunk* adjust_sound_;
 };
 
 #endif // !MAINMENUSTATE_H_

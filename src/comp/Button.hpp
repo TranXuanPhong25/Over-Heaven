@@ -10,8 +10,9 @@ public:
 		NEWGAME,
 		OPTIONS,
 		EXIT,
-		BACK,
 		VOLUME_SLIDER,
+		SLIDER,
+		BACK,
 		NUM_BUTTONS
 	};
     Button();
@@ -20,11 +21,13 @@ public:
 	void loadTexture(SDL_Renderer* ren, const std::string& path);
     SDL_Texture* getTexture();
 	void setRectY(const int& y);
+	void setRectXCenterOn(const int& x);
     SDL_Rect getRect() const;
 	void setType(Type type);
 	void reduceAlpha();
 	void enhanceAlpha();
 	Type getType() const;
+	void verticalCenter(Button destination);
 private:
 	Type type_;
 	SDL_Texture* texture_;

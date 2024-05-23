@@ -17,7 +17,7 @@ void Transition::getIn(const float &dT)
 }
 void Transition::getOut(const float &dT)
 {
-	overlay_alpha_ += dT / 0.4f;
+	overlay_alpha_ += dT / GETOUT_DURATION ;
 	if (overlay_alpha_ > 1.0f)
 	{
 		overlay_alpha_ = 1.0f;
@@ -62,4 +62,5 @@ void Transition::startGetOutEffect()
 {
 	is_on_enter_ = false;
 	is_on_exit_ = true;
+	
 }

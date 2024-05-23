@@ -12,7 +12,7 @@ public:
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
 	void finishGetOut() override;
-
+	void finishGetIn() override;
 private:
 	static IntroState s_intro_state_;
 	IntroState();

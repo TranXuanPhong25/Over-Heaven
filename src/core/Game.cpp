@@ -15,8 +15,9 @@ Game::~Game()
 	SDL_DestroyWindow(p_window_);
 	p_window_ = NULL;
 	p_ren_ = NULL;
-
+	
 	// Quit SDL subsystems
+	Mix_CloseAudio();
 	IMG_Quit();
 	SDL_Quit();
 	Mix_Quit();

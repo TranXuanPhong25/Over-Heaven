@@ -97,12 +97,19 @@ const std::string CREDIT_SCREEN_PATH = "assets/credit/credit.png";
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
 
-const std::string BUTTON_TEXTURE_PATHS[6] = {
+const std::string BUTTON_TEXTURE_PATHS[7] = {
 	"assets/buttons/CONTINUE.png",
 	"assets/buttons/NEW GAME.png",
 	"assets/buttons/OPTIONS.png",
 	"assets/buttons/EXIT GAME.png",
+	"assets/buttons/VOLUME.png",
+	"assets/buttons/SLIDER.png",
 	"assets/buttons/BACK.png"
+};
+const std::string BUTTON_SOUND_PATH[3] ={
+	"assets/sounds/9240-navigate-60.wav",
+	"assets/sounds/8607-navigate-14.wav",
+	"assets/sounds/computer-processing-sound-effects-short-click-select-03-122132.mp3"
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
 const std::string VIDEO_MENU_BACKGROUND_PATH = "assets/menu/menu.mov";
@@ -113,8 +120,15 @@ const std::string PLAY_MUSIC_PATHS[4]= {
 	"assets/sounds/level2.mp3",
 	"assets/sounds/Ghiblis Waltz.mp3"
 };
+
 const std::string CREDIT_MUSIC_PATH ="assets/sounds/memories_of_winter.wav";
 const int NUM_OF_MAIN_MENU_BUTTONS = 4;
-const int NUM_OF_OPTIONS_BUTTONS = 2;
+const int NUM_OF_OPTIONS_BUTTONS = 3;
 const int NUM_OF_PAUSE_MENU_BUTTONS = 3;
+
+const float GETOUT_DURATION = 0.5f;
+
+const int BUTTON_PADDING = 80;
+const int INTRO_DURATION = 2000;
+const int SLIDER_PADDING = 63;
 #endif // !CONSTANT_H_
