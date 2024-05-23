@@ -22,14 +22,6 @@ public:
 	 * @param _y The y-coordinate value.
 	 */
 	Vector2D(float _x, float _y);
-
-	/**
-	 * @brief Constructor that initializes the vector with given x and y values.
-	 * @param _x The x-coordinate value.
-	 * @param _y The y-coordinate value.
-	 */
-	Vector2D(int _x, int _y);
-
 	/**
 	 * @brief Overloaded addition operator.
 	 * @param other The vector to be added.

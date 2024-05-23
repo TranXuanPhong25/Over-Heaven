@@ -1,54 +1,22 @@
 #include "MainMenuState.hpp"
-MenuButton::~MenuButton()
-{
-	SDL_DestroyTexture(texture_);
-	texture_ = NULL;
-	alpha_ = MISFOCUSING;
-
-}
-void MenuButton::render(SDL_Renderer* ren)
-{
-	SDL_SetTextureAlphaMod(texture_, alpha_);
-	SDL_RenderCopy(ren, texture_, NULL, &rect_);
-}
-void MenuButton::loadTexture(SDL_Renderer* ren, const std::string& path)
-{
-	texture_ = IMG_LoadTexture(ren, path.c_str());
-	SDL_QueryTexture(texture_, NULL, NULL, &rect_.w, &rect_.h);
-	rect_.x = (SCREEN_WIDTH - rect_.w) / 2;
-}
-void MenuButton::setRectY(const int& y)
-{
-	rect_.y = y;
-}
-void MenuButton::setType(ButtonType type)
-{
-	type_ = type;
-}
-void MenuButton::reduceAlpha()
-{
-	alpha_ = Transition::easeIn(alpha_, MISFOCUSING, 0.25f);
-}
-void MenuButton::enhanceAlpha()
-{
-	alpha_ = Transition::easeOut(alpha_, FOCUSING, 0.05f);
-}
-MenuButton::ButtonType MenuButton::getType() const
-{
-	return type_;
-}
 
 MainMenuState MainMenuState::s_main_menu_state_;
 MainMenuState::MainMenuState()
 {
-
 	p_video_streamer_ = new VideoStreamer();
-	buttons_[0].setType(MenuButton::NEWGAME);
-	buttons_[1].setType(MenuButton::CONTINUE);
-	buttons_[2].setType(MenuButton::QUIT);
-	current_button_ = MenuButton::NEWGAME;
 	bg_ = NULL;
+	background_music_ = NULL;
+
+	for (int i = 0; i < Button::NUM_BUTTONS; i++)
+	{
+		buttons_[i].setType(static_cast<Button::Type>(i));
+	}
+
+	current_button_ = Button::NEWGAME;
+
 	continue_available_ = false;
+	state_ = MAINMENU;
+	current_num_buttons_ = NUM_OF_MAIN_MENU_BUTTONS;
 }
 MainMenuState::~MainMenuState()
 {
@@ -57,81 +25,117 @@ MainMenuState::~MainMenuState()
 		SDL_DestroyTexture(bg_);
 		bg_ = NULL;
 	}
-
 	delete p_video_streamer_;
 }
-MainMenuState* MainMenuState::get()
+MainMenuState *MainMenuState::get()
 {
 	return &s_main_menu_state_;
 }
-bool MainMenuState::enter(SDL_Renderer* ren)
+bool MainMenuState::enter(SDL_Renderer *ren)
 {
+	background_music_ = Mix_LoadMUS(MENU_MUSIC_PATH.c_str());
+
 	startGetInEffect();
-	p_video_streamer_->init(ren, "assets/menu/menu.mov");
-	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
+
+	p_video_streamer_->init(ren, VIDEO_MENU_BACKGROUND_PATH.c_str());
+	bg_ = IMG_LoadTexture(ren, MENU_BACKGROUND_TEXTURE_PATH.c_str());
+	for (int i = 0; i < Button::NUM_BUTTONS; i++)
 	{
-		buttons_[i].loadTexture(ren, MENU_BUTTON_TEXTURE_PATHS[i]);
-		buttons_[i].setRectY(SCREEN_HEIGHT / 2 + i * 100);
+		buttons_[i].loadTexture(ren, BUTTON_TEXTURE_PATHS[i]);
+		buttons_[i].setRectY(SCREEN_HEIGHT / 2 + i * buttons_[i].getRect().h * 2);
 	}
+
 	std::ifstream save_file(SAVE_PATH);
 	continue_available_ = save_file.good();
 	save_file.close();
-	bg_ = IMG_LoadTexture(ren, MENU_BACKGROUND_TEXTURE_PATH.c_str());
-
+	current_button_ = continue_available_ ? Button::CONTINUE : Button::NEWGAME;
 	return true;
 }
 bool MainMenuState::exit()
 {
 	p_video_streamer_->free();
+	Mix_FreeMusic(background_music_);
 	return true;
 }
 void MainMenuState::handleFocusUp()
 {
-	if (current_button_ == MenuButton::NEWGAME)
+	if (state_ == MAINMENU)
 	{
-		current_button_ = MenuButton::QUIT;
+		if (current_button_ == Button::NEWGAME)
+		{
+			current_button_ =continue_available_ ? Button::CONTINUE : Button::EXIT;
+		}
+		else
+		{
+			
+			current_button_ =current_button_== Button::CONTINUE?Button::EXIT:static_cast<Button::Type>(current_button_ - 1);
+
+		}
 	}
 	else
 	{
-		current_button_ = static_cast<MenuButton::ButtonType>(current_button_ - 1);
-		if (!continue_available_ && current_button_ == MenuButton::CONTINUE)
-		{
-			current_button_ = static_cast<MenuButton::ButtonType>(current_button_ - 1);
-		}
+		if(current_button_ == Button::BACK)
+			current_button_ = Button::VOLUME_SLIDER;
+		else if(current_button_ == Button::VOLUME_SLIDER)
+			current_button_ = Button::BACK;
 	}
+}
+void MainMenuState::handleAdjustVolume()
+{
 }
 void MainMenuState::handleFocusDown()
 {
-	if (current_button_ == MenuButton::QUIT)
+	if (state_ == MAINMENU)
 	{
-		current_button_ = MenuButton::NEWGAME;
+		if (current_button_ == Button::EXIT)
+		{
+			current_button_ = continue_available_ ? Button::CONTINUE : Button::NEWGAME;
+		}
+		else
+		{
+			current_button_ = static_cast<Button::Type>((current_button_ + 1) % NUM_OF_MAIN_MENU_BUTTONS);
+		}
 	}
 	else
 	{
-
-		current_button_ = static_cast<MenuButton::ButtonType>(current_button_ + 1);
-		if (!continue_available_ && current_button_ == MenuButton::CONTINUE)
-		{
-			current_button_ = static_cast<MenuButton::ButtonType>(current_button_ + 1);
-		}
+		if(current_button_ == Button::VOLUME_SLIDER)
+			current_button_ = Button::BACK;
+		else if(current_button_ == Button::BACK)
+			current_button_ = Button::VOLUME_SLIDER;
 	}
 }
 void MainMenuState::handleEnter()
 {
-	if (current_button_ == MenuButton::QUIT)
+	if (state_ == MAINMENU)
 	{
-		StateMachine::get()->setNextState(ExitState::get());
+		switch (current_button_)
+		{
+		case Button::CONTINUE:
+			startGetOutEffect();
+			break;
+		case Button::NEWGAME:
+			startGetOutEffect();
+			PlayState::get()->deleteSave();
+			break;
+		case Button::OPTIONS:
+			state_ = OPTIONS;
+			current_button_ = Button::VOLUME_SLIDER;
+			break;
+		case Button::EXIT:
+			StateMachine::get()->setNextState(ExitState::get());
+			break;
+		}
 	}
 	else
 	{
-		startGetOutEffect();
-		if (current_button_ == MenuButton::NEWGAME)
+		if (current_button_ == Button::BACK)
 		{
-			PlayState::get()->deleteSave();
+			current_button_ = Button::OPTIONS;
+			state_ = MAINMENU;
 		}
 	}
 }
-void MainMenuState::handleEvent(SDL_Event& e)
+void MainMenuState::handleEvent(SDL_Event &e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -149,35 +153,42 @@ void MainMenuState::handleEvent(SDL_Event& e)
 		}
 	}
 }
-void MainMenuState::update(const float& dT)
+void MainMenuState::update(const float &dT)
 {
-	handleTransition(dT);
-	p_video_streamer_->readFrame();
-	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
+	if (Mix_PlayingMusic() == 0)
 	{
-		if (buttons_[i].getType() == current_button_)
+		Mix_PlayMusic(background_music_, -1);
+	}
+	// update all regardless which state is
+	current_num_buttons_ = (state_ == MAINMENU) ? NUM_OF_MAIN_MENU_BUTTONS : NUM_OF_OPTIONS_BUTTONS;
+	for (int i = 0; i < current_num_buttons_; i++)
+	{
+		if (buttons_[state_ + i].getType() == current_button_)
 		{
-			buttons_[i].enhanceAlpha();
+			buttons_[state_ + i].enhanceAlpha();
 		}
 		else
 		{
-			buttons_[i].reduceAlpha();
+			buttons_[state_ + i].reduceAlpha();
 		}
 	}
+
+	p_video_streamer_->readFrame();
+	handleTransition(dT);
 }
-void MainMenuState::render(SDL_Renderer* ren)
+void MainMenuState::render(SDL_Renderer *ren)
 {
 	p_video_streamer_->render(ren);
 	SDL_RenderCopy(ren, bg_, NULL, NULL);
 
-	for (int i = 0; i < NUMS_OF_BUTTONS; i++)
+	for (int i = 0; i < current_num_buttons_; i++)
 	{
-		if (buttons_[i].getType() == current_button_)
+		if (buttons_[state_ + i].getType() == current_button_)
 		{
-			buttons_[i].render(ren);
+			buttons_[state_ + i].render(ren);
 		}
 		else
-			buttons_[i].render(ren);
+			buttons_[state_ + i].render(ren);
 	}
 	renderTransitionFx(ren);
 }

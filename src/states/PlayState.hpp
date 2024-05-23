@@ -2,7 +2,6 @@
 #define PLAYSTATE_H_
 #include "../entities/Character.hpp"
 #include "../levels/Levels.hpp"
-#include "../levels/Camera.hpp"
 #include "../comp/Transition.hpp"
 class PlayState : public GameState, public Transition {
 public:
@@ -27,6 +26,7 @@ private:
 	Character player_;
 	Camera cam_;
 	Level level_;
+	Mix_Music* background_music_;
 };
 
 #endif // !PLAYSTATE_H_

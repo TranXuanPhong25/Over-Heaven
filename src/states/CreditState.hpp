@@ -20,6 +20,7 @@ private:
 	SDL_Rect dest_rect_;
 	int credit_texture_height_;
 	bool esc_pressed_;
+	Mix_Music* background_music_;
 };
 
 #endif // !CREDITSTATE_H_

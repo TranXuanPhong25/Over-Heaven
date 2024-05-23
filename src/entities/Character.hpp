@@ -11,9 +11,15 @@ public:
 		RUNNING,
 		NUM_ANIMATIONS
 	};
-	
+	enum Channel {
+		JUMP,
+		LAND,
+		RUN,
+		NUM_CHANNELS
+	};
 	Character();
 	~Character();
+
 	void handleInput(SDL_Event& e);
 	void handleKeyPressed(const SDL_Event& e);
 	void handleKeyReleased(const SDL_Event& e);
@@ -21,6 +27,7 @@ public:
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
 	virtual void animate(const float&dT) override;
+
 	void moveX(const float& dT);
 	void moveY(const float& dT);
 
@@ -31,17 +38,25 @@ public:
 	void handleCollideX(const int& x, const int& y, Level::Tile tile);
 	void handleCollideY(const int& x, const int& y, const int& endY, Level::Tile tile, bool& somethingBelow);
 	bool checkCollision(const SDL_Rect& a, const SDL_Rect& s);
+
 	void setDefaultPosition(Level& level);
 	void applyGravity(const float& dT);
 	void jump(const float& dT);
+
 	bool isReachedGoal() const;
 	void handleReachGoal();
+
 	void saveStats() const;
 	void loadStats(Level& level);
 	bool loadSpriteSheetData(const std::string& path) override;
 	bool loadData(const std::string& path) override;
 	void resetStats();
+
 	void handleSoundFx();
+	void playJumpSound();
+	void playLandSound(int &playedLandSound);
+	void playRunSound();
+
 private:
 	float speed_;
 	int direction_;
@@ -56,10 +71,11 @@ private:
 	int coyote_time_;
 
 	bool should_change_level_;
-
+	
+	bool play_jump_sound_;
 	Mix_Chunk *jump_sound_;
 	Mix_Chunk *land_sound_;
-	Mix_Music *walk_sound_;
+	Mix_Chunk *walk_sound_;
 };
 
 

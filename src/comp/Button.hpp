@@ -1,0 +1,35 @@
+#ifndef BUTTON_H_
+#define BUTTON_H_
+
+#include "Transition.hpp"
+
+class Button {
+public:
+	enum Type {
+		CONTINUE,
+		NEWGAME,
+		OPTIONS,
+		EXIT,
+		BACK,
+		VOLUME_SLIDER,
+		NUM_BUTTONS
+	};
+    Button();
+	~Button();
+	void render(SDL_Renderer* ren);
+	void loadTexture(SDL_Renderer* ren, const std::string& path);
+    SDL_Texture* getTexture();
+	void setRectY(const int& y);
+    SDL_Rect getRect() const;
+	void setType(Type type);
+	void reduceAlpha();
+	void enhanceAlpha();
+	Type getType() const;
+private:
+	Type type_;
+	SDL_Texture* texture_;
+	SDL_Rect rect_;
+	bool is_focused_;
+	Uint8 alpha_;
+};
+#endif // !BUTTON_H_

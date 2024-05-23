@@ -96,12 +96,25 @@ const std::string INTRO_SCREEN_PATH = "assets/intro/intro.png";
 const std::string CREDIT_SCREEN_PATH = "assets/credit/credit.png";
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
-const int NUMS_OF_BUTTONS = 3;
-const std::string MENU_BUTTON_TEXTURE_PATHS[3] = {
-	"assets/menu/newGame.png",
-	"assets/menu/continue.png",
-	"assets/menu/quitGame.png",
+
+const std::string BUTTON_TEXTURE_PATHS[6] = {
+	"assets/buttons/CONTINUE.png",
+	"assets/buttons/NEW GAME.png",
+	"assets/buttons/OPTIONS.png",
+	"assets/buttons/EXIT GAME.png",
+	"assets/buttons/BACK.png"
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
-
+const std::string VIDEO_MENU_BACKGROUND_PATH = "assets/menu/menu.mov";
+const std::string MENU_MUSIC_PATH = "assets/sounds/Goldberg Variations, BWV 988 - 26 - Variatio 25 a 2 Clav..mp3";
+const std::string PLAY_MUSIC_PATHS[4]= {
+	"",
+	"assets/sounds/from_earth_to_heaven.mp3",
+	"assets/sounds/level2.mp3",
+	"assets/sounds/Ghiblis Waltz.mp3"
+};
+const std::string CREDIT_MUSIC_PATH ="assets/sounds/memories_of_winter.wav";
+const int NUM_OF_MAIN_MENU_BUTTONS = 4;
+const int NUM_OF_OPTIONS_BUTTONS = 2;
+const int NUM_OF_PAUSE_MENU_BUTTONS = 3;
 #endif // !CONSTANT_H_

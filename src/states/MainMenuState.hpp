@@ -4,61 +4,38 @@
 #include "LoadingState.hpp"
 #include "PlayState.hpp"
 #include "../thirdParty/ffmpeg/VideoStreamer.hpp"
-
-class MenuButton {
-public:
-	enum ButtonType {
-		NEWGAME,
-		CONTINUE,
-		QUIT,
-		OPTIONS,
-		VOLUME_SLIDER,
-		BACK,
-
-	};
-	~MenuButton();
-	void render(SDL_Renderer* ren);
-	void loadTexture(SDL_Renderer* ren, const std::string& path);
-	void setRectY(const int& y);
-	void setType(ButtonType type);
-	void reduceAlpha();
-	void enhanceAlpha();
-	ButtonType getType() const;
-private:
-	ButtonType type_;
-	SDL_Texture* texture_;
-	SDL_Rect rect_;
-	bool is_focused_;
-	Uint8 alpha_;
-};
-//single-level menu
+#include "../comp/Button.hpp"
 class MainMenuState : public GameState, public Transition
 {
 public:
 	enum State {
-		MAINMENU,
-		OPTIONS
+		MAINMENU=0,
+		OPTIONS=4
 	};
 	static MainMenuState* get();
 	bool enter(SDL_Renderer* ren);
 	bool exit();
-	void handleFocusUp();
-	void handleFocusDown();
 	void handleEnter();
 	void handleEvent(SDL_Event& e);
 	void update(const float& dT);
 	void render(SDL_Renderer* ren);
+
+	void handleFocusDown();
+	void handleFocusUp();
+	void handleAdjustVolume();
 	void finishGetOut() override;
 private:
 	static MainMenuState s_main_menu_state_;
 	MainMenuState();
 	~MainMenuState();
-
-	VideoStreamer* p_video_streamer_;
+	State state_;
+	int current_num_buttons_;
+	Button buttons_[Button::NUM_BUTTONS];
+	Button::Type current_button_;
 	bool continue_available_;
-	MenuButton buttons_[NUMS_OF_BUTTONS];
-	MenuButton::ButtonType current_button_;
 
+	Mix_Music* background_music_;
+	VideoStreamer* p_video_streamer_;
 	SDL_Texture* bg_;
 };
 

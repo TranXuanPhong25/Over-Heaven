@@ -17,7 +17,7 @@ void Transition::getIn(const float &dT)
 }
 void Transition::getOut(const float &dT)
 {
-	overlay_alpha_ += dT / 0.4;
+	overlay_alpha_ += dT / 0.4f;
 	if (overlay_alpha_ > 1.0f)
 	{
 		overlay_alpha_ = 1.0f;
@@ -54,12 +54,12 @@ void Transition::renderTransitionFx(SDL_Renderer *ren)
 
 void Transition::startGetInEffect()
 {
-	if (!is_on_exit_)
-		is_on_enter_ = true;
+	is_on_enter_ = true;
+	is_on_exit_ = false;
 }
 
 void Transition::startGetOutEffect()
 {
-	if (!is_on_enter_)
-		is_on_exit_ = true;
+	is_on_enter_ = false;
+	is_on_exit_ = true;
 }

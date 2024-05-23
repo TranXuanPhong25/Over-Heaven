@@ -20,7 +20,7 @@ bool CreditState::enter(SDL_Renderer* ren)
 {
 	credit_ = IMG_LoadTexture(ren, CREDIT_SCREEN_PATH.c_str());
 	SDL_QueryTexture(credit_, NULL, NULL, &credit_rect_.w, &credit_texture_height_);
-
+	background_music_ = Mix_LoadMUS(CREDIT_MUSIC_PATH.c_str());
 	dest_rect_.x = (SCREEN_WIDTH - credit_rect_.w) / 2;
 	dest_rect_.y = 0;
 	dest_rect_.w = credit_rect_.w;
@@ -33,6 +33,16 @@ bool CreditState::enter(SDL_Renderer* ren)
 
 bool CreditState::exit()
 {
+	if (credit_ != nullptr)
+	{
+		SDL_DestroyTexture(credit_);
+		credit_ = nullptr;
+	}
+	if (background_music_ != nullptr)
+	{
+		Mix_FreeMusic(background_music_);
+		background_music_ = nullptr;
+	}
 	return true;
 }
 
@@ -55,6 +65,10 @@ void CreditState::update(const float& dT)
 		startGetOutEffect();
 	}
 	else credit_rect_.y += 1;
+	if (Mix_PlayingMusic() == 0)
+	{
+		Mix_PlayMusic(background_music_, -1);
+	}
 	handleTransition(dT);
 }
 

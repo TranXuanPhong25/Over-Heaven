@@ -1,7 +1,6 @@
 #include "Vector2D.hpp"
 Vector2D::Vector2D() : x(0), y(0) {}
 Vector2D::Vector2D(float _x, float _y) : x(_x), y(_y) {}
-Vector2D::Vector2D(int _x, int _y) : x(_x), y(_y) {}
 
 Vector2D Vector2D::operator+(const Vector2D& other) const {
 	return Vector2D(x + other.x, y + other.y);
@@ -43,7 +42,7 @@ Vector2D& Vector2D::operator*=(float scalar) {
 }
 
 Vector2D& Vector2D::operator/=(float scalar) {
-	if (scalar != 0) {
+	if (scalar != 0.0f) {
 		x /= scalar;
 		y /= scalar;
 	}

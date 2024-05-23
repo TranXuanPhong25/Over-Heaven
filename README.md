@@ -13,3 +13,5 @@ Image : Designed by [Freepik.io](https://www.freepik.com), downloaded from [itch
  C++17 required
 
 singleton, thread, no magic string/ number, oop ,ffmpeg
+Music by Xenia Straub from Pixabay
+Music by free-to-use-audio from Pixabay

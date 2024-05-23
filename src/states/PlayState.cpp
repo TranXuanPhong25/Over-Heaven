@@ -33,6 +33,8 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 {
 
 	level_.loadSavedPath();
+	background_music_ = Mix_LoadMUS(PLAY_MUSIC_PATHS[level_.getLevelIndex()].c_str());
+	std::cout<<SDL_GetError()<<std::endl;
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	level_.loadTiles();
@@ -69,6 +71,7 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 bool PlayState::enter(SDL_Renderer *ren)
 {
 	startGetInEffect();
+	
 	if (should_change_level_)
 	{
 		player_.resetStats();
@@ -83,7 +86,7 @@ bool PlayState::exit()
 {
 	player_.saveStats();
 	level_.savePath();
-
+	Mix_FreeMusic(background_music_);
 	return true;
 }
 void PlayState::handleEvent(SDL_Event &e)
@@ -92,7 +95,10 @@ void PlayState::handleEvent(SDL_Event &e)
 }
 void PlayState::update(const float &dT)
 {
-
+	if (Mix_PlayingMusic() == 0)
+	{
+		Mix_PlayMusic(background_music_, -1);
+	}
 	player_.update(level_, cam_, dT);
 	cam_.move(player_.getVel() * dT);
 	cam_.centerOn(player_.getPos(), player_.getRect().w, player_.getRect().h, level_.getWidth(), level_.getHeight());
@@ -103,7 +109,6 @@ void PlayState::update(const float &dT)
 }
 void PlayState::render(SDL_Renderer *ren)
 {
-
 	level_.renderFarGround(ren);
 	level_.renderBackground(ren);
 	player_.render(ren);
@@ -114,7 +119,7 @@ void PlayState::render(SDL_Renderer *ren)
 }
 void PlayState::deleteSave()
 {
-	// set flag load default to true
+	// set load default data flag to true
 	should_change_level_ = true;
 	try
 	{
