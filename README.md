@@ -16,3 +16,6 @@ Music by Xenia Straub from Pixabay
 Music by free-to-use-audio from Pixabay
 <br/>
 Sound Effect by Samuel F. Johanns from Pixabay
+# Cài đặt
+
+cài đặt SDL2 và cài đặt ffmpeg từ link [youtube](https://www.youtube.com/watch?v=IECI72XEox0)
