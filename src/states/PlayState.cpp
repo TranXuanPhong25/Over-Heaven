@@ -10,13 +10,12 @@ PlayState::PlayState()
 	adjust_sound_ = NULL;
 	background_music_ = NULL;
 	pause_menu_bg_ = NULL;
-	buttons_[0].setType(Button::CONTINUE);
-	buttons_[1].setType(Button::OPTIONS);
-	buttons_[2].setType(Button::EXIT);
-	buttons_[3].setType(Button::VOLUME_SLIDER);
-	buttons_[4].setType(Button::SLIDER);
-	buttons_[5].setType(Button::BACK);
-
+	buttons_[PauseMenuButton::CONTINUE].setType(Button::CONTINUE);
+	buttons_[PauseMenuButton::OPTIONS].setType(Button::OPTIONS);
+	buttons_[PauseMenuButton::EXIT].setType(Button::EXIT);
+	buttons_[PauseMenuButton::VOLUME_SLIDER].setType(Button::VOLUME_SLIDER);
+	buttons_[PauseMenuButton::SLIDER].setType(Button::SLIDER);
+	buttons_[PauseMenuButton::BACK].setType(Button::BACK);
 
 	current_button_ = PauseMenuButton::CONTINUE;
 
@@ -56,14 +55,11 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 	navigate_sound_ = Mix_LoadWAV(BUTTON_SOUND_PATH[Channel::NAVIGATE].c_str());
 	adjust_sound_ = Mix_LoadWAV(BUTTON_SOUND_PATH[Channel::ADJUST].c_str());
 
-	pause_menu_bg_ = IMG_LoadTexture(ren, MENU_BACKGROUND_TEXTURE_PATH.c_str());
-	for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS-NUM_OF_OPTIONS_BUTTONS; i++)
+	pause_menu_bg_ = IMG_LoadTexture(ren, PAUSE_MENU_BACKGROUND_TEXTURE_PATH.c_str());
+	for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS; i++)
 	{
-		buttons_[i].loadTexture(ren, BUTTON_TEXTURE_PATHS[i]);
+		buttons_[i].loadTexture(ren, BUTTON_TEXTURE_PATHS[buttons_[i].getType()]);
 	}
-	buttons_[PauseMenuButton::VOLUME_SLIDER].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::VOLUME_SLIDER]);
-	buttons_[PauseMenuButton::SLIDER].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::SLIDER]);
-	buttons_[PauseMenuButton::BACK].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::BACK]);
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
 	level_.loadTiles();
@@ -99,7 +95,7 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 }
 bool PlayState::enter(SDL_Renderer *ren)
 {
-	state_=PLAY;
+	state_ = PLAY;
 	startGetInEffect();
 
 	if (should_change_level_)
@@ -110,14 +106,14 @@ bool PlayState::enter(SDL_Renderer *ren)
 	}
 
 	// load button
-	for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS-NUM_OF_OPTIONS_BUTTONS; i++)
+	for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS - NUM_OF_OPTIONS_BUTTONS; i++)
 	{
 		buttons_[i].setRectY(SCREEN_HEIGHT / 2 + i * BUTTON_PADDING);
 	}
 
 	buttons_[PauseMenuButton::VOLUME_SLIDER].setRectY(SCREEN_HEIGHT / 2 + BUTTON_PADDING);
 
-	buttons_[PauseMenuButton::SLIDER].setRectXCenterOn(buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().x + buttons_[Button::VOLUME_SLIDER].getRect().w*Mix_VolumeMusic(-1)/MIX_MAX_VOLUME);
+	buttons_[PauseMenuButton::SLIDER].setRectXCenterOn(buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().x + buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().w * Mix_VolumeMusic(-1) / MIX_MAX_VOLUME);
 	buttons_[PauseMenuButton::SLIDER].setRectY(buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().y + SLIDER_PADDING);
 
 	buttons_[PauseMenuButton::BACK].setRectY(SCREEN_HEIGHT / 2 + 3 * BUTTON_PADDING);
@@ -128,7 +124,10 @@ bool PlayState::enter(SDL_Renderer *ren)
 
 bool PlayState::exit()
 {
-	
+	for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS; i++)
+	{
+		buttons_[i].free();
+	}
 	player_.saveStats();
 	level_.savePath();
 	Mix_FreeMusic(background_music_);
@@ -143,16 +142,14 @@ void PlayState::handleEvent(SDL_Event &e)
 {
 	if (state_ == PLAY)
 	{
-		if (e.key.keysym.sym == SDLK_ESCAPE)
+		player_.handleInput(e);
+		if (e.key.keysym.sym == SDLK_ESCAPE && e.type == SDL_KEYDOWN)
 		{
 			state_ = PAUSE;
 			current_button_ = PauseMenuButton::CONTINUE;
 		}
-		player_.handleInput(e);
 	}
-	else
-
-		if (e.type == SDL_KEYDOWN)
+	else if (e.type == SDL_KEYDOWN)
 	{
 		if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w)
 		{
@@ -168,16 +165,7 @@ void PlayState::handleEvent(SDL_Event &e)
 		}
 		else if (e.key.keysym.sym == SDLK_ESCAPE)
 		{
-			if (state_ == OPTIONS)
-			{
-				current_button_ = PauseMenuButton::OPTIONS;
-				state_ = PAUSE;
-			}
-			else
-			{
-				state_ = PLAY;
-				current_button_ = PauseMenuButton::CONTINUE;
-			}
+			handleEsc();
 		}
 		else if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)
 		{
@@ -206,11 +194,26 @@ void PlayState::update(const float &dT)
 		handleChangeLevel();
 		handleTransition(dT);
 	}
-	else
+	else if (state_ == PAUSE)
 	{
-		for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS; i++)
+
+		for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS - NUM_OF_OPTIONS_BUTTONS; i++)
 		{
 
+			if (current_button_== state_+i )
+			{
+				buttons_[state_ + i].enhanceAlpha();
+			}
+			else
+			{
+				buttons_[state_ + i].reduceAlpha();
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < NUM_OF_OPTIONS_BUTTONS; i++)
+		{
 			if (current_button_ == PauseMenuButton::VOLUME_SLIDER)
 			{
 				buttons_[PauseMenuButton::SLIDER].enhanceAlpha();
@@ -219,9 +222,8 @@ void PlayState::update(const float &dT)
 			{
 				buttons_[PauseMenuButton::SLIDER].reduceAlpha();
 			}
-			if (buttons_[state_ + i].getType() == current_button_)
+			if (current_button_== state_+i )
 			{
-
 				buttons_[state_ + i].enhanceAlpha();
 			}
 			else
@@ -242,6 +244,7 @@ void PlayState::render(SDL_Renderer *ren)
 	renderTransitionFx(ren);
 	if (state_ == PAUSE)
 	{
+		
 		SDL_RenderCopy(ren, pause_menu_bg_, NULL, NULL);
 		for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS - NUM_OF_OPTIONS_BUTTONS; i++)
 		{
@@ -283,8 +286,7 @@ void PlayState::handleNavigateUp()
 		}
 		else
 		{
-
-			current_button_ = current_button_ == PauseMenuButton::CONTINUE ? PauseMenuButton::EXIT : static_cast<PauseMenuButton>(current_button_ - 1);
+			current_button_ = static_cast<PauseMenuButton>(current_button_ - 1);
 		}
 	}
 	else
@@ -304,7 +306,7 @@ void PlayState::handleNavigateDown()
 	{
 		if (current_button_ == PauseMenuButton::EXIT)
 		{
-			current_button_ = PauseMenuButton::CONTINUE ;
+			current_button_ = PauseMenuButton::CONTINUE;
 		}
 		else
 		{
@@ -369,5 +371,19 @@ void PlayState::handleAdjustVolume(int direction)
 		Mix_PlayChannel(Channel::ADJUST, adjust_sound_, 0);
 		// move slider relative with volume
 		buttons_[PauseMenuButton::SLIDER].setRectXCenterOn(buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().x + volume * buttons_[PauseMenuButton::VOLUME_SLIDER].getRect().w / MIX_MAX_VOLUME);
+	}
+}
+
+void PlayState::handleEsc()
+{
+	if (state_ == OPTION)
+	{
+		current_button_ = PauseMenuButton::OPTIONS;
+		state_ = PAUSE;
+	}
+	else
+	{
+		state_ = PLAY;
+		current_button_ = PauseMenuButton::CONTINUE;
 	}
 }

@@ -6,7 +6,7 @@ MainMenuState::MainMenuState()
 	p_video_streamer_ = new VideoStreamer();
 	bg_ = NULL;
 	background_music_ = NULL;
-	navigate_sound_ =NULL;
+	navigate_sound_ = NULL;
 	select_sound_ = NULL;
 	adjust_sound_ = NULL;
 	for (int i = 0; i < Button::NUM_BUTTONS; i++)
@@ -45,9 +45,9 @@ bool MainMenuState::enter(SDL_Renderer *ren)
 	}
 	buttons_[Button::VOLUME_SLIDER].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::VOLUME_SLIDER]);
 	buttons_[Button::VOLUME_SLIDER].setRectY(SCREEN_HEIGHT / 2 + BUTTON_PADDING);
-	
+
 	buttons_[Button::SLIDER].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::SLIDER]);
-	buttons_[Button::SLIDER].setRectY(buttons_[Button::VOLUME_SLIDER].getRect().y+SLIDER_PADDING);
+	buttons_[Button::SLIDER].setRectY(buttons_[Button::VOLUME_SLIDER].getRect().y + SLIDER_PADDING);
 	buttons_[Button::SLIDER].setRectXCenterOn(buttons_[Button::VOLUME_SLIDER].getRect().x + buttons_[Button::VOLUME_SLIDER].getRect().w);
 
 	buttons_[Button::BACK].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::BACK]);
@@ -67,8 +67,11 @@ bool MainMenuState::exit()
 	Mix_FreeChunk(navigate_sound_);
 	Mix_FreeChunk(select_sound_);
 	Mix_FreeChunk(adjust_sound_);
-
 	SDL_DestroyTexture(bg_);
+	for (int i = 0; i < Button::NUM_BUTTONS; i++)
+	{
+		buttons_[i].free();
+	}
 	return true;
 }
 void MainMenuState::handleNavigateUp()
@@ -155,7 +158,7 @@ void MainMenuState::handleAdjustVolume(int direction)
 {
 	if (current_button_ == Button::VOLUME_SLIDER)
 	{
-		
+
 		int volume = Mix_Volume(-1, -1);
 		int volumeMusic = Mix_VolumeMusic(-1);
 		volume += direction * 2;
@@ -166,10 +169,19 @@ void MainMenuState::handleAdjustVolume(int direction)
 		volumeMusic = volumeMusic > MIX_MAX_VOLUME ? MIX_MAX_VOLUME : volumeMusic;
 		Mix_VolumeMusic(volume);
 		Mix_Volume(-1, volume);
-		
+
 		Mix_PlayChannel(Channel::ADJUST, adjust_sound_, 0);
 		// move slider relative with volume
 		buttons_[Button::SLIDER].setRectXCenterOn(buttons_[Button::VOLUME_SLIDER].getRect().x + volume * buttons_[Button::VOLUME_SLIDER].getRect().w / MIX_MAX_VOLUME);
+	}
+}
+
+void MainMenuState::handleEsc()
+{
+	if (state_ == OPTIONS)
+	{
+		current_button_ = Button::OPTIONS;
+		state_ = MAINMENU;
 	}
 }
 
@@ -180,7 +192,6 @@ void MainMenuState::handleEvent(SDL_Event &e)
 		if (e.key.keysym.sym == SDLK_UP || e.key.keysym.sym == SDLK_w)
 		{
 			handleNavigateUp();
-
 		}
 		else if (e.key.keysym.sym == SDLK_DOWN || e.key.keysym.sym == SDLK_s)
 		{
@@ -192,11 +203,7 @@ void MainMenuState::handleEvent(SDL_Event &e)
 		}
 		else if (e.key.keysym.sym == SDLK_ESCAPE)
 		{
-			if (state_ == OPTIONS)
-			{
-				current_button_ = Button::OPTIONS;
-				state_ = MAINMENU;
-			}
+			handleEsc();
 		}
 		else if (e.key.keysym.sym == SDLK_LEFT || e.key.keysym.sym == SDLK_a)
 		{
@@ -214,7 +221,7 @@ void MainMenuState::update(const float &dT)
 	{
 		Mix_PlayMusic(background_music_, -1);
 	}
-	// update all buttons
+
 	current_num_buttons_ = (state_ == MAINMENU) ? NUM_OF_MAIN_MENU_BUTTONS : NUM_OF_OPTIONS_BUTTONS;
 	for (int i = 0; i < current_num_buttons_; i++)
 	{

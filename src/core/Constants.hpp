@@ -112,6 +112,7 @@ const std::string BUTTON_SOUND_PATH[3] ={
 	"assets/sounds/computer-processing-sound-effects-short-click-select-03-122132.mp3"
 };
 const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
+const std::string PAUSE_MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/pause_bg.png";
 const std::string VIDEO_MENU_BACKGROUND_PATH = "assets/menu/menu.mov";
 const std::string MENU_MUSIC_PATH = "assets/sounds/Goldberg Variations, BWV 988 - 26 - Variatio 25 a 2 Clav..mp3";
 const std::string PLAY_MUSIC_PATHS[4]= {

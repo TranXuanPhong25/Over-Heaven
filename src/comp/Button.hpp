@@ -28,6 +28,7 @@ public:
 	void enhanceAlpha();
 	Type getType() const;
 	void verticalCenter(Button destination);
+	void free();
 private:
 	Type type_;
 	SDL_Texture* texture_;

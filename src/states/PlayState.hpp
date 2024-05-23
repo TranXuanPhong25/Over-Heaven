@@ -40,7 +40,7 @@ public:
 	void handleNavigateDown();
 	void handleEnter();
 	void handleAdjustVolume(int direction);
-
+	void handleEsc();
 private:
 	static PlayState s_play_state_;
 	PlayState();

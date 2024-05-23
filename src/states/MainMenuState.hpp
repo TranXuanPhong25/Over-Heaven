@@ -28,6 +28,7 @@ public:
 	void handleNavigateUp();
 	void handleNavigateDown();
 	void handleAdjustVolume(int direction);
+	void handleEsc();
 	void finishGetOut() override;
 private:
 	static MainMenuState s_main_menu_state_;
