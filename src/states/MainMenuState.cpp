@@ -7,6 +7,8 @@ MainMenuState::MainMenuState()
 	bg_ = NULL;
 	background_music_ = NULL;
 	navigate_sound_ =NULL;
+	select_sound_ = NULL;
+	adjust_sound_ = NULL;
 	for (int i = 0; i < Button::NUM_BUTTONS; i++)
 	{
 		buttons_[i].setType(static_cast<Button::Type>(i));

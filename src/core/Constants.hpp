@@ -124,7 +124,7 @@ const std::string PLAY_MUSIC_PATHS[4]= {
 const std::string CREDIT_MUSIC_PATH ="assets/sounds/memories_of_winter.wav";
 const int NUM_OF_MAIN_MENU_BUTTONS = 4;
 const int NUM_OF_OPTIONS_BUTTONS = 3;
-const int NUM_OF_PAUSE_MENU_BUTTONS = 3;
+const int NUM_OF_PAUSE_MENU_BUTTONS = 6;
 
 const float GETOUT_DURATION = 0.5f;
 
