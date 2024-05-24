@@ -46,9 +46,10 @@ void PlayState::handleChangeLevel()
 }
 float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 {
-
 	level_.loadSavedPath();
+	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 
+	VolumeLoader::loadVolume();
 	background_music_ = Mix_LoadMUS(PLAY_MUSIC_PATHS[level_.getLevelIndex()].c_str());
 
 	select_sound_ = Mix_LoadWAV(BUTTON_SOUND_PATH[Channel::SELECT].c_str());
@@ -88,7 +89,6 @@ float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 	{
 		*progress = *progress + 2.0f / TOTAL_LOADING_STEP;
 	}
-
 	player_.loadStats(level_); // this action may be redundant but it doesn't hurt to load it again
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 	return *progress;
@@ -140,6 +140,7 @@ bool PlayState::exit()
 	Mix_FreeChunk(adjust_sound_);
 	SDL_DestroyTexture(pause_menu_bg_);
 	Mix_HaltChannel(-1);
+	VolumeLoader::saveVolume();
 	return true;
 }
 void PlayState::handleEvent(SDL_Event& e)

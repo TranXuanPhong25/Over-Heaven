@@ -30,6 +30,7 @@ MainMenuState *MainMenuState::get()
 }
 bool MainMenuState::enter(SDL_Renderer *ren)
 {
+	VolumeLoader::loadVolume();
 	background_music_ = Mix_LoadMUS(MENU_MUSIC_PATH.c_str());
 	navigate_sound_ = Mix_LoadWAV(BUTTON_SOUND_PATH[Channel::NAVIGATE].c_str());
 	select_sound_ = Mix_LoadWAV(BUTTON_SOUND_PATH[Channel::SELECT].c_str());
@@ -48,7 +49,7 @@ bool MainMenuState::enter(SDL_Renderer *ren)
 
 	buttons_[Button::SLIDER].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::SLIDER]);
 	buttons_[Button::SLIDER].setRectY(buttons_[Button::VOLUME_SLIDER].getRect().y + SLIDER_PADDING);
-	buttons_[Button::SLIDER].setRectXCenterOn(buttons_[Button::VOLUME_SLIDER].getRect().x + buttons_[Button::VOLUME_SLIDER].getRect().w);
+	buttons_[Button::SLIDER].setRectXCenterOn(buttons_[Button::VOLUME_SLIDER].getRect().x + buttons_[Button::VOLUME_SLIDER].getRect().w * Mix_VolumeMusic(-1)/ MIX_MAX_VOLUME);
 
 	buttons_[Button::BACK].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::BACK]);
 	buttons_[Button::BACK].setRectY(SCREEN_HEIGHT / 2 + 3 * BUTTON_PADDING);
@@ -72,6 +73,7 @@ bool MainMenuState::exit()
 	{
 		buttons_[i].free();
 	}
+	VolumeLoader::saveVolume();
 	return true;
 }
 void MainMenuState::handleNavigateUp()
@@ -264,3 +266,4 @@ void MainMenuState::finishGetOut()
 {
 	StateMachine::get()->setNextState(LoadingState::get());
 }
+

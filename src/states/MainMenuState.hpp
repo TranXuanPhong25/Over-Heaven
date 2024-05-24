@@ -5,6 +5,7 @@
 #include "PlayState.hpp"
 #include "../thirdParty/ffmpeg/VideoStreamer.hpp"
 #include "../comp/Button.hpp"
+
 class MainMenuState : public GameState, public Transition
 {
 public:
@@ -30,6 +31,7 @@ public:
 	void handleAdjustVolume(int direction);
 	void handleEsc();
 	void finishGetOut() override;
+	
 private:
 	static MainMenuState s_main_menu_state_;
 	MainMenuState();

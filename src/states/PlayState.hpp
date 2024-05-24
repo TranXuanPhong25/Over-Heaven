@@ -4,6 +4,7 @@
 #include "../levels/Levels.hpp"
 #include "../comp/Transition.hpp"
 #include "../comp/Button.hpp"
+#include "../comp/VolumeLoader.hpp"
 class PlayState : public GameState, public Transition {
 public:
 	enum Channel

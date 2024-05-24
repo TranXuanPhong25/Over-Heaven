@@ -4,6 +4,7 @@ CreditState CreditState::s_exit_state_;
 
 CreditState::CreditState()
 {
+	speed_ = 2;
 	credit_ = NULL;
 	overlay_ = NULL;
 	background_music_ = NULL;
@@ -77,12 +78,12 @@ void CreditState::update(const float &dT)
 	}
 	else
 	{
-		credit_rect_.y += 1;
+		credit_rect_.y += speed_;
 
-		if (credit_rect_.y >= credit_texture_height_)
+		if (credit_rect_.y >= credit_texture_height_ - SCREEN_HEIGHT)
 		{
-			dest_rect_.y += 1;
-			credit_rect_.h -= 1;
+			dest_rect_.h -= speed_;
+			credit_rect_.h -= speed_;
 		}
 	}
 

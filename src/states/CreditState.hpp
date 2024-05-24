@@ -22,6 +22,7 @@ private:
 	SDL_Texture * overlay_;
 	bool esc_pressed_;
 	Mix_Music* background_music_;
+	int speed_;
 };
 
 #endif // !CREDITSTATE_H_

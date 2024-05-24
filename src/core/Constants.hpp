@@ -66,7 +66,7 @@ const int RIGHT = 1;
 const int UP = -1;
 const int DOWN = 1;
 
-const float TOTAL_LOADING_STEP = 10.0f;
+const float TOTAL_LOADING_STEP = 11.0f;
 const float PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
