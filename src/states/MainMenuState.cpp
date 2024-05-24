@@ -54,9 +54,8 @@ bool MainMenuState::enter(SDL_Renderer *ren)
 	buttons_[Button::BACK].loadTexture(ren, BUTTON_TEXTURE_PATHS[Button::BACK]);
 	buttons_[Button::BACK].setRectY(SCREEN_HEIGHT / 2 + 3 * BUTTON_PADDING);
 
-	std::ifstream save_file(SAVE_PATH);
-	continue_available_ = save_file.good();
-	save_file.close();
+	checkSaveFile();
+	
 	current_button_ = continue_available_ ? Button::CONTINUE : Button::NEWGAME;
 	return true;
 }
@@ -267,3 +266,24 @@ void MainMenuState::finishGetOut()
 	StateMachine::get()->setNextState(LoadingState::get());
 }
 
+void MainMenuState::checkSaveFile()
+{
+	//check if save file has PlayerPos element 
+	tinyxml2::XMLDocument doc;
+	if (doc.LoadFile(SAVE_PATH) == tinyxml2::XML_SUCCESS)
+	{
+		tinyxml2::XMLElement *root = doc.FirstChildElement("SaveData");
+		if (root==NULL)
+		{
+			continue_available_ = false;
+			return;
+		}
+		tinyxml2::XMLElement *player = root->FirstChildElement("PlayerPosition");
+		if (player != NULL)
+		{
+			continue_available_ = true;
+			return;
+		}
+	}
+	continue_available_ = false;
+}

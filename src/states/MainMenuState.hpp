@@ -31,7 +31,7 @@ public:
 	void handleAdjustVolume(int direction);
 	void handleEsc();
 	void finishGetOut() override;
-	
+	void checkSaveFile();
 private:
 	static MainMenuState s_main_menu_state_;
 	MainMenuState();
