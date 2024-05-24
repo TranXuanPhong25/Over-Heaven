@@ -29,6 +29,7 @@ bool CreditState::enter(SDL_Renderer *ren)
 	{
 		std::cout << e.what() << std::endl;
 	}
+	VolumeLoader::saveVolume();
 	credit_ = IMG_LoadTexture(ren, CREDIT_SCREEN_PATH.c_str());
 	SDL_QueryTexture(credit_, NULL, NULL, &credit_rect_.w, &credit_texture_height_);
 	overlay_ = IMG_LoadTexture(ren, CREDIT_OVERLAY_PATH.c_str());

@@ -2,6 +2,7 @@
 #define CREDITSTATE_H_
 #include "../core/StateMachine.hpp"
 #include "../comp/Transition.hpp"
+#include "../comp/VolumeLoader.hpp"
 class IntroState;
 class CreditState : public GameState, public Transition {
 public:

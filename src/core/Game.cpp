@@ -3,8 +3,8 @@ Game::Game() : p_window_(NULL), p_ren_(NULL)
 {
 	p_state_machine_ = StateMachine::get();
 	p_state_machine_->setInitialState(IntroState::get());
-	curFrame = 0;
-	preFrame = 0;
+	cur_frame_ = 0;
+	pre_frame_ = 0;
 	time_step_ = TARGET_TIMESTEP;
 	time_step_seconds_ = TARGET_TIMESTEP / 1000.0f;
 }
@@ -72,7 +72,7 @@ void Game::run()
 	if (initWindow())
 	{
 		p_state_machine_->getCurrentState()->enter(p_ren_);
-		preFrame = SDL_GetTicks64();
+		pre_frame_ = SDL_GetTicks64();
 		SDL_Event e;
 		while (p_state_machine_->getCurrentState() != ExitState::get())
 		{
@@ -94,8 +94,8 @@ void Game::launchGameLoop(SDL_Event& e)
 
 	p_state_machine_->changeState(p_ren_);
 
-	curFrame = SDL_GetTicks64();
-	time_step_ = static_cast<float>(curFrame - preFrame);
+	cur_frame_ = SDL_GetTicks64();
+	time_step_ = static_cast<float>(cur_frame_ - pre_frame_);
 	if (time_step_ < TARGET_TIMESTEP)
 	{
 		SDL_Delay(static_cast<Uint32>(TARGET_TIMESTEP - time_step_));
@@ -104,7 +104,7 @@ void Game::launchGameLoop(SDL_Event& e)
 	{
 		time_step_ = TARGET_TIMESTEP;
 	}
-	preFrame = curFrame;
+	pre_frame_ = cur_frame_;
 	time_step_seconds_ = time_step_ / 1000.0f;
 
 	p_state_machine_->getCurrentState()->update(time_step_seconds_);

@@ -272,7 +272,7 @@ void PlayState::deleteSave()
 	should_change_level_ = true;
 	try
 	{
-		std::remove(SAVE_PATH);
+		std::filesystem::remove(SAVE_PATH);
 	}
 	catch (std::exception& e)
 	{

@@ -15,8 +15,8 @@ private:
 	SDL_Window* p_window_;
 	StateMachine* p_state_machine_;
 
-	Uint64 preFrame;
-	Uint64 curFrame;
+	Uint64 pre_frame_;
+	Uint64 cur_frame_;
 	float time_step_;
 	float time_step_seconds_;
 };
