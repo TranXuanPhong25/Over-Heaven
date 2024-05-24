@@ -60,3 +60,10 @@ void Button::verticalCenter(Button destination)
 {
 	rect_.y = destination.getRect().y + (destination.getRect().h - rect_.h) / 2;
 }
+
+void Button::free()
+{
+	SDL_DestroyTexture(texture_);
+	texture_ = NULL;
+	alpha_ = MISFOCUSING;
+}
