@@ -4,22 +4,33 @@ CreditState CreditState::s_exit_state_;
 
 CreditState::CreditState()
 {
-	credit_ = nullptr;
-	credit_rect_ = { 0,0,0,0 };
-	dest_rect_ = { 0,0,0,0 };
+	credit_ = NULL;
+	overlay_ = NULL;
+	background_music_ = NULL;
+	credit_rect_ = {0, 0, 0, 0};
+	dest_rect_ = {0, 0, 0, 0};
 	esc_pressed_ = false;
 	credit_texture_height_ = 0;
 }
 
-CreditState* CreditState::get()
+CreditState *CreditState::get()
 {
 	return &s_exit_state_;
 }
 
-bool CreditState::enter(SDL_Renderer* ren)
+bool CreditState::enter(SDL_Renderer *ren)
 {
+	try
+	{
+		std::filesystem::remove(SAVE_PATH);
+	}
+	catch (std::exception &e)
+	{
+		std::cout << e.what() << std::endl;
+	}
 	credit_ = IMG_LoadTexture(ren, CREDIT_SCREEN_PATH.c_str());
 	SDL_QueryTexture(credit_, NULL, NULL, &credit_rect_.w, &credit_texture_height_);
+	overlay_ = IMG_LoadTexture(ren, CREDIT_OVERLAY_PATH.c_str());
 	background_music_ = Mix_LoadMUS(CREDIT_MUSIC_PATH.c_str());
 	dest_rect_.x = (SCREEN_WIDTH - credit_rect_.w) / 2;
 	dest_rect_.y = 0;
@@ -46,7 +57,7 @@ bool CreditState::exit()
 	return true;
 }
 
-void CreditState::handleEvent(SDL_Event& e)
+void CreditState::handleEvent(SDL_Event &e)
 {
 	if (e.type == SDL_KEYDOWN)
 	{
@@ -57,26 +68,37 @@ void CreditState::handleEvent(SDL_Event& e)
 		}
 	}
 }
-void CreditState::update(const float& dT)
+void CreditState::update(const float &dT)
 {
 	if (credit_rect_.y > credit_texture_height_ && !esc_pressed_)
 	{
 		esc_pressed_ = true;
 		startGetOutEffect();
 	}
-	else credit_rect_.y += 1;
+	else
+	{
+		credit_rect_.y += 1;
+
+		if (credit_rect_.y >= credit_texture_height_)
+		{
+			dest_rect_.y += 1;
+			credit_rect_.h -= 1;
+		}
+	}
+
 	if (Mix_PlayingMusic() == 0)
 	{
 		Mix_PlayMusic(background_music_, -1);
 	}
+
 	handleTransition(dT);
 }
 
-void CreditState::render(SDL_Renderer* ren)
+void CreditState::render(SDL_Renderer *ren)
 {
 	SDL_RenderCopy(ren, credit_, &credit_rect_, &dest_rect_);
+	SDL_RenderCopy(ren, overlay_, NULL, NULL);
 	renderTransitionFx(ren);
-
 }
 
 void CreditState::finishGetOut()

@@ -22,7 +22,7 @@ PlayState::PlayState()
 	state_ = PLAY;
 }
 
-PlayState *PlayState::get()
+PlayState* PlayState::get()
 {
 	return &s_play_state_;
 }
@@ -44,7 +44,7 @@ void PlayState::handleChangeLevel()
 		level_.toNextLevel();
 	}
 }
-float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
+float PlayState::loadResources(SDL_Renderer* ren, std::atomic<float>* progress)
 {
 
 	level_.loadSavedPath();
@@ -74,7 +74,7 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 			player_.loadData(PLAYER_DATA_PATH);
 			*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 		}
-		catch (std::exception &e)
+		catch (std::exception& e)
 		{
 			std::cerr << e.what() << std::endl;
 		}
@@ -93,7 +93,7 @@ float PlayState::loadResources(SDL_Renderer *ren, std::atomic<float> *progress)
 	*progress = *progress + 1.0f / TOTAL_LOADING_STEP;
 	return *progress;
 }
-bool PlayState::enter(SDL_Renderer *ren)
+bool PlayState::enter(SDL_Renderer* ren)
 {
 	state_ = PLAY;
 	startGetInEffect();
@@ -128,6 +128,9 @@ bool PlayState::exit()
 	{
 		buttons_[i].free();
 	}
+
+	player_.saveStats();
+	level_.savePath();
 	player_.saveStats();
 	level_.savePath();
 	Mix_FreeMusic(background_music_);
@@ -136,9 +139,10 @@ bool PlayState::exit()
 	Mix_FreeChunk(select_sound_);
 	Mix_FreeChunk(adjust_sound_);
 	SDL_DestroyTexture(pause_menu_bg_);
+	Mix_HaltChannel(-1);
 	return true;
 }
-void PlayState::handleEvent(SDL_Event &e)
+void PlayState::handleEvent(SDL_Event& e)
 {
 	if (state_ == PLAY)
 	{
@@ -177,7 +181,7 @@ void PlayState::handleEvent(SDL_Event &e)
 		}
 	}
 }
-void PlayState::update(const float &dT)
+void PlayState::update(const float& dT)
 {
 	if (Mix_PlayingMusic() == 0)
 	{
@@ -200,7 +204,7 @@ void PlayState::update(const float &dT)
 		for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS - NUM_OF_OPTIONS_BUTTONS; i++)
 		{
 
-			if (current_button_== state_+i )
+			if (current_button_ == state_ + i)
 			{
 				buttons_[state_ + i].enhanceAlpha();
 			}
@@ -222,7 +226,7 @@ void PlayState::update(const float &dT)
 			{
 				buttons_[PauseMenuButton::SLIDER].reduceAlpha();
 			}
-			if (current_button_== state_+i )
+			if (current_button_ == state_ + i)
 			{
 				buttons_[state_ + i].enhanceAlpha();
 			}
@@ -233,7 +237,7 @@ void PlayState::update(const float &dT)
 		}
 	}
 }
-void PlayState::render(SDL_Renderer *ren)
+void PlayState::render(SDL_Renderer* ren)
 {
 	level_.renderFarGround(ren);
 	level_.renderBackground(ren);
@@ -244,7 +248,7 @@ void PlayState::render(SDL_Renderer *ren)
 	renderTransitionFx(ren);
 	if (state_ == PAUSE)
 	{
-		
+
 		SDL_RenderCopy(ren, pause_menu_bg_, NULL, NULL);
 		for (int i = 0; i < NUM_OF_PAUSE_MENU_BUTTONS - NUM_OF_OPTIONS_BUTTONS; i++)
 		{
@@ -269,7 +273,7 @@ void PlayState::deleteSave()
 	{
 		std::remove(SAVE_PATH);
 	}
-	catch (std::exception &e)
+	catch (std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 	}

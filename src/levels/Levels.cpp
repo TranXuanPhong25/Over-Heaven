@@ -344,12 +344,6 @@ void Level::toNextLevel()
 {
 	if (id_ == Level3)
 	{
-		try {
-			std::filesystem::remove(SAVE_PATH);
-		}
-		catch (std::exception& e) {
-			std::cout << e.what() << std::endl;
-		}
 		StateMachine::get()->setNextState(CreditState::get());
 		return;
 	}

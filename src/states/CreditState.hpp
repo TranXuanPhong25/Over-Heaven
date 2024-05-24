@@ -19,6 +19,7 @@ private:
 	SDL_Rect credit_rect_;
 	SDL_Rect dest_rect_;
 	int credit_texture_height_;
+	SDL_Texture * overlay_;
 	bool esc_pressed_;
 	Mix_Music* background_music_;
 };

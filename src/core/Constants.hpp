@@ -94,6 +94,7 @@ const std::string FACEGROUND_PATH = "faceground.png";
 const std::string NEARGROUND_PATH = "nearground.png";
 const std::string INTRO_SCREEN_PATH = "assets/intro/intro.png";
 const std::string CREDIT_SCREEN_PATH = "assets/credit/credit.png";
+const std::string CREDIT_OVERLAY_PATH = "assets/credit/overlay.png";
 const Uint8 FOCUSING = 255;
 const Uint8 MISFOCUSING = 90;
 
