@@ -15,21 +15,21 @@
 #include <algorithm>
 #include <atomic>
 #include <filesystem>
+using std::max;
+using std::min;
 
 // Integer Constants
-const int SCREEN_WIDTH = 1920;
-const int SCREEN_HEIGHT = 1080;
+const int SCREEN_WIDTH = GetSystemMetrics(SM_CXSCREEN);
+const int SCREEN_HEIGHT = GetSystemMetrics(SM_CYSCREEN);
 const int MAX_TILES = 155;
-const int TILE_SIZE = 60;
-const int JUMP_HEIGHT = 1200;
-const int MAX_FALL_SPEED = 2000;
+const int TILE_SIZE = 48;
+const int JUMP_HEIGHT = 960;
+const int MAX_FALL_SPEED = 1600;
 const int MAX_JUMP_BUFFER = 3;
 const int MAX_COYOTE_TIME = 6;
-const int GRAVITY = 600;
-const int DEFAULT_SPEED = 400;
-const int FLOATY_FALL_VEL = 80;
-const int MAX_RUN_SPEED = 810;
-const int RUN_SPEED = 30;
+const int GRAVITY = 480;
+const int DEFAULT_SPEED = 320;
+const int FLOATY_FALL_VEL = 64;
 const int LEFT = -1;
 const int RIGHT = 1;
 const int UP = -1;
@@ -37,9 +37,9 @@ const int DOWN = 1;
 const int NUM_OF_MAIN_MENU_BUTTONS = 4;
 const int NUM_OF_OPTIONS_BUTTONS = 3;
 const int NUM_OF_PAUSE_MENU_BUTTONS = 6;
-const int BUTTON_PADDING = 80;
+const int BUTTON_PADDING = 64;
 const int INTRO_DURATION = 2000;
-const int SLIDER_PADDING = 63;
+const int SLIDER_PADDING = 50;
 
 // Float Constants
 const float TARGET_TIMESTEP = 1000 / 60;
@@ -93,7 +93,7 @@ const std::string BUTTON_TEXTURE_PATHS[7] = {
 	"assets/buttons/SLIDER.png",
 	"assets/buttons/BACK.png"
 };
-const std::string BUTTON_SOUND_PATH[3] ={
+const std::string BUTTON_SOUND_PATH[3] = {
 	"assets/sounds/9240-navigate-60.wav",
 	"assets/sounds/8607-navigate-14.wav",
 	"assets/sounds/computer-processing-sound-effects-short-click-select-03-122132.mp3"
@@ -102,20 +102,20 @@ const std::string MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/bg_.png";
 const std::string PAUSE_MENU_BACKGROUND_TEXTURE_PATH = "assets/menu/pause_bg.png";
 const std::string VIDEO_MENU_BACKGROUND_PATH = "assets/menu/menu.mov";
 const std::string MENU_MUSIC_PATH = "assets/sounds/Goldberg Variations, BWV 988 - 26 - Variatio 25 a 2 Clav..mp3";
-const std::string PLAY_MUSIC_PATHS[4]= {
+const std::string PLAY_MUSIC_PATHS[4] = {
 	"",
 	"assets/sounds/from_earth_to_heaven.mp3",
 	"assets/sounds/level2.mp3",
 	"assets/sounds/Ghiblis Waltz.mp3"
 };
-const std::string CREDIT_MUSIC_PATH ="assets/sounds/memories_of_winter.wav";
+const std::string CREDIT_MUSIC_PATH = "assets/sounds/memories_of_winter.wav";
 
 // Array Constants
 const float PLAYER_DEFAULT_POS[4][2] = {
 	{0,0},
 	{ 180, 300 },
-	{120, 5500 },
-	{ 120, 500 }
+	{120, 4400 },
+	{ 120, 200 }
 };
 const std::string LEVEL_PATH[4] = {
 	"",

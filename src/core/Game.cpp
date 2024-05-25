@@ -69,6 +69,7 @@ bool Game::initWindow()
 
 void Game::run()
 {
+
 	if (initWindow())
 	{
 		p_state_machine_->getCurrentState()->enter(p_ren_);

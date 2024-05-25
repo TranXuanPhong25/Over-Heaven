@@ -34,7 +34,7 @@ LoadingState::LoadingState()
 	end_loaded_time_ = 0;
 	alpha_ = 0;
 	progress_ = 0.0f;
-	progress_bar_rect_ = { 0, SCREEN_HEIGHT / 2 - 20, 0, 40 };
+	progress_bar_rect_ = { 0, static_cast<float>(SCREEN_HEIGHT) / 2 - 20, 0, 40 };
 	end_loaded_time_ = 0;
 	loading_finished_ = false;
 }
@@ -69,7 +69,7 @@ bool LoadingState::exit()
 	loading_finished_ = false;
 	p_loading_thread_ = NULL;
 	alpha_ = 0;
-	progress_bar_rect_ = { 0, SCREEN_HEIGHT / 2 - 20, 0,40 };
+	progress_bar_rect_ = { 0, static_cast<float>(SCREEN_HEIGHT) / 2 - 20, 0,40 };
 
 	return success;
 }
