@@ -1,5 +1,6 @@
 # Over Heaven
 - Link demo: [youtube](https://www.youtube.com/watch?v=Di--rG62d9g)
+</br>Dự án này chỉ tập trung về UI, UX và kinh nghiệm code nên về tính năng của game có thể chưa dược tốt. Mong mọi người thông cảm
 > There aren not any bugs 🐛, they are features 😁👍
 # Tải và trải Nghiệm game
 - Bước 1: Vào link [này](https://github.com/TranXuanPhong25/Over-Heaven/releases/tag/release-v1.3) để tải một trong hai file Over-Heaven-v.1.3.rar hoặc Over-Heaven-v.1.3-Compatible-mode.rar
