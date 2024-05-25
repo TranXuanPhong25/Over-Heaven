@@ -11,7 +11,7 @@
 
 
 *Game di chuyển bằng phím 'A' , 'D' 'Space' hoặc các phím mũi tên để di chuyển nhân vật*
-
+*Nhấn Esc để pause menu khi ở trên mặt đất"
 
 # Phát triển, đọc mã nguồn 
 - Bước 1: Đảm bảo đã cài Visual Studio trên máy. Nếu chưa cài đặt thì có thể tải [ở đây](https://visualstudio.microsoft.com)
