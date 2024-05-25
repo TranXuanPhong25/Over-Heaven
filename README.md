@@ -11,6 +11,8 @@
 
 
 *Game di chuyển bằng phím 'A' , 'D' 'Space' hoặc các phím mũi tên để di chuyển nhân vật*
+
+
 *Nhấn Esc để pause menu khi ở trên mặt đất"
 
 # Phát triển, đọc mã nguồn 
