@@ -35,5 +35,5 @@
   - Cài đặt SDL2 và cài ffmpeg từ link [youtube](https://www.youtube.com/watch?v=IECI72XEox0)
 - Đây là dự án phục vụ cho bài tập lớn của sinh viên Trần Xuân Phong, MSSV 20231657 cho học phần Lập trình nâng cao tại Đại học Công Nghệ - Đại học Quốc gia Hà Nội
 - Nếu gặp lỗi thiếu .dll như msvcp140.dll,... hoặc d3dx9_43.dll thì có thể tải thử package visual runtime từ [TechPowerup](https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one) và directx từ [trang chủ Microsoft](https://www.microsoft.com/en-us/download/details.aspx?id=35)
-- Bản Compatible : hoạt động ổn với card cũ và nhẹ hơn, nhưng có thể gặp một số hiệu ứng lỗi như glitch, tearing screen, chất lượng ảnh kém.
+- Bản Compatible : hoạt động ổn với card cũ và nhẹ hơn, nhưng có thể gặp một số hiệu ứng lỗi như glitch, tearing screen, chất lượng ảnh kém. Tuy nhiên lại rất tương thích với nhiều độ phân giải màn hình (do laptop thường có scale lên 125% hoặc 150% để phù hợp với màn hình bé). Ngoài ra bản này hitbox của slime to hơn nhưng chậm hơn chút.
 - Bản Original: có thể gặp lỗi sau khi nhảy xuống giếng nếu card đồ họa của bạn đã cũ nhưng hình ảnh ở mức tốt nhất.
