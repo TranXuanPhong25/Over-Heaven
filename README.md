@@ -21,6 +21,8 @@
 
 - Bước 3: vào folder chứa file tải xuống rồi giải nén file vừa tải
 - Bước 4: Chạy Over-Heaven.sln để khởi động project
+
+  
 ![image](https://github.com/TranXuanPhong25/Over-Heaven/assets/89262558/a82c6697-4dd5-4f0b-ba9b-b0989ff5e98b)
 - Bước 5: dùng phím tổ hợp phím Ctrl F5 để build và chạy game
 
@@ -32,10 +34,3 @@
 - Nếu gặp lỗi thiếu .dll như msvcp140.dll,... hoặc d3dx9_43.dll thì có thể tải thử package visual runtime từ [TechPowerup](https://www.techpowerup.com/download/visual-c-redistributable-runtime-package-all-in-one) và directx từ [trang chủ Microsoft](https://www.microsoft.com/en-us/download/details.aspx?id=35)
 - Bản Compatible : hoạt động ổn với card cũ và nhẹ hơn, nhưng có thể gặp một số hiệu ứng lỗi như glitch, tearing screen, chất lượng ảnh kém.
 - Bản Original: có thể gặp lỗi sau khi nhảy xuống giếng nếu card đồ họa của bạn đã cũ nhưng hình ảnh ở mức tốt nhất.
-
-Music by free-to-use-audio from Pixabay
-<br/>
-Sound Effect by Samuel F. Johanns from Pixabay
-# Cài đặt
-
-cài đặt SDL2 và cài đặt ffmpeg từ link [youtube](https://www.youtube.com/watch?v=IECI72XEox0)
