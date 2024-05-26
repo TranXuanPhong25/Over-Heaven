@@ -23,10 +23,11 @@ public:
 	void handleInput(SDL_Event& e);
 	void handleKeyPressed(const SDL_Event& e);
 	void handleKeyReleased(const SDL_Event& e);
+	void releaseEvent();
 
 	Vector2D getVel()const;
 	void update(Level& level, Camera& cam, const float& dT);
-	virtual void animate(const float&dT) override;
+	virtual void animate(const float& dT) override;
 
 	void moveX(const float& dT);
 	void moveY(const float& dT);
@@ -54,7 +55,7 @@ public:
 
 	void handleSoundFx();
 	void playJumpSound();
-	void playLandSound(int &playedLandSound);
+	void playLandSound(int& playedLandSound);
 	void playRunSound();
 
 private:
@@ -71,11 +72,11 @@ private:
 	int coyote_time_;
 
 	bool should_change_level_;
-	
+
 	bool play_jump_sound_;
-	Mix_Chunk *jump_sound_;
-	Mix_Chunk *land_sound_;
-	Mix_Chunk *walk_sound_;
+	Mix_Chunk* jump_sound_;
+	Mix_Chunk* land_sound_;
+	Mix_Chunk* walk_sound_;
 };
 
 
