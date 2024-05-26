@@ -79,6 +79,13 @@ void Character::handleKeyReleased(const SDL_Event& e)
 	}
 }
 
+void Character::releaseEvent()
+{
+	dir_left_ = 0;
+	dir_right_ = 0;
+	spacekey_pressed_ = false;
+}
+
 Vector2D Character::getVel() const
 {
 	return vel_;

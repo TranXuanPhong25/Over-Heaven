@@ -152,6 +152,7 @@ void PlayState::handleEvent(SDL_Event& e)
 		{
 			state_ = PAUSE;
 			current_button_ = PauseMenuButton::CONTINUE;
+			player_.releaseEvent();
 		}
 	}
 	else if (e.type == SDL_KEYDOWN)
